@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidInteraction(data, userId) {
+      return data.userId == userId
+        && data.userId == request.auth.uid
+        && data.rawPrompt is string
+        && data.rawPrompt.size() > 0
+        && data.rawPrompt.size() <= 10000
+        && data.sanitizedPrompt is string
+        && data.sanitizedPrompt.size() <= 10000
+        && data.reflection is string
+        && data.reflection.size() <= 20000
+        && (data.title == null || (data.title is string && data.title.size() <= 200))
+        && (data.mood == null || (data.mood is string && data.mood.size() <= 32))
+        && (data.piiEntitiesCount == null || data.piiEntitiesCount is number)
+        && (data.modelUsed == null || (data.modelUsed is string && data.modelUsed.size() <= 64))
+        && (data.latencyMs == null || data.latencyMs is number);
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // User interactions subcollection
+    match /users/{userId}/interactions/{interactionId} {
+      // Individual document read
+      allow get: if isOwner(userId) && isValidId(userId) && isValidId(interactionId);
+
+      // List queries constrained to user
+      allow list: if isOwner(userId) && isValidId(userId);
+
+      // Create new interaction
+      allow create: if isOwner(userId)
+        && isValidId(userId)
+        && isValidId(interactionId)
+        && isValidInteraction(incoming(), userId);
+
+      // Update interaction (cannot alter userId or rawPrompt identity)
+      allow update: if isOwner(userId)
+        && isValidId(userId)
+        && isValidId(interactionId)
+        && isValidInteraction(incoming(), userId)
+        && incoming().userId == existing().userId
+        && (existing().createdAt == null || incoming().createdAt == existing().createdAt);
+
+      // Delete interaction
+      allow delete: if isOwner(userId) && isValidId(userId) && isValidId(interactionId);
+    }
+  }
+}

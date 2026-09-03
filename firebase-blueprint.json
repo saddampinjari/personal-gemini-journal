@@ -1,0 +1,73 @@
+{
+  "entities": {
+    "Interaction": {
+      "title": "Journal Interaction",
+      "description": "User journal entry with AI reflection and Zero-Trust Privacy Gateway metadata",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The Firebase Authentication UID of the owner",
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "maxLength": 128
+        },
+        "title": {
+          "type": "string",
+          "description": "Title or short summary of the journal reflection",
+          "maxLength": 200
+        },
+        "rawPrompt": {
+          "type": "string",
+          "description": "Original raw journal entry provided by the user",
+          "maxLength": 10000
+        },
+        "sanitizedPrompt": {
+          "type": "string",
+          "description": "De-identified prompt sent to Gemini with surrogate tokens",
+          "maxLength": 10000
+        },
+        "reflection": {
+          "type": "string",
+          "description": "Gemini generated empathetic and analytical reflection",
+          "maxLength": 20000
+        },
+        "mood": {
+          "type": "string",
+          "description": "User selected mood or sentiment",
+          "enum": ["reflective", "grateful", "anxious", "energized", "thoughtful", "peaceful", "challenging"],
+          "maxLength": 32
+        },
+        "piiEntitiesCount": {
+          "type": "number",
+          "description": "Total count of sensitive PII tokens de-identified by the Privacy Gateway"
+        },
+        "modelUsed": {
+          "type": "string",
+          "description": "Gemini model version resolved by the fallback ladder",
+          "maxLength": 64
+        },
+        "latencyMs": {
+          "type": "number",
+          "description": "End-to-end processing latency in milliseconds"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp of entry creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp of entry update"
+        }
+      },
+      "required": ["userId", "rawPrompt", "sanitizedPrompt", "reflection", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/interactions/{interactionId}": {
+      "schema": "Interaction",
+      "description": "Isolated per-user collection of journal interactions and Zero-Trust reflections"
+    }
+  }
+}

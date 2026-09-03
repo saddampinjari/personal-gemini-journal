@@ -1,0 +1,6 @@
+{
+  "name": "Personal Gemini Journal",
+  "description": "Enterprise Zero-Trust AI Journal featuring a client-side de-identification Privacy Gateway, Secret Manager integration, and resilient Gemini model fallback ladder deployed on Google Cloud Run.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
