@@ -15,8 +15,8 @@ interface HeaderProps {
   } | null;
   onSignOut: () => void;
   onOpenAuth: () => void;
-  activeTab?: 'journal' | 'inspector';
-  onTabChange?: (tab: 'journal' | 'inspector') => void;
+  activeTab?: 'journal' | 'map' | 'inspector';
+  onTabChange?: (tab: 'journal' | 'map' | 'inspector') => void;
   scrubCount?: number;
 }
 
@@ -67,25 +67,37 @@ export function Header({
           <div className="flex items-center bg-[#F5F2F9] dark:bg-[#232128] p-1 rounded-full border border-[#E8E4EE] dark:border-[#36343B]">
             <button
               onClick={() => onTabChange('journal')}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'journal'
                   ? 'bg-white dark:bg-[#322F37] text-[#6750A4] dark:text-[#D0BCFF] shadow-xs'
                   : 'text-[#49454F] dark:text-[#CAC4D0] hover:text-[#1C1B1F] dark:hover:text-white'
               }`}
             >
-              <MaterialIcon name="menu_book" size={18} />
-              <span>Journal Workspace</span>
+              <MaterialIcon name="menu_book" size={16} />
+              <span>Workspace</span>
+            </button>
+
+            <button
+              onClick={() => onTabChange('map')}
+              className={`flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === 'map'
+                  ? 'bg-white dark:bg-[#322F37] text-[#6750A4] dark:text-[#D0BCFF] shadow-xs'
+                  : 'text-[#49454F] dark:text-[#CAC4D0] hover:text-[#1C1B1F] dark:hover:text-white'
+              }`}
+            >
+              <MaterialIcon name="map" size={16} className="text-indigo-600 dark:text-indigo-400" />
+              <span>Map View</span>
             </button>
 
             <button
               onClick={() => onTabChange('inspector')}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === 'inspector'
                   ? 'bg-white dark:bg-[#322F37] text-[#6750A4] dark:text-[#D0BCFF] shadow-xs'
                   : 'text-[#49454F] dark:text-[#CAC4D0] hover:text-[#1C1B1F] dark:hover:text-white'
               }`}
             >
-              <MaterialIcon name="verified_user" size={18} className="text-emerald-600 dark:text-emerald-400" />
+              <MaterialIcon name="verified_user" size={16} className="text-emerald-600 dark:text-emerald-400" />
               <span>Security HUD</span>
               {scrubCount > 0 && (
                 <span className="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-[#EADDFF] dark:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF]">

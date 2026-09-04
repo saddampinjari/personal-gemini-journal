@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import { motion, type Variants } from 'motion/react';
 import { MaterialIcon } from '@/components/MaterialIcon';
 import { deidentifyText } from '@/lib/privacy-gateway/dlp';
+import { LocationPicker, type LocationData } from '@/components/LocationPicker';
 
 interface ReflectionComposerProps {
-  onSubmit: (prompt: string, mood: string) => Promise<void>;
+  onSubmit: (prompt: string, mood: string, location?: LocationData | null) => Promise<void>;
   isLoading: boolean;
 }
 
@@ -86,6 +87,7 @@ const INSPIRATION_PROMPTS = [
 export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerProps) {
   const [prompt, setPrompt] = useState('');
   const [mood, setMood] = useState('reflective');
+  const [location, setLocation] = useState<LocationData | null>(null);
   const [showLiveDlp, setShowLiveDlp] = useState(false);
 
   // Client-side quick DLP preview
@@ -94,7 +96,7 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!prompt.trim() || isLoading) return;
-    await onSubmit(prompt, mood);
+    await onSubmit(prompt, mood, location);
   };
 
   const handleSelectInspiration = (text: string) => {
@@ -228,10 +230,13 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
 
         {/* Writing Canvas Textarea */}
         <motion.div variants={itemVariants}>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-[#79747E] dark:text-[#938F99]">
-              Your Reflection:
-            </label>
+          <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+            <div className="flex items-center gap-3">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#79747E] dark:text-[#938F99]">
+                Your Reflection:
+              </label>
+              <LocationPicker location={location} onChange={setLocation} />
+            </div>
             <span className="text-xs text-[#79747E] dark:text-[#938F99]">
               {prompt.length} / 10,000 characters
             </span>

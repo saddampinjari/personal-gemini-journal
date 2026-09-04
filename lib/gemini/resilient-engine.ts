@@ -40,12 +40,36 @@ Guidelines:
    - **Key Insights & Themes**: Bulleted observations
    - **Inquiry & Prompts for Tomorrow**: 2-3 actionable reflective questions.`;
 
+export interface ChatMessage {
+  role: 'user' | 'model';
+  content: string;
+  createdAt?: string;
+}
+
 /**
  * High-quality deterministic psychological reflection fallback when upstream APIs are unavailable
  */
-export function generateLocalEmpatheticReflection(prompt: string, mood?: string): string {
+export function generateLocalEmpatheticReflection(
+  prompt: string,
+  mood?: string,
+  history?: ChatMessage[]
+): string {
   const moodNormalized = (mood || 'reflective').toLowerCase();
   const summarySnippet = prompt.slice(0, 120).trim();
+
+  if (history && history.length > 0) {
+    return `### Follow-up Inquiry & Clarification
+Thank you for delving deeper into this thought: "${summarySnippet}..."
+
+Continuing to unpack this experience allows subtle nuances to surface. When we observe thoughts in dialogue rather than keeping them isolated, we often find the initial reaction transforms into a clearer perspective.
+
+### Guiding Reflections
+- **Nuance & Discovery**: Looking back at what you first felt versus what you're noticing now, where do you feel the tension softening?
+- **Self-Compassion**: Remember that progress in self-awareness isn't linear—honoring how you feel in this exact moment is enough.
+
+### Next Prompt
+*If you were to speak to yourself right now with the same unconditional kindness you would offer a trusted friend, what would you say?*`;
+  }
 
   return `### Empathetic Summary
 Thank you for articulating this moment. You noted: "${summarySnippet}..." Processing experiences through writing helps ground the nervous system and externalize what can otherwise feel internally congested. With a ${moodNormalized} mindset, giving voice to these tensions is the foundational step toward intentional clarity.
@@ -67,7 +91,8 @@ Thank you for articulating this moment. You noted: "${summarySnippet}..." Proces
 export async function generateResilientReflection(
   apiKey: string,
   sanitizedPrompt: string,
-  mood?: string
+  mood?: string,
+  history?: ChatMessage[]
 ): Promise<ReflectionResponse> {
   const fallbackTrail: FallbackAttempt[] = [];
 
@@ -79,7 +104,7 @@ export async function generateResilientReflection(
       attemptedAt: new Date().toISOString(),
     });
     return {
-      reflection: generateLocalEmpatheticReflection(sanitizedPrompt, mood),
+      reflection: generateLocalEmpatheticReflection(sanitizedPrompt, mood, history),
       modelUsed: 'gemini-resilient-local',
       fallbackTrail,
       ladderStepsAttempted: 1,
@@ -98,7 +123,7 @@ export async function generateResilientReflection(
     });
   } catch {
     return {
-      reflection: generateLocalEmpatheticReflection(sanitizedPrompt, mood),
+      reflection: generateLocalEmpatheticReflection(sanitizedPrompt, mood, history),
       modelUsed: 'gemini-resilient-local',
       fallbackTrail: [
         {
@@ -111,16 +136,33 @@ export async function generateResilientReflection(
     };
   }
 
+  // Format contents: either multi-turn or single turn
+  const userPrompt = mood
+    ? `[Current Mood: ${mood}]\n\nJournal Entry:\n${sanitizedPrompt}`
+    : sanitizedPrompt;
+
+  let requestContents: unknown;
+  if (history && history.length > 0) {
+    requestContents = [
+      ...history.map((msg) => ({
+        role: msg.role === 'model' ? 'model' : 'user',
+        parts: [{ text: msg.content }],
+      })),
+      {
+        role: 'user',
+        parts: [{ text: userPrompt }],
+      },
+    ];
+  } else {
+    requestContents = userPrompt;
+  }
+
   for (let i = 0; i < MODEL_FALLBACK_LADDER.length; i++) {
     const model = MODEL_FALLBACK_LADDER[i];
     try {
-      const userPrompt = mood
-        ? `[Current Mood: ${mood}]\n\nJournal Entry:\n${sanitizedPrompt}`
-        : sanitizedPrompt;
-
       const response = await ai.models.generateContent({
         model,
-        contents: userPrompt,
+        contents: requestContents as any,
         config: {
           systemInstruction: SYSTEM_INSTRUCTION,
           temperature: 0.7,

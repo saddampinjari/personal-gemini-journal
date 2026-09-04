@@ -21,6 +21,8 @@ export async function POST(req: NextRequest) {
     const mood = body.mood || 'reflective';
     const title = body.title;
     const clientInteractionId = body.interactionId;
+    const location = body.location; // { name: string, latitude?: number, longitude?: number }
+    const history = Array.isArray(body.history) ? body.history : [];
 
     if (prompt.length > 10000) {
       return NextResponse.json(
@@ -30,16 +32,23 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Zero-Trust Privacy Gateway: Server-side PII de-identification
-    const dlpResult = deidentifyText(prompt);
+    // If location is provided, ensure its name is also passed into DLP tokenization
+    let textToDeidentify = prompt;
+    if (location?.name && !prompt.includes(location.name)) {
+      textToDeidentify = `${prompt} (at ${location.name})`;
+    }
+
+    const dlpResult = deidentifyText(textToDeidentify);
 
     // 4. Dynamic Secret Management: Fetch Gemini API Key via Secret Manager cache
     const secretInfo = await getGeminiApiKey();
 
-    // 5. Resilient AI Engine: Execute Fallback Ladder
+    // 5. Resilient AI Engine: Execute Fallback Ladder with multi-turn history
     const genResult = await generateResilientReflection(
       secretInfo.apiKey,
       dlpResult.sanitizedText,
-      mood
+      mood,
+      history
     );
 
     // 6. Server-side Detokenization Engine: Restore entities for the authenticated user
@@ -61,6 +70,13 @@ export async function POST(req: NextRequest) {
         .slice(0, 60) ||
       'Journal Reflection';
 
+    const nowIso = new Date().toISOString();
+    const currentConversation = [
+      ...history,
+      { role: 'user', content: prompt, createdAt: nowIso },
+      { role: 'model', content: detokenizedReflection, createdAt: nowIso },
+    ];
+
     // 7. Prepare Tenant-Isolated Firestore Document
     const firestoreDoc = {
       userId: user.uid,
@@ -73,7 +89,13 @@ export async function POST(req: NextRequest) {
       piiEntitiesCount: dlpResult.scrubCount,
       modelUsed: genResult.modelUsed,
       latencyMs,
-      createdAt: new Date().toISOString(),
+      createdAt: nowIso,
+      location: location ? {
+        name: location.name,
+        latitude: location.latitude ?? null,
+        longitude: location.longitude ?? null,
+      } : null,
+      conversation: currentConversation,
       dlpMetadata: {
         entitiesDetectedCount: dlpResult.entities.length,
         entityTypes: Array.from(new Set(dlpResult.entities.map((e) => e.type))),
@@ -107,6 +129,8 @@ export async function POST(req: NextRequest) {
       latencyMs,
       secretSource: secretInfo.source,
       secretCached: secretInfo.isCached,
+      location: location || null,
+      conversation: currentConversation,
       storedFirestoreDocument: firestoreDoc,
     });
   } catch (err: unknown) {

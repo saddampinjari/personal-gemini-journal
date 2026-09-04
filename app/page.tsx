@@ -11,6 +11,8 @@ import { Sidebar, JournalItem } from '@/components/Sidebar';
 import { ReflectionComposer } from '@/components/ReflectionComposer';
 import { ReflectionViewer } from '@/components/ReflectionViewer';
 import { SecurityInspector } from '@/components/SecurityInspector';
+import { JournalMapView } from '@/components/JournalMapView';
+import { type LocationData } from '@/components/LocationPicker';
 import { DetectedEntity, deidentifyText, detokenizeText } from '@/lib/privacy-gateway/dlp';
 import { MaterialIcon } from '@/components/MaterialIcon';
 import { GeminiBackgroundGlow } from '@/components/GeminiBackgroundGlow';
@@ -44,8 +46,9 @@ export default function HomePage() {
   // App UI state
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFollowUpLoading, setIsFollowUpLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [dashboardTab, setDashboardTab] = useState<'journal' | 'inspector'>('journal');
+  const [dashboardTab, setDashboardTab] = useState<'journal' | 'map' | 'inspector'>('journal');
 
   // Journal Items & Active View
   const [journalItems, setJournalItems] = useState<JournalItem[]>([]);
@@ -99,7 +102,7 @@ export default function HomePage() {
   );
 
   const loadUserJournalData = useCallback(
-    (uid: string) => {
+    async (uid: string, tokenOverride?: string | null) => {
       const storageKey = `pgj_journal_items_${uid}`;
       const cached = localStorage.getItem(storageKey);
       if (cached) {
@@ -116,7 +119,33 @@ export default function HomePage() {
         } catch {
           // Handled gracefully without error output
         }
-      } else if (uid === 'demo-user-77') {
+      }
+
+      // Fetch persistent history from Firestore /api/journal/history
+      const effectiveToken = tokenOverride || authToken || (uid === 'demo-user-77' ? 'demo-token-demo-user-77' : undefined);
+      if (effectiveToken) {
+        try {
+          const res = await fetch('/api/journal/history', {
+            headers: {
+              Authorization: `Bearer ${effectiveToken}`,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.items && Array.isArray(data.items) && data.items.length > 0) {
+              setJournalItems(data.items);
+              setActiveItem(data.items[0]);
+              updateInspectorFromItem(data.items[0], uid);
+              localStorage.setItem(storageKey, JSON.stringify(data.items));
+              return;
+            }
+          }
+        } catch {
+          // Fall back gracefully to cached items
+        }
+      }
+
+      if (!cached && uid === 'demo-user-77') {
         const demoSeed: JournalItem = {
           interactionId: 'inter_demo_7701',
           title: '1-on-1 Sync & Timeline Anxiety in San Francisco',
@@ -128,9 +157,14 @@ export default function HomePage() {
             '### Empathetic Reflection\nIt sounds like you are carrying the dual weight of empathy for Sarah Connor and personal responsibility for the project commitments. Stepping forward with your personal contact info shows deep dedication, but also signals boundary strain.\n\n### Key Psychological Insights\n- **Cognitive Load & Guilt**: You are conflating commitment estimation errors with personal integrity.\n- **Boundary Blur**: Offering weekend personal contact channels is an acute stress response to relieve immediate guilt.\n\n### Mindful Inquiry\n1. What is one concrete adjustment you and Sarah could propose together on Monday morning?\n2. Where can you set a clearer line between being supportive and absorbing systemic timeline pressures?',
           mood: 'anxious',
           piiEntitiesCount: 4,
-          modelUsed: 'gemini-3.6-flash',
+          modelUsed: 'gemini-3.8-flash',
           latencyMs: 842,
           createdAt: new Date().toISOString(),
+          location: {
+            name: 'San Francisco, CA',
+            latitude: 37.7749,
+            longitude: -122.4194,
+          },
           dlpMetadata: {
             entitiesDetectedCount: 4,
             entityTypes: ['PERSON', 'LOCATION', 'EMAIL', 'PHONE'],
@@ -148,13 +182,13 @@ export default function HomePage() {
         setActiveItem(demoSeed);
         updateInspectorFromItem(demoSeed, uid);
         localStorage.setItem(storageKey, JSON.stringify(seedList));
-      } else {
+      } else if (!cached) {
         setJournalItems([]);
         setActiveItem(null);
         setInspectorData(null);
       }
     },
-    [updateInspectorFromItem]
+    [authToken, updateInspectorFromItem]
   );
 
   // Initialize Auth & Storage on client mount
@@ -272,7 +306,11 @@ export default function HomePage() {
   };
 
   // Submit Reflection to Zero-Trust Backend
-  const handleCreateReflection = async (prompt: string, mood: string) => {
+  const handleCreateReflection = async (
+    prompt: string,
+    mood: string,
+    location?: LocationData | null
+  ) => {
     let effectiveUser = currentUser;
     let effectiveToken = authToken;
 
@@ -304,6 +342,11 @@ export default function HomePage() {
         body: JSON.stringify({
           prompt,
           mood,
+          location: location ? {
+            name: location.name,
+            latitude: location.latitude,
+            longitude: location.longitude,
+          } : null,
         }),
       });
 
@@ -313,7 +356,8 @@ export default function HomePage() {
         throw new Error(data.error || `HTTP ${res.status}: Failed to generate reflection.`);
       }
 
-      // Create new JournalItem
+      // Create new JournalItem with location & conversation thread
+      const nowIso = data.storedFirestoreDocument?.createdAt || new Date().toISOString();
       const newItem: JournalItem = {
         interactionId: data.interactionId,
         title: data.storedFirestoreDocument?.title || prompt.slice(0, 50) + '...',
@@ -324,7 +368,12 @@ export default function HomePage() {
         piiEntitiesCount: data.piiCountScrubbed,
         modelUsed: data.modelUsed,
         latencyMs: data.latencyMs,
-        createdAt: data.storedFirestoreDocument?.createdAt || new Date().toISOString(),
+        createdAt: nowIso,
+        location: data.location || location || null,
+        conversation: data.conversation || [
+          { role: 'user', content: prompt, createdAt: nowIso },
+          { role: 'model', content: data.reflection, createdAt: nowIso },
+        ],
         dlpMetadata: {
           entitiesDetectedCount: data.piiEntities?.length || 0,
           entityTypes: data.piiEntities?.map((e: DetectedEntity) => e.type) || [],
@@ -372,6 +421,7 @@ export default function HomePage() {
       const localReflection = `### Empathetic Summary\n\nThank you for articulating this moment. Navigating personal reflections with a ${moodLabel} mindset helps ground your thoughts and cultivate psychological clarity. Documenting experiences provides distance to examine what is within your locus of control.\n\n### Key Psychological Insights\n- **Cognitive Clarity**: Giving structured expression to your thoughts reduces emotional cognitive load.\n- **Locus of Control**: Focusing attention on immediate, actionable steps restores a sense of agency.\n\n### Mindful Inquiry\n1. What is one small, grounded action that would bring you calm today?\n2. What expectation can you release right now?`;
       const detokenized = detokenizeText(localReflection, dlp.tokenMap);
 
+      const nowIso = new Date().toISOString();
       const fallbackItem: JournalItem = {
         interactionId: `inter_${Date.now()}_local`,
         title: prompt.slice(0, 50).trim() || 'Journal Reflection',
@@ -382,10 +432,15 @@ export default function HomePage() {
         piiEntitiesCount: dlp.scrubCount,
         modelUsed: 'gemini-resilient-local',
         latencyMs: 140,
-        createdAt: new Date().toISOString(),
+        createdAt: nowIso,
+        location: location || null,
+        conversation: [
+          { role: 'user', content: prompt, createdAt: nowIso },
+          { role: 'model', content: detokenized, createdAt: nowIso },
+        ],
         dlpMetadata: {
           entitiesDetectedCount: dlp.entities.length,
-          entityTypes: dlp.entities.map((e) => e.type),
+          entityTypes: Array.from(new Set(dlp.entities.map((e) => e.type))),
         },
         secretMetadata: {
           source: 'autonomous-zero-trust',
@@ -428,6 +483,72 @@ export default function HomePage() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Submit multi-turn follow-up dialogue turn
+  const handleFollowUpReflection = async (followUpPrompt: string) => {
+    if (!activeItem) return;
+    setIsFollowUpLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const existingConversation = activeItem.conversation || [
+        { role: 'user', content: activeItem.rawPrompt, createdAt: activeItem.createdAt },
+        { role: 'model', content: activeItem.reflection, createdAt: activeItem.createdAt },
+      ];
+
+      const effectiveToken = authToken || 'demo-token-demo-user-77';
+      const res = await fetch('/api/journal/reflect', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${effectiveToken}`,
+        },
+        body: JSON.stringify({
+          prompt: followUpPrompt,
+          mood: activeItem.mood,
+          title: activeItem.title,
+          interactionId: activeItem.interactionId,
+          history: existingConversation,
+          location: activeItem.location,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to submit follow-up turn.');
+      }
+
+      const updatedItem: JournalItem = {
+        ...activeItem,
+        reflection: data.reflection,
+        conversation: data.conversation || [
+          ...existingConversation,
+          { role: 'user', content: followUpPrompt, createdAt: new Date().toISOString() },
+          { role: 'model', content: data.reflection, createdAt: new Date().toISOString() },
+        ],
+        modelUsed: data.modelUsed,
+        latencyMs: data.latencyMs,
+        piiEntitiesCount: (activeItem.piiEntitiesCount || 0) + (data.piiCountScrubbed || 0),
+      };
+
+      setJournalItems((prev) => {
+        const updated = prev.map((item) =>
+          item.interactionId === updatedItem.interactionId ? updatedItem : item
+        );
+        if (currentUser?.uid) {
+          localStorage.setItem(`pgj_journal_items_${currentUser.uid}`, JSON.stringify(updated));
+        }
+        return updated;
+      });
+
+      setActiveItem(updatedItem);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error processing follow-up turn';
+      setErrorMessage(msg);
+    } finally {
+      setIsFollowUpLoading(false);
     }
   };
 
@@ -613,6 +734,10 @@ export default function HomePage() {
                           piiEntitiesCount={activeItem.piiEntitiesCount}
                           latencyMs={activeItem.latencyMs}
                           createdAt={activeItem.createdAt}
+                          location={activeItem.location}
+                          conversation={activeItem.conversation}
+                          onFollowUpSubmit={handleFollowUpReflection}
+                          isFollowUpLoading={isFollowUpLoading}
                           onScrollToInspector={handleScrollToInspector}
                         />
                       </div>
@@ -642,13 +767,52 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      <button
-                        onClick={() => setDashboardTab('inspector')}
-                        className="w-full sm:w-auto px-5 py-2.5 rounded-full text-xs font-bold bg-[#F5F2F9] dark:bg-[#2A2830] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#36343B] transition-colors cursor-pointer"
-                      >
-                        Open Live Security HUD &rarr;
-                      </button>
+                      <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <button
+                          onClick={() => setDashboardTab('map')}
+                          className="flex-1 sm:flex-none px-4 py-2.5 rounded-full text-xs font-bold bg-white dark:bg-[#232128] hover:bg-slate-100 dark:hover:bg-[#2C2932] text-slate-700 dark:text-slate-300 border border-[#E8E4EE] dark:border-[#36343B] transition-colors cursor-pointer"
+                        >
+                          View Map &rarr;
+                        </button>
+                        <button
+                          onClick={() => setDashboardTab('inspector')}
+                          className="flex-1 sm:flex-none px-5 py-2.5 rounded-full text-xs font-bold bg-[#F5F2F9] dark:bg-[#2A2830] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#36343B] transition-colors cursor-pointer"
+                        >
+                          Security HUD &rarr;
+                        </button>
+                      </div>
                     </div>
+                  </motion.div>
+                ) : dashboardTab === 'map' ? (
+                  <motion.div
+                    key="tab-map"
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -14 }}
+                    transition={{ duration: 0.35, ease: M3_DECELERATE }}
+                    className="space-y-6"
+                  >
+                    <div className="flex items-center justify-between pb-1">
+                      <button
+                        onClick={() => setDashboardTab('journal')}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-[#1E1C23] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#36343B] transition-all shadow-xs cursor-pointer"
+                      >
+                        <MaterialIcon name="arrow_back" size={16} />
+                        <span>Return to Workspace</span>
+                      </button>
+                      <div className="flex items-center gap-2 text-xs text-[#79747E] dark:text-[#938F99] font-medium">
+                        <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                        <span>Geospatial Privacy Active</span>
+                      </div>
+                    </div>
+
+                    <JournalMapView
+                      items={journalItems}
+                      onSelectItem={(item) => {
+                        handleSelectItem(item);
+                        setDashboardTab('journal');
+                      }}
+                    />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -681,7 +845,7 @@ export default function HomePage() {
                       piiEntities={inspectorData?.piiEntities || []}
                       piiCountScrubbed={inspectorData?.piiCountScrubbed || 0}
                       tokenMap={inspectorData?.tokenMap || {}}
-                      modelUsed={inspectorData?.modelUsed || 'gemini-3.6-flash'}
+                      modelUsed={inspectorData?.modelUsed || 'gemini-3.8-flash'}
                       fallbackTrail={inspectorData?.fallbackTrail || []}
                       latencyMs={inspectorData?.latencyMs || 0}
                       secretSource={inspectorData?.secretSource || 'Google Cloud Secret Manager'}

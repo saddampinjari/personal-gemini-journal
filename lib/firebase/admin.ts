@@ -206,3 +206,65 @@ export async function persistInteraction(
     }
   }
 }
+
+/**
+ * Retrieves all user interactions from /users/{userId}/interactions
+ */
+export async function getUserInteractions(userId: string): Promise<Array<Record<string, unknown>>> {
+  const memoryItems = inMemoryStore.has(userId)
+    ? Array.from(inMemoryStore.get(userId)!.values())
+    : [];
+
+  if (firestoreDisabledOrUnavailable) {
+    return memoryItems.sort((a, b) => {
+      const timeA = new Date((a.createdAt as string) || 0).getTime();
+      const timeB = new Date((b.createdAt as string) || 0).getTime();
+      return timeB - timeA;
+    });
+  }
+
+  try {
+    const app = getFirebaseAdmin();
+    const firestore = getFirestore(app);
+
+    const snapshot = await firestore
+      .collection('users')
+      .doc(userId)
+      .collection('interactions')
+      .orderBy('createdAt', 'desc')
+      .limit(50)
+      .get();
+
+    if (snapshot.empty) {
+      return memoryItems;
+    }
+
+    const items: Array<Record<string, unknown>> = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      // Format timestamps if needed
+      items.push({
+        ...data,
+        interactionId: doc.id,
+      });
+    });
+
+    return items;
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (
+      msg.includes('PERMISSION_DENIED') ||
+      msg.includes('has not been used in project') ||
+      msg.includes('disabled') ||
+      msg.includes('NOT_FOUND') ||
+      msg.includes('Could not load the default credentials')
+    ) {
+      firestoreDisabledOrUnavailable = true;
+    }
+    return memoryItems.sort((a, b) => {
+      const timeA = new Date((a.createdAt as string) || 0).getTime();
+      const timeB = new Date((b.createdAt as string) || 0).getTime();
+      return timeB - timeA;
+    });
+  }
+}

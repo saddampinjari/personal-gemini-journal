@@ -37,7 +37,9 @@ service cloud.firestore {
         && (data.mood == null || (data.mood is string && data.mood.size() <= 32))
         && (data.piiEntitiesCount == null || data.piiEntitiesCount is number)
         && (data.modelUsed == null || (data.modelUsed is string && data.modelUsed.size() <= 64))
-        && (data.latencyMs == null || data.latencyMs is number);
+        && (data.latencyMs == null || data.latencyMs is number)
+        && (data.location == null || data.location is map)
+        && (data.conversation == null || data.conversation is list);
     }
 
     // Default deny catch-all

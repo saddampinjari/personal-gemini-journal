@@ -41,6 +41,16 @@ export interface JournalItem {
   modelUsed: string;
   latencyMs: number;
   createdAt: string;
+  location?: {
+    name: string;
+    latitude?: number;
+    longitude?: number;
+  } | null;
+  conversation?: Array<{
+    role: 'user' | 'model';
+    content: string;
+    createdAt?: string;
+  }>;
   dlpMetadata?: {
     entitiesDetectedCount: number;
     entityTypes: string[];
@@ -259,6 +269,13 @@ export function Sidebar({
                     <p className="text-xs text-[#49454F] dark:text-[#CAC4D0] line-clamp-2 mt-1 leading-relaxed">
                       {item.rawPrompt}
                     </p>
+
+                    {item.location?.name && (
+                      <div className="mt-2 flex items-center gap-1 text-[10px] text-indigo-600 dark:text-indigo-400 font-medium">
+                        <MaterialIcon name="place" size={12} />
+                        <span className="truncate max-w-[200px]">{item.location.name}</span>
+                      </div>
+                    )}
 
                     {/* Bottom Meta & Delete button */}
                     <div className="mt-3 pt-2.5 border-t border-[#E8E4EE]/70 dark:border-[#36343B]/70 flex items-center justify-between text-[11px]">

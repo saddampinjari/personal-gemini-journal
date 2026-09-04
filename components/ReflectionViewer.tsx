@@ -41,6 +41,18 @@ interface ReflectionViewerProps {
   piiEntitiesCount: number;
   latencyMs: number;
   createdAt: string;
+  location?: {
+    name: string;
+    latitude?: number;
+    longitude?: number;
+  } | null;
+  conversation?: Array<{
+    role: 'user' | 'model';
+    content: string;
+    createdAt?: string;
+  }>;
+  onFollowUpSubmit?: (followUpPrompt: string) => Promise<void>;
+  isFollowUpLoading?: boolean;
   onScrollToInspector?: () => void;
 }
 
@@ -52,9 +64,14 @@ export function ReflectionViewer({
   piiEntitiesCount,
   latencyMs,
   createdAt,
+  location,
+  conversation,
+  onFollowUpSubmit,
+  isFollowUpLoading = false,
   onScrollToInspector,
 }: ReflectionViewerProps) {
   const [copied, setCopied] = useState(false);
+  const [followUpText, setFollowUpText] = useState('');
 
   const handleCopy = () => {
     navigator.clipboard.writeText(reflection);
@@ -100,6 +117,13 @@ export function ReflectionViewer({
                 <span className="capitalize px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#EADDFF] dark:bg-[#381E72]/60 text-[#21005D] dark:text-[#EADDFF]">
                   {mood || 'Reflective'}
                 </span>
+                {location?.name && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/80">
+                    <MaterialIcon name="place" size={14} className="text-indigo-600 dark:text-indigo-400" />
+                    <span>{location.name}</span>
+                    <span className="text-[10px] text-indigo-500 font-mono">(DLP Masked)</span>
+                  </span>
+                )}
               </div>
               <p className="text-xs text-[#79747E] dark:text-[#938F99] mt-1">
                 Recorded {new Date(createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
@@ -239,6 +263,119 @@ export function ReflectionViewer({
             );
           })}
         </div>
+
+        {/* Multi-turn Conversational Dialogue Thread */}
+        {conversation && conversation.length > 2 && (
+          <div className="mt-8 pt-6 border-t border-[#E8E4EE] dark:border-[#36343B] space-y-4">
+            <div className="flex items-center gap-2 mb-3">
+              <MaterialIcon name="forum" size={20} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+              <h4 className="text-sm font-bold uppercase tracking-wider text-[#1C1B1F] dark:text-[#E6E1E5]">
+                Continued Multi-Turn Dialogue
+              </h4>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold">
+                {Math.floor((conversation.length - 2) / 2) + 1} Exchanges
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {conversation.slice(2).map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
+                    msg.role === 'user'
+                      ? 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 ml-4 sm:ml-8'
+                      : 'bg-[#F5F0FB] dark:bg-[#251F30] border-[#6750A4]/30 text-[#1C1B1F] dark:text-[#E6E1E5] mr-4 sm:mr-8 shadow-2xs'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <span className="font-bold flex items-center gap-1.5 text-xs">
+                      <MaterialIcon
+                        name={msg.role === 'user' ? 'person' : 'auto_awesome'}
+                        size={14}
+                        className={msg.role === 'user' ? 'text-slate-500' : 'text-[#6750A4] dark:text-[#D0BCFF]'}
+                      />
+                      <span>{msg.role === 'user' ? 'You' : 'Gemini Companion'}</span>
+                    </span>
+                    {msg.createdAt && (
+                      <span className="text-[10px] text-slate-400">
+                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                  </div>
+                  <div className="whitespace-pre-wrap">{msg.content}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Interactive Multi-Turn Follow-Up Composer */}
+        {onFollowUpSubmit && (
+          <div className="mt-8 pt-6 border-t border-[#E8E4EE] dark:border-[#36343B] space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#79747E] dark:text-[#938F99] flex items-center gap-1.5">
+                <MaterialIcon name="chat" size={16} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+                <span>Delve Deeper with Gemini</span>
+              </span>
+              <span className="text-[11px] text-slate-400">Multi-Turn Session</span>
+            </div>
+
+            {/* Quick Inspiration chips for follow-up */}
+            <div className="flex flex-wrap gap-1.5">
+              {[
+                'How can I reframe this constructively?',
+                'What boundaries can I set to protect my energy?',
+                'What underlying pattern might I be missing?',
+              ].map((suggestion, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setFollowUpText(suggestion)}
+                  className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!followUpText.trim() || isFollowUpLoading) return;
+                const text = followUpText.trim();
+                setFollowUpText('');
+                await onFollowUpSubmit(text);
+              }}
+              className="flex gap-2"
+            >
+              <input
+                type="text"
+                value={followUpText}
+                onChange={(e) => setFollowUpText(e.target.value)}
+                disabled={isFollowUpLoading}
+                placeholder="Ask a follow-up question or explore this thought further..."
+                className="flex-1 px-4 py-2.5 text-xs sm:text-sm rounded-2xl bg-[#FAF8FD] dark:bg-[#232128] border border-[#E8E4EE] dark:border-[#36343B] text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-[#79747E] focus:outline-hidden focus:border-[#6750A4] focus:ring-2 focus:ring-[#6750A4]/20 transition-all disabled:opacity-60"
+              />
+              <button
+                type="submit"
+                disabled={!followUpText.trim() || isFollowUpLoading}
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-[#6750A4] hover:bg-[#523e85] text-white text-xs sm:text-sm font-semibold shadow-xs disabled:opacity-50 transition-colors cursor-pointer"
+              >
+                {isFollowUpLoading ? (
+                  <>
+                    <MaterialIcon name="refresh" size={16} className="animate-spin" />
+                    <span>Thinking...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Reply</span>
+                    <MaterialIcon name="send" size={14} />
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        )}
       </motion.div>
     </motion.div>
   );

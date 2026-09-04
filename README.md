@@ -176,5 +176,59 @@ service cloud.firestore {
 | **TC-4: Zero-Trust Reflection Generation** | Select mood `"Grateful"` and click `"Generate Reflection"`. | The button enters an animated processing state. The empathetic reflection appears with key insights, and the Security Inspector HUD updates with exact telemetry. |
 | **TC-5: Security Inspector Verification** | Click on `"1. Redacted Context Sent to Gemini (DLP)"` in the Security Inspector. | The code viewer shows the exact surrogate string (`"Had lunch in [LOCATION_1] with [PERSON_1]..."`) proving no raw PII reached the AI model. |
 | **TC-6: Firestore Document Inspection** | Click on `"3. Stored Firestore Document"` tab and click `"Copy JSON"`. | Displays the exact structured document saved under `/users/demo-user-77/interactions/inter_*` with zero `undefined` values. |
-| **TC-7: Resilient Model Fallback HUD** | Click on `"4. Privacy & Resilience Telemetry HUD"`. | Displays the active model (`gemini-3.6-flash`), roundtrip latency in ms, PII entity count, and Secret Manager warm cache status. |
+| **TC-7: Resilient Model Fallback HUD** | Click on `"4. Privacy & Resilience Telemetry HUD"`. | Displays the active model (`gemini-3.8-flash`), roundtrip latency in ms, PII entity count, and Secret Manager warm cache status. |
 | **TC-8: Journal History Search & Filtering** | Click `"Grateful"` mood filter chip or type `"Seattle"` in the search bar. | The history sidebar dynamically filters entries matching the query or mood. |
+| **TC-9: Location-Aware Privacy Journaling** | Click `"Add Location"` in the composer (e.g., select Seattle, WA) and submit. | The location is pinned to your journal entry. In the Security Inspector, verify that the location name was tokenized to `[LOCATION_1]` by the Zero-Trust Gateway before reaching Gemini. |
+| **TC-10: Interactive Map View** | Click `"Map View"` in the top navigation header. | Displays the interactive Material 3 world map with pins colored by emotional mood tone. Clicking any pin opens a preview card with DLP status and quick navigation. |
+| **TC-11: Multi-Turn Gemini Conversation** | Scroll to the bottom of any reflection, type a follow-up inquiry (or click a suggestion chip), and click `"Reply"`. | Gemini continues the psychological reflection in a multi-turn conversation thread, preserving earlier context without leaking PII. |
+| **TC-12: Firestore Cross-Session Persistence** | Click sign out, then sign in again. | The journal automatically calls `GET /api/journal/history` and restores all saved reflections from Firestore `/users/{uid}/interactions`. |
+
+---
+
+## 7. Google AI Studio Publishing & Mandatory Cloud Run Verification Label
+
+To ensure your submission qualifies for automated verification and scoring:
+
+### Step 1: Deploy / Publish from AI Studio
+1. In Google AI Studio, locate the **Publish** button on the top right of your app dashboard.
+2. Select your preferences and create a unique **App URL**.
+3. Click **Publish Your App**. Once published, test your live app link!
+
+### Step 2: Apply the Mandatory Cloud Run Verification Label
+1. In the AI Studio dashboard, click **Advanced settings** to see the Cloud Run service your app is running on in Google Cloud.
+2. Note the service name next to the green checkmark.
+3. In the Google Cloud Console, navigate to **Cloud Run** &rarr; **Services**.
+4. Check the box next to your service name.
+5. Click **Labels** in the top action bar where it says *"1 service selected"*.
+6. Click **+ Add label**:
+   * **Key**: `dev-tutorial`
+   * **Value**: `cloud-run-ai-challenge`
+7. Click **Save**.
+
+*(Or via Google Cloud Shell CLI):*
+```bash
+gcloud run services update personal-gemini-journal \
+    --update-labels=dev-tutorial=cloud-run-ai-challenge \
+    --region=us-central1
+```
+
+---
+
+## 8. Ready-to-Use Social Post Draft (`#AccelerateAIwithCloudRun`)
+
+Copy and paste this post to LinkedIn, X (Twitter), or Medium to complete the submission requirement:
+
+```markdown
+🚀 Excited to share my submission for the Google Cloud Run AI Challenge: Personal Gemini Journal! 🛡️✨
+
+I built an enterprise Zero-Trust AI Journal featuring:
+🔒 Server-Side Zero-Trust Privacy Gateway (DLP): Automatically scrubs PII (names, emails, phones, and locations) into surrogate tokens before Gemini inference, detokenizing reflections on the fly.
+📍 Location-Aware Privacy Journaling: Interactive Material 3 Map allowing users to tag reflections while proving zero geospatial tracking by the LLM.
+💬 Multi-Turn Gemini Reflections: Empathetic psychological reframing with full multi-turn conversational dialogue.
+⚡ Resilient Model Ladder: 3-tier fallback matrix (gemini-3.8-flash -> gemini-3.1-flash-lite -> gemini-flash-latest) cached with Google Cloud Secret Manager.
+💾 Subcollection Tenant Isolation: Private per-user storage strictly inside Cloud Firestore.
+
+Built with Google AI Studio, deployed to Google Cloud Run!
+
+#AccelerateAIwithCloudRun #GoogleCloud #GeminiAI #CloudRun #ZeroTrust #AppDevelopment
+```
