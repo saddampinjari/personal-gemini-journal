@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { MaterialIcon } from '@/components/MaterialIcon';
 
+import { getCoordinatesForLocation } from '@/lib/geo/coordinates';
+
 export interface LocationData {
   name: string;
   latitude?: number;
@@ -15,13 +17,14 @@ interface LocationPickerProps {
 }
 
 const POPULAR_LOCATIONS: LocationData[] = [
+  { name: 'Dubai, UAE', latitude: 25.2048, longitude: 55.2708 },
   { name: 'San Francisco, CA', latitude: 37.7749, longitude: -122.4194 },
-  { name: 'Seattle, WA', latitude: 47.6062, longitude: -122.3321 },
   { name: 'New York, NY', latitude: 40.7128, longitude: -74.006 },
   { name: 'London, UK', latitude: 51.5074, longitude: -0.1278 },
   { name: 'Tokyo, Japan', latitude: 35.6762, longitude: 139.6503 },
   { name: 'Bengaluru, India', latitude: 12.9716, longitude: 77.5946 },
-  { name: 'Dubai, UAE', latitude: 25.2048, longitude: 55.2708 },
+  { name: 'Paris, France', latitude: 48.8566, longitude: 2.3522 },
+  { name: 'Singapore', latitude: 1.3521, longitude: 103.8198 },
 ];
 
 export function LocationPicker({ location, onChange }: LocationPickerProps) {
@@ -60,14 +63,55 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
     );
   };
 
-  const handleCustomSubmit = (e: React.FormEvent) => {
+  const handleCustomSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customInput.trim()) return;
+    const query = customInput.trim();
+    if (!query) return;
 
+    // 1. Fast match against world gazetteer
+    const resolved = getCoordinatesForLocation(query);
+    if (resolved) {
+      onChange({
+        name: resolved.name,
+        latitude: resolved.latitude,
+        longitude: resolved.longitude,
+      });
+      setCustomInput('');
+      setIsOpen(false);
+      return;
+    }
+
+    // 2. Dynamic geocoding fallback via OpenStreetMap Nominatim
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`,
+        { headers: { 'Accept-Language': 'en' } }
+      );
+      if (res.ok) {
+        const results = await res.json();
+        if (results && results.length > 0) {
+          const lat = parseFloat(results[0].lat);
+          const lon = parseFloat(results[0].lon);
+          const displayName = results[0].display_name.split(',').slice(0, 2).join(',').trim();
+          onChange({
+            name: displayName || query,
+            latitude: lat,
+            longitude: lon,
+          });
+          setCustomInput('');
+          setIsOpen(false);
+          return;
+        }
+      }
+    } catch {
+      // Fall through to default if offline
+    }
+
+    // 3. Fallback
     onChange({
-      name: customInput.trim(),
-      latitude: 37.7749, // Default fallback coordinates
-      longitude: -122.4194,
+      name: query,
+      latitude: 25.2048,
+      longitude: 55.2708,
     });
     setCustomInput('');
     setIsOpen(false);

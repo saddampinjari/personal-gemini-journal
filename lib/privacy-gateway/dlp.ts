@@ -41,7 +41,7 @@ const PATTERNS = {
   ACCOUNT_ID: /\b(?:ACCT|ID|USR|EMP)-[A-Z0-9]{4,10}\b/gi,
   // Common locations and location indicators
   LOCATION_KEYWORDS: /\b(?:in|at|from|to|near|visiting|living in|traveled to)\s+([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)*)\b/g,
-  KNOWN_LOCATIONS: /\b(?:New York|Los Angeles|San Francisco|Seattle|Chicago|Boston|Austin|London|Paris|Berlin|Tokyo|Toronto|Sydney|Singapore|California|Texas|Washington|Florida|Canada|United Kingdom|Germany|Japan|Australia)\b/gi,
+  KNOWN_LOCATIONS: /\b(?:Dubai|Abu Dhabi|Sharjah|UAE|United Arab Emirates|Riyadh|Doha|Cairo|Istanbul|New York|Los Angeles|San Francisco|Seattle|Chicago|Boston|Austin|London|Paris|Berlin|Tokyo|Kyoto|Seoul|Singapore|Bengaluru|Bangalore|Mumbai|Delhi|New Delhi|Hyderabad|Chennai|Sydney|Melbourne|Toronto|Vancouver|California|Texas|Washington|Florida|Canada|United Kingdom|Germany|Japan|Australia|India)\b/gi,
   // Person name indicators: Honorifics or conversational cues
   HONORIFICS: /\b(?:Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.|Boss|Manager|Colleague|Partner|Friend|Doctor)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/g,
   // Conversational name mentions: "talked with John", "emailed Sarah", "argued with Alex Smith"

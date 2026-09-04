@@ -4,6 +4,8 @@ import { deidentifyText, detokenizeText } from '@/lib/privacy-gateway/dlp';
 import { getGeminiApiKey } from '@/lib/secrets/secret-manager';
 import { generateResilientReflection, generateLocalEmpatheticReflection } from '@/lib/gemini/resilient-engine';
 
+import { findLocationInText, getCoordinatesForLocation } from '@/lib/geo/coordinates';
+
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
 
@@ -21,8 +23,30 @@ export async function POST(req: NextRequest) {
     const mood = body.mood || 'reflective';
     const title = body.title;
     const clientInteractionId = body.interactionId;
-    const location = body.location; // { name: string, latitude?: number, longitude?: number }
+    const rawLocation = body.location; // { name: string, latitude?: number, longitude?: number }
     const history = Array.isArray(body.history) ? body.history : [];
+
+    // Intelligent Location Extraction & Coordinate Resolution
+    let effectiveLocation = rawLocation;
+    if (effectiveLocation?.name && (!effectiveLocation.latitude || !effectiveLocation.longitude)) {
+      const geo = getCoordinatesForLocation(effectiveLocation.name);
+      if (geo) {
+        effectiveLocation = {
+          name: geo.name,
+          latitude: geo.latitude,
+          longitude: geo.longitude,
+        };
+      }
+    } else if (!effectiveLocation) {
+      const detected = findLocationInText(prompt);
+      if (detected) {
+        effectiveLocation = {
+          name: detected.name,
+          latitude: detected.latitude,
+          longitude: detected.longitude,
+        };
+      }
+    }
 
     if (prompt.length > 10000) {
       return NextResponse.json(
@@ -34,8 +58,8 @@ export async function POST(req: NextRequest) {
     // 3. Zero-Trust Privacy Gateway: Server-side PII de-identification
     // If location is provided, ensure its name is also passed into DLP tokenization
     let textToDeidentify = prompt;
-    if (location?.name && !prompt.includes(location.name)) {
-      textToDeidentify = `${prompt} (at ${location.name})`;
+    if (effectiveLocation?.name && !prompt.includes(effectiveLocation.name)) {
+      textToDeidentify = `${prompt} (at ${effectiveLocation.name})`;
     }
 
     const dlpResult = deidentifyText(textToDeidentify);
@@ -90,10 +114,10 @@ export async function POST(req: NextRequest) {
       modelUsed: genResult.modelUsed,
       latencyMs,
       createdAt: nowIso,
-      location: location ? {
-        name: location.name,
-        latitude: location.latitude ?? null,
-        longitude: location.longitude ?? null,
+      location: effectiveLocation ? {
+        name: effectiveLocation.name,
+        latitude: effectiveLocation.latitude ?? null,
+        longitude: effectiveLocation.longitude ?? null,
       } : null,
       conversation: currentConversation,
       dlpMetadata: {
@@ -129,7 +153,7 @@ export async function POST(req: NextRequest) {
       latencyMs,
       secretSource: secretInfo.source,
       secretCached: secretInfo.isCached,
-      location: location || null,
+      location: effectiveLocation || null,
       conversation: currentConversation,
       storedFirestoreDocument: firestoreDoc,
     });

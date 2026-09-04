@@ -157,7 +157,7 @@ export default function HomePage() {
             '### Empathetic Reflection\nIt sounds like you are carrying the dual weight of empathy for Sarah Connor and personal responsibility for the project commitments. Stepping forward with your personal contact info shows deep dedication, but also signals boundary strain.\n\n### Key Psychological Insights\n- **Cognitive Load & Guilt**: You are conflating commitment estimation errors with personal integrity.\n- **Boundary Blur**: Offering weekend personal contact channels is an acute stress response to relieve immediate guilt.\n\n### Mindful Inquiry\n1. What is one concrete adjustment you and Sarah could propose together on Monday morning?\n2. Where can you set a clearer line between being supportive and absorbing systemic timeline pressures?',
           mood: 'anxious',
           piiEntitiesCount: 4,
-          modelUsed: 'gemini-3.8-flash',
+          modelUsed: 'gemini-2.5-flash',
           latencyMs: 842,
           createdAt: new Date().toISOString(),
           location: {
@@ -522,6 +522,7 @@ export default function HomePage() {
 
       const updatedItem: JournalItem = {
         ...activeItem,
+        location: data.location || activeItem.location,
         reflection: data.reflection,
         conversation: data.conversation || [
           ...existingConversation,
@@ -845,7 +846,7 @@ export default function HomePage() {
                       piiEntities={inspectorData?.piiEntities || []}
                       piiCountScrubbed={inspectorData?.piiCountScrubbed || 0}
                       tokenMap={inspectorData?.tokenMap || {}}
-                      modelUsed={inspectorData?.modelUsed || 'gemini-3.8-flash'}
+                      modelUsed={inspectorData?.modelUsed || 'gemini-2.5-flash'}
                       fallbackTrail={inspectorData?.fallbackTrail || []}
                       latencyMs={inspectorData?.latencyMs || 0}
                       secretSource={inspectorData?.secretSource || 'Google Cloud Secret Manager'}

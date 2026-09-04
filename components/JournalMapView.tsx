@@ -20,20 +20,10 @@ const MOOD_COLORS: Record<string, { bg: string; text: string; pinHex: string }> 
   peaceful: { bg: 'bg-teal-100 dark:bg-teal-950/60', text: 'text-teal-700 dark:text-teal-300', pinHex: '#0D9488' },
 };
 
-// Global hub presets for fallback
-const GLOBAL_HUBS: Array<{ name: string; lat: number; lng: number }> = [
-  { name: 'San Francisco, CA', lat: 37.7749, lng: -122.4194 },
-  { name: 'New York, NY', lat: 40.7128, lng: -74.006 },
-  { name: 'London, UK', lat: 51.5074, lng: -0.1278 },
-  { name: 'Tokyo, Japan', lat: 35.6762, lng: 139.6503 },
-  { name: 'Bengaluru, India', lat: 12.9716, lng: 77.5946 },
-  { name: 'Paris, France', lat: 48.8566, lng: 2.3522 },
-  { name: 'Berlin, Germany', lat: 52.52, lng: 13.405 },
-  { name: 'Sydney, Australia', lat: -33.8688, lng: 151.2093 },
-  { name: 'Austin, TX', lat: 30.2672, lng: -97.7431 },
-];
+import { findLocationInText, getCoordinatesForLocation } from '@/lib/geo/coordinates';
 
 function resolveCoords(item: JournalItem, index: number): { lat: number; lng: number; cityName: string } {
+  // 1. Direct coordinates from item.location
   if (item.location?.latitude && item.location?.longitude) {
     return {
       lat: item.location.latitude,
@@ -42,23 +32,41 @@ function resolveCoords(item: JournalItem, index: number): { lat: number; lng: nu
     };
   }
 
-  const promptLower = (
+  // 2. Resolve location name if present
+  if (item.location?.name) {
+    const geo = getCoordinatesForLocation(item.location.name);
+    if (geo) {
+      return { lat: geo.latitude, lng: geo.longitude, cityName: geo.name };
+    }
+  }
+
+  // 3. Scan prompt, title, and full conversation thread for city/country mentions (e.g. Dubai, Tokyo, London)
+  const fullText = (
     (item.rawPrompt || '') +
     ' ' +
     (item.title || '') +
     ' ' +
-    (item.location?.name || '')
-  ).toLowerCase();
+    (item.location?.name || '') +
+    ' ' +
+    (item.conversation?.map((c) => c.content).join(' ') || '')
+  );
 
-  for (const hub of GLOBAL_HUBS) {
-    const cityWord = hub.name.split(',')[0].toLowerCase();
-    if (promptLower.includes(cityWord)) {
-      return { lat: hub.lat, lng: hub.lng, cityName: hub.name };
-    }
+  const detected = findLocationInText(fullText);
+  if (detected) {
+    return { lat: detected.latitude, lng: detected.longitude, cityName: detected.name };
   }
 
-  // Distribute across hubs based on index or hash so pins don't overlap
-  const fallback = GLOBAL_HUBS[index % GLOBAL_HUBS.length];
+  // 4. Default fallback hubs if no location detected
+  const DEFAULT_HUBS = [
+    { name: 'San Francisco, CA', lat: 37.7749, lng: -122.4194 },
+    { name: 'Dubai, UAE', lat: 25.2048, lng: 55.2708 },
+    { name: 'London, UK', lat: 51.5074, lng: -0.1278 },
+    { name: 'Tokyo, Japan', lat: 35.6762, lng: 139.6503 },
+    { name: 'New York, NY', lat: 40.7128, lng: -74.006 },
+    { name: 'Bengaluru, India', lat: 12.9716, lng: 77.5946 },
+    { name: 'Paris, France', lat: 48.8566, lng: 2.3522 },
+  ];
+  const fallback = DEFAULT_HUBS[index % DEFAULT_HUBS.length];
   return { lat: fallback.lat, lng: fallback.lng, cityName: fallback.name };
 }
 
@@ -485,7 +493,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
                 {/* Open Button */}
                 <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                   <div className="text-[11px] text-slate-500">
-                    Model: <span className="font-mono text-indigo-600 dark:text-indigo-400">{selectedItem.modelUsed || 'gemini-3.8-flash'}</span>
+                    Model: <span className="font-mono text-indigo-600 dark:text-indigo-400">{selectedItem.modelUsed || 'gemini-2.5-flash'}</span>
                   </div>
                   <button
                     onClick={() => onSelectItem(selectedItem)}

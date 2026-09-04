@@ -176,7 +176,7 @@ service cloud.firestore {
 | **TC-4: Zero-Trust Reflection Generation** | Select mood `"Grateful"` and click `"Generate Reflection"`. | The button enters an animated processing state. The empathetic reflection appears with key insights, and the Security Inspector HUD updates with exact telemetry. |
 | **TC-5: Security Inspector Verification** | Click on `"1. Redacted Context Sent to Gemini (DLP)"` in the Security Inspector. | The code viewer shows the exact surrogate string (`"Had lunch in [LOCATION_1] with [PERSON_1]..."`) proving no raw PII reached the AI model. |
 | **TC-6: Firestore Document Inspection** | Click on `"3. Stored Firestore Document"` tab and click `"Copy JSON"`. | Displays the exact structured document saved under `/users/demo-user-77/interactions/inter_*` with zero `undefined` values. |
-| **TC-7: Resilient Model Fallback HUD** | Click on `"4. Privacy & Resilience Telemetry HUD"`. | Displays the active model (`gemini-3.8-flash`), roundtrip latency in ms, PII entity count, and Secret Manager warm cache status. |
+| **TC-7: Resilient Model Fallback HUD** | Click on `"4. Privacy & Resilience Telemetry HUD"`. | Displays the active model (`gemini-2.5-flash`), roundtrip latency in ms, PII entity count, and Secret Manager warm cache status. |
 | **TC-8: Journal History Search & Filtering** | Click `"Grateful"` mood filter chip or type `"Seattle"` in the search bar. | The history sidebar dynamically filters entries matching the query or mood. |
 | **TC-9: Location-Aware Privacy Journaling** | Click `"Add Location"` in the composer (e.g., select Seattle, WA) and submit. | The location is pinned to your journal entry. In the Security Inspector, verify that the location name was tokenized to `[LOCATION_1]` by the Zero-Trust Gateway before reaching Gemini. |
 | **TC-10: Interactive Map View** | Click `"Map View"` in the top navigation header. | Displays the interactive Material 3 world map with pins colored by emotional mood tone. Clicking any pin opens a preview card with DLP status and quick navigation. |
@@ -225,7 +225,7 @@ I built an enterprise Zero-Trust AI Journal featuring:
 🔒 Server-Side Zero-Trust Privacy Gateway (DLP): Automatically scrubs PII (names, emails, phones, and locations) into surrogate tokens before Gemini inference, detokenizing reflections on the fly.
 📍 Location-Aware Privacy Journaling: Interactive Material 3 Map allowing users to tag reflections while proving zero geospatial tracking by the LLM.
 💬 Multi-Turn Gemini Reflections: Empathetic psychological reframing with full multi-turn conversational dialogue.
-⚡ Resilient Model Ladder: 3-tier fallback matrix (gemini-3.8-flash -> gemini-3.1-flash-lite -> gemini-flash-latest) cached with Google Cloud Secret Manager.
+⚡ Resilient Model Ladder: 3-tier fallback matrix (gemini-2.5-flash -> gemini-2.0-flash -> gemini-1.5-flash) cached with Google Cloud Secret Manager.
 💾 Subcollection Tenant Isolation: Private per-user storage strictly inside Cloud Firestore.
 
 Built with Google AI Studio, deployed to Google Cloud Run!
