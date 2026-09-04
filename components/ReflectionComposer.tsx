@@ -13,26 +13,25 @@ interface ReflectionComposerProps {
 
 const M3_DECELERATE = [0.05, 0.7, 0.1, 1.0] as const;
 
+const M3_SMOOTH = [0.16, 1, 0.3, 1] as const;
+
 const containerVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 8 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
-      ease: M3_DECELERATE,
-      staggerChildren: 0.08,
-      delayChildren: 0.05,
+      duration: 0.28,
+      ease: M3_SMOOTH,
     },
   },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 15 },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: M3_DECELERATE },
+    transition: { duration: 0.22, ease: M3_SMOOTH },
   },
 };
 
@@ -41,19 +40,20 @@ const cardsContainerVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.09,
-      delayChildren: 0.1,
+      staggerChildren: 0.04,
     },
   },
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 18, scale: 0.97 },
+  hidden: { opacity: 0, y: 6 },
   visible: {
     opacity: 1,
     y: 0,
-    scale: 1,
-    transition: { duration: 0.45, ease: M3_DECELERATE },
+    transition: {
+      duration: 0.22,
+      ease: M3_SMOOTH,
+    },
   },
 };
 

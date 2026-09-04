@@ -4,31 +4,27 @@ import React, { useState } from 'react';
 import { motion, type Variants } from 'motion/react';
 import { MaterialIcon } from '@/components/MaterialIcon';
 
-const M3_DECELERATE = [0.05, 0.7, 0.1, 1.0] as const;
+const M3_SMOOTH = [0.16, 1, 0.3, 1] as const;
 
 const containerVariants: Variants = {
-  hidden: { opacity: 0, y: 16, scale: 0.98 },
+  hidden: { opacity: 0, y: 8 },
   visible: {
     opacity: 1,
     y: 0,
-    scale: 1,
     transition: {
-      duration: 0.45,
-      ease: M3_DECELERATE,
-      staggerChildren: 0.08,
-      delayChildren: 0.05,
+      duration: 0.28,
+      ease: M3_SMOOTH,
     },
   },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 12 },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    y: 0,
     transition: {
-      duration: 0.35,
-      ease: M3_DECELERATE,
+      duration: 0.22,
+      ease: M3_SMOOTH,
     },
   },
 };

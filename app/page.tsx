@@ -50,6 +50,8 @@ export default function HomePage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [dashboardTab, setDashboardTab] = useState<'journal' | 'map' | 'inspector'>('journal');
 
+  const [isRestoringSession, setIsRestoringSession] = useState(true);
+
   // Journal Items & Active View
   const [journalItems, setJournalItems] = useState<JournalItem[]>([]);
   const [activeItem, setActiveItem] = useState<JournalItem | null>(null);
@@ -110,7 +112,7 @@ export default function HomePage() {
           const parsed: JournalItem[] = JSON.parse(cached);
           setJournalItems(parsed);
           if (parsed.length > 0) {
-            setActiveItem(parsed[0]);
+            setActiveItem((current) => current ?? parsed[0]);
             updateInspectorFromItem(parsed[0], uid);
           } else {
             setActiveItem(null);
@@ -134,9 +136,24 @@ export default function HomePage() {
             const data = await res.json();
             if (data.items && Array.isArray(data.items) && data.items.length > 0) {
               setJournalItems(data.items);
-              setActiveItem(data.items[0]);
-              updateInspectorFromItem(data.items[0], uid);
               localStorage.setItem(storageKey, JSON.stringify(data.items));
+
+              setActiveItem((currentActive) => {
+                // If user already has an active item, keep reference stable to prevent duplicate re-animation
+                if (currentActive) {
+                  const match = data.items.find((i: JournalItem) => i.interactionId === currentActive.interactionId);
+                  if (match) {
+                    const isSame =
+                      match.title === currentActive.title &&
+                      match.reflection === currentActive.reflection &&
+                      (match.conversation?.length || 0) === (currentActive.conversation?.length || 0);
+                    return isSame ? currentActive : match;
+                  }
+                  return currentActive;
+                }
+                updateInspectorFromItem(data.items[0], uid);
+                return data.items[0];
+              });
               return;
             }
           }
@@ -195,34 +212,36 @@ export default function HomePage() {
   useEffect(() => {
     let isMounted = true;
 
-    // Check cached session on mount
-    const restoreTimer = setTimeout(() => {
-      if (!isMounted) return;
-      try {
-        const cachedAuth = localStorage.getItem('pgj_auth_user');
-        const savedDemo = localStorage.getItem('pgj_demo_session');
-        if (cachedAuth) {
-          const { user, token } = JSON.parse(cachedAuth);
-          if (user) {
-            setCurrentUser(user);
-            setAuthToken(token);
-            loadUserJournalData(user.uid);
-            return;
-          }
+    // Check cached session on mount synchronously
+    try {
+      const cachedAuth = localStorage.getItem('pgj_auth_user');
+      const savedDemo = localStorage.getItem('pgj_demo_session');
+      if (cachedAuth) {
+        const { user, token } = JSON.parse(cachedAuth);
+        if (user) {
+          setCurrentUser(user);
+          setAuthToken(token);
+          loadUserJournalData(user.uid, token);
+          setIsRestoringSession(false);
+          return;
         }
-        if (savedDemo) {
-          const parsed = JSON.parse(savedDemo);
-          if (parsed) {
-            setCurrentUser(parsed);
-            setAuthToken(`demo-token-${parsed.uid}`);
-            loadUserJournalData(parsed.uid);
-            return;
-          }
-        }
-      } catch {
-        // ignore
       }
-    }, 0);
+      if (savedDemo) {
+        const parsed = JSON.parse(savedDemo);
+        if (parsed) {
+          const demoToken = `demo-token-${parsed.uid}`;
+          setCurrentUser(parsed);
+          setAuthToken(demoToken);
+          loadUserJournalData(parsed.uid, demoToken);
+          setIsRestoringSession(false);
+          return;
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    setIsRestoringSession(false);
 
     let unsubscribe: (() => void) | undefined;
     if (auth && typeof onAuthStateChanged === 'function') {
@@ -240,15 +259,15 @@ export default function HomePage() {
           setCurrentUser(userObj);
           setAuthToken(token);
           localStorage.setItem('pgj_auth_user', JSON.stringify({ user: userObj, token }));
-          loadUserJournalData(fbUser.uid);
+          loadUserJournalData(fbUser.uid, token);
         }
         setIsAuthLoading(false);
+        setIsRestoringSession(false);
       });
     }
 
     return () => {
       isMounted = false;
-      clearTimeout(restoreTimer);
       if (unsubscribe) unsubscribe();
     };
   }, [loadUserJournalData]);
@@ -615,17 +634,20 @@ export default function HomePage() {
 
       {/* Main Container - Offset by fixed header height (h-18 / 72px) */}
       <div className="flex-1 flex flex-col pt-18 relative z-10">
-        <AnimatePresence mode="wait">
-          {!currentUser ? (
-            /* Welcome / Auth View */
-            <motion.div
-              key="welcome-view"
-              variants={viewTransitionVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="flex-1 flex flex-col"
-            >
+        {isRestoringSession ? (
+          <div className="flex-1 min-h-[calc(100vh-4.5rem)]" />
+        ) : (
+          <AnimatePresence mode="wait">
+            {!currentUser ? (
+              /* Welcome / Auth View */
+              <motion.div
+                key="welcome-view"
+                variants={viewTransitionVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="flex-1 flex flex-col"
+              >
               <WelcomeView
                 onSignInWithGoogle={handleGoogleSignIn}
                 onStartDemoSession={handleStartDemoSession}
@@ -709,48 +731,62 @@ export default function HomePage() {
                     transition={{ duration: 0.35, ease: M3_DECELERATE }}
                     className="space-y-7"
                   >
-                    {/* If viewing a selected past reflection */}
-                    {activeItem && !isSubmitting && (
-                      <div className="space-y-4">
-                        {/* Clear Top Navigation Bar Matching Security HUD */}
-                        <div className="flex items-center justify-between pb-1">
-                          <button
-                            onClick={() => handleNewReflection()}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-[#1E1C23] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#36343B] transition-all shadow-xs cursor-pointer"
-                          >
-                            <MaterialIcon name="add" size={16} />
-                            <span>Create New Reflection</span>
-                          </button>
-                          <div className="flex items-center gap-2 text-xs text-[#79747E] dark:text-[#938F99] font-medium">
-                            <span className="w-2 h-2 rounded-full bg-[#6750A4] dark:bg-[#D0BCFF]"></span>
-                            <span>Viewing Archival Record</span>
+                    {/* Animated Card View Switcher */}
+                    <AnimatePresence mode="wait" initial={false}>
+                      {activeItem && !isSubmitting ? (
+                        <motion.div
+                          key={activeItem.interactionId}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                          className="space-y-4"
+                        >
+                          {/* Clear Top Navigation Bar Matching Security HUD */}
+                          <div className="flex items-center justify-between pb-1">
+                            <button
+                              onClick={() => handleNewReflection()}
+                              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-[#1E1C23] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#36343B] transition-all shadow-xs cursor-pointer"
+                            >
+                              <MaterialIcon name="add" size={16} />
+                              <span>Create New Reflection</span>
+                            </button>
+                            <div className="flex items-center gap-2 text-xs text-[#79747E] dark:text-[#938F99] font-medium">
+                              <span className="w-2 h-2 rounded-full bg-[#6750A4] dark:bg-[#D0BCFF]"></span>
+                              <span>Viewing Archival Record</span>
+                            </div>
                           </div>
-                        </div>
 
-                        <ReflectionViewer
-                          title={activeItem.title}
-                          reflection={activeItem.reflection}
-                          mood={activeItem.mood}
-                          modelUsed={activeItem.modelUsed}
-                          piiEntitiesCount={activeItem.piiEntitiesCount}
-                          latencyMs={activeItem.latencyMs}
-                          createdAt={activeItem.createdAt}
-                          location={activeItem.location}
-                          conversation={activeItem.conversation}
-                          onFollowUpSubmit={handleFollowUpReflection}
-                          isFollowUpLoading={isFollowUpLoading}
-                          onScrollToInspector={handleScrollToInspector}
-                        />
-                      </div>
-                    )}
-
-                    {/* Composer (Visible if no activeItem or composing new) */}
-                    {(!activeItem || isSubmitting) && (
-                      <ReflectionComposer
-                        onSubmit={handleCreateReflection}
-                        isLoading={isSubmitting}
-                      />
-                    )}
+                          <ReflectionViewer
+                            title={activeItem.title}
+                            reflection={activeItem.reflection}
+                            mood={activeItem.mood}
+                            modelUsed={activeItem.modelUsed}
+                            piiEntitiesCount={activeItem.piiEntitiesCount}
+                            latencyMs={activeItem.latencyMs}
+                            createdAt={activeItem.createdAt}
+                            location={activeItem.location}
+                            conversation={activeItem.conversation}
+                            onFollowUpSubmit={handleFollowUpReflection}
+                            isFollowUpLoading={isFollowUpLoading}
+                            onScrollToInspector={handleScrollToInspector}
+                          />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="composer-view"
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                          <ReflectionComposer
+                            onSubmit={handleCreateReflection}
+                            isLoading={isSubmitting}
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
                     {/* Security Telemetry Banner (Spacious & Clean) */}
                     <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1C23] border border-[#E8E4EE] dark:border-[#36343B] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
@@ -862,6 +898,7 @@ export default function HomePage() {
           </motion.div>
         )}
         </AnimatePresence>
+      )}
       </div>
     </div>
   );
