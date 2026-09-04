@@ -11,7 +11,7 @@
 |---|-------------|---------------------------------|---------------------|------------------------------------------|
 | **1** | **Input Surfaces** | Raw reflection payloads containing customer PII (names, emails, phones, SSNs, credit cards, locations), malformed JSON, and oversized injection payloads. | **CRITICAL**: PII exfiltration, identity leaks to 3rd-party model providers, DoS attacks. | **Server-Side Zero-Trust Privacy Gateway**: High-precision DLP engine scans and replaces all sensitive entities with surrogate tokens (`[PERSON_1]`, `[LOCATION_1]`) *before* invoking Gemini. Enforces strict input validation (`size <= 10,000` chars). |
 | **2** | **Planning & Reasoning** | Prompt injection, role hijacking, instruction dumping, or manipulation of psychological framing. | **HIGH**: Model deviation, unhelpful or unsafe coaching outputs. | **Hardened System Instructions**: System prompts enforce active empathetic listening, non-judgmental reframing, and preservation of token bracket formatting. Zero raw PII is exposed to the reasoning context. |
-| **3** | **Tool Execution & Model Resilience** | Upstream Gemini API outages (503), rate limiting (429), model alias deprecation (404), or internal errors (500). | **HIGH**: Service denial, dropped user reflections, user frustration. | **4-Tier Resilient Model Fallback Ladder**: Automated cascading recovery ladder (`gemini-3.6-flash` &rarr; `gemini-3.1-flash-lite` &rarr; `gemini-flash-latest` &rarr; `gemini-3.7-flash`) with telemetry trail recording. |
+| **3** | **Tool Execution & Model Resilience** | Upstream Gemini API outages (503), rate limiting (429), model alias deprecation (404), or internal errors (500). | **HIGH**: Service denial, dropped user reflections, user frustration. | **3-Tier Resilient Model Fallback Ladder**: Automated cascading recovery ladder (`gemini-2.5-flash` &rarr; `gemini-2.0-flash` &rarr; `gemini-1.5-flash`) with telemetry trail recording. |
 | **4** | **Memory & State** | Cross-tenant data scraping, unauthorized Firestore reads/writes, session hijacking, orphaned records. | **CRITICAL**: Exposure of sensitive personal journals across users. | **Subcollection Tenant Isolation & ABAC**: Data stored strictly at `/users/{userId}/interactions/{interactionId}`. Enforced via Firestore Security Rules requiring `request.auth.uid == userId`, bounded string lengths, and field immutability. |
 | **5** | **Inter-System Communication** | API secret exposure in client bundles, unencrypted transit, stolen JWT tokens. | **CRITICAL**: Cloud account compromise, API quota draining. | **Zero Client Credential Exposure**: `GEMINI_API_KEY` is fetched dynamically at runtime from **Google Cloud Secret Manager** and cached in-memory across warm starts. Backend verifies JWTs via `firebase-admin.auth().verifyIdToken()`. |
 
@@ -34,7 +34,7 @@
        │
        ├─► 3. Dynamic Secret Manager (Fetch & In-Memory Cache GEMINI_API_KEY)
        │
-       ├─► 4. Resilient Gemini Engine (Ladder: 3.6-flash -> 3.1-lite -> flash-latest -> 3.7-flash)
+       ├─► 4. Resilient Gemini Engine (Ladder: 2.5-flash -> 2.0-flash -> 1.5-flash)
        │       • Sends ONLY sanitized string with surrogate tokens
        │
        ├─► 5. Server-Side Detokenization (Restores entities for authenticated user)
