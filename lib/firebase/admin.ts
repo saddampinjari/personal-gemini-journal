@@ -146,9 +146,18 @@ export function stripUndefined<T>(obj: T): T {
   return obj;
 }
 
-// In-memory fallback store for tenant interactions when Firestore API is disabled
+// Detect if running with valid Google Cloud environment credentials
+const hasGcpCredentials = Boolean(
+  process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+  process.env.FIREBASE_SERVICE_ACCOUNT_KEY ||
+  process.env.K_SERVICE || // Automatically set by Google Cloud Run runtime
+  process.env.GAE_ENV ||
+  process.env.FUNCTION_NAME
+);
+
+// In-memory fallback store for tenant interactions when Firestore is disabled or running locally without ADC
 const inMemoryStore = new Map<string, Map<string, Record<string, unknown>>>();
-let firestoreDisabledOrUnavailable = false;
+let firestoreDisabledOrUnavailable = !hasGcpCredentials;
 
 /**
  * Persists an interaction strictly at /users/{userId}/interactions/{interactionId}
