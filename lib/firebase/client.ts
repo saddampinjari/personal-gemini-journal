@@ -5,6 +5,8 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut as fbSignOut,
   onAuthStateChanged,
   User,
@@ -52,56 +54,99 @@ export interface UserProfile {
   isDemoUser?: boolean;
 }
 
-export async function signInWithGoogle(options?: { email?: string; name?: string }): Promise<{ user: UserProfile; token: string }> {
-  // 1. Try real Firebase popup if configured and available
-  if (
-    typeof window !== 'undefined' &&
-    auth &&
+export function isFirebaseConfigured(): boolean {
+  return Boolean(
     process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
     process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== 'demo-api-key'
-  ) {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const token = await result.user.getIdToken();
-      const userProfile: UserProfile = {
-        uid: result.user.uid,
-        email: result.user.email,
-        displayName: result.user.displayName,
-        photoURL: result.user.photoURL,
-        isDemoUser: false,
-      };
-      localStorage.setItem('pgj_auth_user', JSON.stringify({ user: userProfile, token }));
-      return { user: userProfile, token };
-    } catch {
-      // Firebase popup unavailable or blocked by container sandbox; cleanly proceed to resilient Google identity
-    }
+  );
+}
+
+/**
+ * Genuine Firebase Google Sign-In using OAuth popup
+ */
+export async function signInWithGoogle(): Promise<{ user: UserProfile; token: string }> {
+  if (!auth) {
+    throw new Error('Firebase Auth has not been initialized in the browser.');
   }
 
-  // 2. Resilient Google Sign-In with verified session
-  const email = options?.email || 'iamsaddamp@gmail.com';
-  const displayName =
-    options?.name ||
-    email
-      .split('@')[0]
-      .replace(/[._]/g, ' ')
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-  const uid =
-    'google_user_' +
-    Math.abs(email.split('').reduce((acc, char) => (acc << 5) - acc + char.charCodeAt(0), 0)).toString(36);
-  const token = `google-token-${uid}`;
+  if (!isFirebaseConfigured()) {
+    throw new Error(
+      'Firebase Project is not connected yet. Please add your NEXT_PUBLIC_FIREBASE_API_KEY and NEXT_PUBLIC_FIREBASE_PROJECT_ID into .env.local to open the live Google OAuth popup.'
+    );
+  }
 
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const token = await result.user.getIdToken();
+    const userProfile: UserProfile = {
+      uid: result.user.uid,
+      email: result.user.email,
+      displayName: result.user.displayName,
+      photoURL: result.user.photoURL,
+      isDemoUser: false,
+    };
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pgj_auth_user', JSON.stringify({ user: userProfile, token }));
+    }
+    return { user: userProfile, token };
+  } catch (error: unknown) {
+    const fbErr = error as { code?: string; message?: string };
+    if (fbErr.code === 'auth/popup-closed-by-user') {
+      throw new Error('Sign-in cancelled: The Google popup was closed before completing authentication.');
+    }
+    if (fbErr.code === 'auth/popup-blocked') {
+      throw new Error('Popup blocked: Please allow popups for localhost:3000 in your browser to sign in with Google.');
+    }
+    if (fbErr.code === 'auth/unauthorized-domain') {
+      throw new Error('Unauthorized Domain: Please add "localhost" to your Firebase Console > Authentication > Settings > Authorized Domains.');
+    }
+    throw new Error(fbErr.message || 'Firebase Authentication failed.');
+  }
+}
+
+/**
+ * Genuine Firebase Email/Password Sign-In
+ */
+export async function signInWithEmail(email: string, pass: string): Promise<{ user: UserProfile; token: string }> {
+  if (!auth) throw new Error('Firebase Auth is not initialized.');
+  if (!isFirebaseConfigured()) {
+    throw new Error('Firebase Project is not connected yet. Please add your Firebase credentials to .env.local.');
+  }
+  const result = await signInWithEmailAndPassword(auth, email, pass);
+  const token = await result.user.getIdToken();
   const userProfile: UserProfile = {
-    uid,
-    email,
-    displayName,
-    photoURL: null,
+    uid: result.user.uid,
+    email: result.user.email,
+    displayName: result.user.displayName || email.split('@')[0],
+    photoURL: result.user.photoURL,
     isDemoUser: false,
   };
-
   if (typeof window !== 'undefined') {
     localStorage.setItem('pgj_auth_user', JSON.stringify({ user: userProfile, token }));
   }
+  return { user: userProfile, token };
+}
 
+/**
+ * Genuine Firebase Email/Password Sign-Up
+ */
+export async function signUpWithEmail(email: string, pass: string): Promise<{ user: UserProfile; token: string }> {
+  if (!auth) throw new Error('Firebase Auth is not initialized.');
+  if (!isFirebaseConfigured()) {
+    throw new Error('Firebase Project is not connected yet. Please add your Firebase credentials to .env.local.');
+  }
+  const result = await createUserWithEmailAndPassword(auth, email, pass);
+  const token = await result.user.getIdToken();
+  const userProfile: UserProfile = {
+    uid: result.user.uid,
+    email: result.user.email,
+    displayName: result.user.displayName || email.split('@')[0],
+    photoURL: result.user.photoURL,
+    isDemoUser: false,
+  };
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('pgj_auth_user', JSON.stringify({ user: userProfile, token }));
+  }
   return { user: userProfile, token };
 }
 

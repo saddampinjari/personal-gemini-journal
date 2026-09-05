@@ -239,17 +239,10 @@ export default function HomePage() {
       if (result.user) {
         handleUserSelect(result.user, result.token);
       }
-    } catch {
-      // Fallback to Saddam P primary profile
-      const fallbackUid = 'google_user_iamsaddamp';
-      const fallbackUser: UserProfile = {
-        uid: fallbackUid,
-        email: 'iamsaddamp@gmail.com',
-        displayName: 'Saddam P',
-        photoURL: null,
-        isDemoUser: false,
-      };
-      handleUserSelect(fallbackUser, `google-token-${fallbackUid}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Google Sign-In failed.';
+      setErrorMessage(msg);
+      setIsAuthModalOpen(true);
     } finally {
       setIsAuthLoading(false);
     }
