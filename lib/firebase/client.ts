@@ -9,6 +9,7 @@ import {
   createUserWithEmailAndPassword,
   signOut as fbSignOut,
   onAuthStateChanged,
+  sendEmailVerification,
   User,
   Auth,
 } from 'firebase/auth';
@@ -136,6 +137,11 @@ export async function signUpWithEmail(email: string, pass: string): Promise<{ us
     throw new Error('Firebase Project is not connected yet. Please add your Firebase credentials to .env.local.');
   }
   const result = await createUserWithEmailAndPassword(auth, email, pass);
+  try {
+    await sendEmailVerification(result.user);
+  } catch (err) {
+    console.warn('Could not send verification email:', err);
+  }
   const token = await result.user.getIdToken();
   const userProfile: UserProfile = {
     uid: result.user.uid,
