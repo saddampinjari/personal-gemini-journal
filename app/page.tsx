@@ -124,7 +124,7 @@ export default function HomePage() {
       }
 
       // Fetch persistent history from Firestore /api/journal/history
-      const effectiveToken = tokenOverride || authToken || (uid === 'demo-user-77' ? 'demo-token-demo-user-77' : undefined);
+      const effectiveToken = tokenOverride || authToken;
       if (effectiveToken) {
         try {
           const res = await fetch('/api/journal/history', {
@@ -162,44 +162,7 @@ export default function HomePage() {
         }
       }
 
-      if (!cached && uid === 'demo-user-77') {
-        const demoSeed: JournalItem = {
-          interactionId: 'inter_demo_7701',
-          title: '1-on-1 Sync & Timeline Anxiety in San Francisco',
-          rawPrompt:
-            'Had a difficult 1-on-1 meeting with Sarah Connor in San Francisco today about project timelines. Sarah expressed anxiety about our deployment deadline, and I shared my personal email sarah.c@cyberdyne.io and cell 415-555-0199 for weekend sync. Feeling overwhelmed and guilty for committing our team to unrealistic dates.',
-          sanitizedPrompt:
-            'Had a difficult 1-on-1 meeting with [PERSON_1] in [LOCATION_1] today about project timelines. [PERSON_1] expressed anxiety about our deployment deadline, and I shared my personal email [EMAIL_1] and cell [PHONE_1] for weekend sync. Feeling overwhelmed and guilty for committing our team to unrealistic dates.',
-          reflection:
-            '### Empathetic Reflection\nIt sounds like you are carrying the dual weight of empathy for Sarah Connor and personal responsibility for the project commitments. Stepping forward with your personal contact info shows deep dedication, but also signals boundary strain.\n\n### Key Psychological Insights\n- **Cognitive Load & Guilt**: You are conflating commitment estimation errors with personal integrity.\n- **Boundary Blur**: Offering weekend personal contact channels is an acute stress response to relieve immediate guilt.\n\n### Mindful Inquiry\n1. What is one concrete adjustment you and Sarah could propose together on Monday morning?\n2. Where can you set a clearer line between being supportive and absorbing systemic timeline pressures?',
-          mood: 'anxious',
-          piiEntitiesCount: 4,
-          modelUsed: 'gemini-2.5-flash',
-          latencyMs: 842,
-          createdAt: new Date().toISOString(),
-          location: {
-            name: 'San Francisco, CA',
-            latitude: 37.7749,
-            longitude: -122.4194,
-          },
-          dlpMetadata: {
-            entitiesDetectedCount: 4,
-            entityTypes: ['PERSON', 'LOCATION', 'EMAIL', 'PHONE'],
-          },
-          secretMetadata: {
-            source: 'google-cloud-secret-manager',
-            isCached: true,
-          },
-          resilienceMetadata: {
-            ladderStepsAttempted: 1,
-          },
-        };
-        const seedList = [demoSeed];
-        setJournalItems(seedList);
-        setActiveItem(demoSeed);
-        updateInspectorFromItem(demoSeed, uid);
-        localStorage.setItem(storageKey, JSON.stringify(seedList));
-      } else if (!cached) {
+      if (!cached) {
         setJournalItems([]);
         setActiveItem(null);
         setInspectorData(null);
@@ -215,24 +178,12 @@ export default function HomePage() {
     // Check cached session on mount synchronously
     try {
       const cachedAuth = localStorage.getItem('pgj_auth_user');
-      const savedDemo = localStorage.getItem('pgj_demo_session');
       if (cachedAuth) {
         const { user, token } = JSON.parse(cachedAuth);
-        if (user) {
+        if (user && token && !user.isDemoUser) {
           setCurrentUser(user);
           setAuthToken(token);
           loadUserJournalData(user.uid, token);
-          setIsRestoringSession(false);
-          return;
-        }
-      }
-      if (savedDemo) {
-        const parsed = JSON.parse(savedDemo);
-        if (parsed) {
-          const demoToken = `demo-token-${parsed.uid}`;
-          setCurrentUser(parsed);
-          setAuthToken(demoToken);
-          loadUserJournalData(parsed.uid, demoToken);
           setIsRestoringSession(false);
           return;
         }
@@ -304,19 +255,10 @@ export default function HomePage() {
     }
   };
 
-  const handleStartDemoSession = () => {
-    const demoUser: UserProfile = {
-      uid: 'demo-user-77',
-      email: 'challenge.judge@cloudrun.local',
-      displayName: 'Cloud Run Reviewer',
-      photoURL: null,
-      isDemoUser: true,
-    };
-    handleUserSelect(demoUser, 'demo-token-demo-user-77');
-  };
-
   const handleSignOut = async () => {
     await signOut();
+    localStorage.removeItem('pgj_auth_user');
+    localStorage.removeItem('pgj_demo_session');
     setCurrentUser(null);
     setAuthToken(null);
     setActiveItem(null);
@@ -330,23 +272,14 @@ export default function HomePage() {
     mood: string,
     location?: LocationData | null
   ) => {
-    let effectiveUser = currentUser;
-    let effectiveToken = authToken;
-
-    if (!effectiveUser || !effectiveToken) {
-      const demoUser: UserProfile = {
-        uid: 'demo-user-77',
-        email: 'challenge.judge@cloudrun.local',
-        displayName: 'Cloud Run Reviewer',
-        photoURL: null,
-        isDemoUser: true,
-      };
-      effectiveUser = demoUser;
-      effectiveToken = 'demo-token-demo-user-77';
-      setCurrentUser(demoUser);
-      setAuthToken(effectiveToken);
-      localStorage.setItem('pgj_auth_user', JSON.stringify({ user: demoUser, token: effectiveToken }));
+    if (!currentUser || !authToken) {
+      setErrorMessage('You must be signed in with a Google account to save reflections.');
+      setIsAuthModalOpen(true);
+      return;
     }
+
+    const effectiveUser = currentUser;
+    const effectiveToken = authToken;
 
     setIsSubmitting(true);
     setErrorMessage(null);
@@ -517,7 +450,12 @@ export default function HomePage() {
         { role: 'model', content: activeItem.reflection, createdAt: activeItem.createdAt },
       ];
 
-      const effectiveToken = authToken || 'demo-token-demo-user-77';
+      const effectiveToken = authToken;
+      if (!effectiveToken) {
+        setErrorMessage('You must be signed in to submit follow-up questions.');
+        setIsAuthModalOpen(true);
+        return;
+      }
       const res = await fetch('/api/journal/reflect', {
         method: 'POST',
         headers: {
@@ -649,7 +587,6 @@ export default function HomePage() {
               >
                 <WelcomeView
                   onSignInWithGoogle={handleGoogleSignIn}
-                  onStartDemoSession={handleStartDemoSession}
                   onOpenAccountPicker={() => setIsAuthModalOpen(true)}
                   isLoading={isAuthLoading}
                 />

@@ -6,6 +6,13 @@ export async function GET(req: NextRequest) {
     const authHeader = req.headers.get('Authorization');
     const user = await verifyAuthToken(authHeader);
 
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized: You must be logged in to view journal history', items: [] },
+        { status: 401 }
+      );
+    }
+
     const items = await getUserInteractions(user.uid);
 
     return NextResponse.json({

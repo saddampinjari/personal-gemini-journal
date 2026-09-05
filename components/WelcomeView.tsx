@@ -6,7 +6,6 @@ import { MaterialIcon } from '@/components/MaterialIcon';
 
 interface WelcomeViewProps {
   onSignInWithGoogle: () => Promise<void>;
-  onStartDemoSession: () => void;
   onOpenAccountPicker?: () => void;
   isLoading: boolean;
 }
@@ -62,7 +61,6 @@ const cardItemVariants: Variants = {
 
 export function WelcomeView({
   onSignInWithGoogle,
-  onStartDemoSession,
   onOpenAccountPicker,
   isLoading,
 }: WelcomeViewProps) {
@@ -72,8 +70,12 @@ export function WelcomeView({
     setError(null);
     try {
       await onSignInWithGoogle();
-    } catch {
-      onStartDemoSession();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Google sign-in popup unavailable. Please choose your Google account.';
+      setError(msg);
+      if (onOpenAccountPicker) {
+        onOpenAccountPicker();
+      }
     }
   };
 
@@ -123,17 +125,17 @@ export function WelcomeView({
         </motion.div>
       )}
 
-      {/* Sign-In & Demo Actions - M3 Button Specification */}
+      {/* Sign-In Actions - M3 Button Specification */}
       <motion.div
         variants={heroItemVariants}
-        className="mt-8 flex flex-col sm:flex-row items-center gap-3.5 w-full max-w-md justify-center"
+        className="mt-8 flex flex-col items-center gap-3.5 w-full max-w-md justify-center"
       >
-        {/* Google Sign In Brand Button - M3 Elevated */}
+        {/* Google Sign In Brand Button - M3 Filled Primary */}
         <button
           id="google-signin-btn"
           onClick={handleGoogleClick}
           disabled={isLoading}
-          className="m3-btn m3-btn-elevated h-12 px-6 w-full sm:w-auto flex-1 font-medium text-sm"
+          className="m3-btn m3-btn-filled h-12 px-8 w-full sm:w-auto font-medium text-sm flex items-center justify-center gap-3 shadow-md"
         >
           <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
             <path
@@ -153,31 +155,20 @@ export function WelcomeView({
               d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
             />
           </svg>
-          <span>{isLoading ? 'Connecting...' : 'Sign In with Google'}</span>
-        </button>
-
-        {/* Quick Demo Launch Button - M3 Filled */}
-        <button
-          id="demo-session-btn"
-          onClick={onStartDemoSession}
-          className="m3-btn m3-btn-filled h-12 px-7 w-full sm:w-auto font-medium text-sm"
-        >
-          <MaterialIcon name="auto_awesome" size={18} />
-          <span>Test Demo Session</span>
+          <span>{isLoading ? 'Connecting to Google...' : 'Sign In with Google'}</span>
           <MaterialIcon name="arrow_forward" size={16} />
         </button>
-      </motion.div>
 
-      {onOpenAccountPicker && (
-        <motion.button
-          variants={heroItemVariants}
-          onClick={onOpenAccountPicker}
-          className="m3-btn m3-btn-text mt-3.5 text-xs font-semibold"
-        >
-          <span>Or choose/switch Google Account</span>
-          <MaterialIcon name="arrow_forward" size={14} />
-        </motion.button>
-      )}
+        {onOpenAccountPicker && (
+          <button
+            onClick={onOpenAccountPicker}
+            className="m3-btn m3-btn-text text-xs font-semibold"
+          >
+            <span>Or choose / enter Google Account email</span>
+            <MaterialIcon name="arrow_forward" size={14} />
+          </button>
+        )}
+      </motion.div>
 
       {/* 4 Zero-Trust Architecture Cards - Sequenced Material Entrance */}
       <div className="mt-16 w-full">

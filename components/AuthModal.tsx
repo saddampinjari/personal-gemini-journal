@@ -94,18 +94,6 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading }: AuthModa
     handleQuickGoogleSignIn(customEmail, name);
   };
 
-  const handleDemoSignIn = () => {
-    const demoUser: UserProfile = {
-      uid: 'demo-user-77',
-      email: 'challenge.judge@cloudrun.local',
-      displayName: 'Cloud Run Reviewer',
-      photoURL: null,
-      isDemoUser: true,
-    };
-    onSelectUser(demoUser, 'demo-token-demo-user-77');
-    onClose();
-  };
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -228,34 +216,6 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading }: AuthModa
                 <MaterialIcon name="arrow_forward" size={18} className="text-[#2563EB] dark:text-blue-300 group-hover:translate-x-1 transition-transform" />
               </motion.button>
 
-              {/* Demo Reviewer Account */}
-              <motion.button
-                variants={itemVariants}
-                whileHover={{ y: -2, transition: { duration: 0.18 } }}
-                whileTap={{ scale: 0.98 }}
-                id="auth-account-demo-btn"
-                onClick={handleDemoSignIn}
-                disabled={isLoading}
-                className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white dark:bg-[#0B1120] hover:bg-slate-50 dark:hover:bg-[#14204F]/40 border border-dashed border-[#2563EB] text-left transition-colors group cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-blue-100 text-[#14204F] flex items-center justify-center font-bold text-sm shadow-xs">
-                    <MaterialIcon name="how_to_reg" size={18} />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-sm text-[#1C1B1F] dark:text-[#E6E1E5] flex items-center gap-1.5">
-                      <span>Demo Reviewer Session</span>
-                      <span className="px-1.5 py-0.2 rounded bg-[#FFD8E4] text-[#31111D] text-[10px] font-bold">
-                        Instant
-                      </span>
-                    </div>
-                    <div className="text-xs text-[#49454F] dark:text-[#CAC4D0]">
-                      Evaluates fallback matrix & DLP with preloaded state
-                    </div>
-                  </div>
-                </div>
-                <MaterialIcon name="arrow_forward" size={18} className="text-[#2563EB] dark:text-blue-300 group-hover:translate-x-1 transition-transform" />
-              </motion.button>
             </motion.div>
 
             {/* Custom Email Form Toggle */}

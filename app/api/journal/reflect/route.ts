@@ -14,6 +14,13 @@ export async function POST(req: NextRequest) {
     const authHeader = req.headers.get('Authorization');
     const user = await verifyAuthToken(authHeader);
 
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Authentication required to create journal reflections' },
+        { status: 401 }
+      );
+    }
+
     // 2. Parse & Validate Payload
     const body = await req.json().catch(() => ({}));
     const rawInput = body.prompt;
