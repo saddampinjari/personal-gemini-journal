@@ -238,10 +238,9 @@ export function ReflectionViewer({
               return (
                 <h4
                   key={index}
-                  className="font-semibold text-[#1C1B1F] dark:text-[#E6E1E5] text-base mt-4 mb-2 flex items-center gap-2"
+                  className="font-semibold text-[#1C1B1F] dark:text-[#E6E1E5] text-base mt-4 mb-2 tracking-tight"
                 >
-                  <span className="w-1.5 h-4 bg-[#2563EB] rounded-full"></span>
-                  <span>{headingText}</span>
+                  {headingText}
                 </h4>
               );
             }
