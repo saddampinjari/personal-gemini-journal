@@ -47,6 +47,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // User root profile document
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) && isValidId(userId);
+    }
+
     // User interactions subcollection
     match /users/{userId}/interactions/{interactionId} {
       // Individual document read

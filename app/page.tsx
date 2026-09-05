@@ -3,7 +3,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, type Variants } from 'motion/react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth, signInWithGoogle, signOut, UserProfile } from '@/lib/firebase/client';
+import {
+  auth,
+  signInWithGoogle,
+  signOut,
+  UserProfile,
+  syncUserProfileToFirestore,
+  saveInteractionToFirestore,
+  fetchUserInteractionsFromFirestore,
+} from '@/lib/firebase/client';
 import { Header } from '@/components/Header';
 import { WelcomeView } from '@/components/WelcomeView';
 import { AuthModal } from '@/components/AuthModal';
@@ -210,6 +218,7 @@ export default function HomePage() {
           setCurrentUser(userObj);
           setAuthToken(token);
           localStorage.setItem('pgj_auth_user', JSON.stringify({ user: userObj, token }));
+          syncUserProfileToFirestore(userObj);
           loadUserJournalData(fbUser.uid, token);
         }
         setIsAuthLoading(false);
@@ -228,6 +237,7 @@ export default function HomePage() {
     setCurrentUser(user);
     setAuthToken(token);
     localStorage.setItem('pgj_auth_user', JSON.stringify({ user, token }));
+    syncUserProfileToFirestore(user);
     loadUserJournalData(user.uid);
   };
 
@@ -341,6 +351,9 @@ export default function HomePage() {
         return updatedList;
       });
       setActiveItem(newItem);
+      if (currentUser?.uid) {
+        saveInteractionToFirestore(currentUser.uid, newItem.interactionId, newItem as unknown as Record<string, unknown>);
+      }
 
       // Update Live Security Inspector HUD
       setInspectorData({

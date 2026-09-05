@@ -13,7 +13,16 @@ import {
   User,
   Auth,
 } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import {
+  getFirestore,
+  Firestore,
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  query,
+  orderBy,
+} from 'firebase/firestore';
 
 // Default configuration with environment fallbacks
 const firebaseConfig = {
@@ -167,5 +176,64 @@ export async function signOut(): Promise<void> {
     } catch {
       // Clean sign out completed
     }
+  }
+}
+
+/**
+ * Automatically creates/updates the user root document at /users/{uid} on login
+ */
+export async function syncUserProfileToFirestore(user: UserProfile): Promise<void> {
+  if (!db || !user?.uid) return;
+  try {
+    const userDocRef = doc(db, 'users', user.uid);
+    await setDoc(
+      userDocRef,
+      {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        lastLoginAt: new Date().toISOString(),
+      },
+      { merge: true }
+    );
+  } catch (err) {
+    console.warn('syncUserProfileToFirestore note:', err);
+  }
+}
+
+/**
+ * Directly writes interaction to Firestore from the authenticated client
+ * Enforces zero cross-user leakage matching firestore.rules
+ */
+export async function saveInteractionToFirestore(
+  userId: string,
+  interactionId: string,
+  data: Record<string, unknown>
+): Promise<void> {
+  if (!db || !userId || !interactionId) return;
+  try {
+    const docRef = doc(db, 'users', userId, 'interactions', interactionId);
+    await setDoc(docRef, { ...data, updatedAt: new Date().toISOString() }, { merge: true });
+  } catch (err) {
+    console.warn('Direct client-side Firestore save note:', err);
+  }
+}
+
+/**
+ * Fetches interactions directly from Firestore subcollection
+ */
+export async function fetchUserInteractionsFromFirestore(
+  userId: string
+): Promise<Record<string, unknown>[]> {
+  if (!db || !userId) return [];
+  try {
+    const colRef = collection(db, 'users', userId, 'interactions');
+    const q = query(colRef, orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ ...d.data(), interactionId: d.id }));
+  } catch (err) {
+    console.warn('Direct client-side Firestore fetch note:', err);
+    return [];
   }
 }
