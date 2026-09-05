@@ -61,6 +61,9 @@ export function SecurityInspector({
   const [activeTab, setActiveTab] = useState<'raw' | 'sanitized' | 'firestore' | 'hud'>('sanitized');
   const [copied, setCopied] = useState(false);
 
+  const firestoreDoc = storedFirestoreDoc;
+  const firestorePath = (storedFirestoreDoc?.path as string) || (storedFirestoreDoc?.userId ? `users/${storedFirestoreDoc.userId}/reflections/${storedFirestoreDoc.interactionId || 'recent'}` : 'users/{userId}/reflections/{interactionId}');
+
   const copyFirestoreJson = () => {
     if (storedFirestoreDoc) {
       navigator.clipboard.writeText(JSON.stringify(storedFirestoreDoc, null, 2));
@@ -72,9 +75,9 @@ export function SecurityInspector({
   const getBadgeColor = (type: string) => {
     switch (type) {
       case 'PERSON':
-        return 'bg-[#EADDFF] text-[#21005D] dark:bg-[#381E72]/50 dark:text-[#EADDFF] border-[#D0BCFF] dark:border-[#6750A4]';
+        return 'bg-blue-100 text-[#14204F] dark:bg-[#14204F]/70 dark:text-blue-200 border-blue-200 dark:border-blue-700/60';
       case 'EMAIL':
-        return 'bg-[#E8DEF8] text-[#21005D] dark:bg-[#381E72]/40 dark:text-[#EADDFF] border-[#D0BCFF] dark:border-[#6750A4]';
+        return 'bg-blue-50 text-[#14204F] dark:bg-[#14204F]/50 dark:text-blue-200 border-blue-200 dark:border-blue-800/40';
       case 'PHONE':
         return 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
       case 'LOCATION':
@@ -83,22 +86,22 @@ export function SecurityInspector({
       case 'CREDIT_CARD':
         return 'bg-[#FFD8E4] text-[#31111D] dark:bg-[#632034] dark:text-[#FFD8E4] border-[#FFD8E4] dark:border-[#632034]';
       default:
-        return 'bg-[#E8DEF8] text-[#21005D] dark:bg-[#381E72]/50 dark:text-[#EADDFF] border-[#D0BCFF] dark:border-[#6750A4]';
+        return 'bg-blue-50 text-[#14204F] dark:bg-[#14204F]/50 dark:text-blue-200 border-blue-200 dark:border-blue-800/40';
     }
   };
 
   return (
     <div
       id="security-inspector-card"
-      className="bg-white dark:bg-[#1D1B20] rounded-3xl border border-[#E3E2E6] dark:border-[#383440] shadow-xs overflow-hidden transition-all duration-200"
+      className="bg-white/95 dark:bg-[#0E1528]/85 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-blue-900/40 shadow-sm overflow-hidden transition-all duration-200"
     >
       {/* Top Header Section with Spacious Metrics & Material 3 Navigation */}
-      <div className="p-5 sm:p-7 border-b border-[#E3E2E6] dark:border-[#383440] bg-[#F7F5FA] dark:bg-[#1E1B24]">
+      <div className="p-5 sm:p-7 border-b border-slate-200 dark:border-blue-900/40 bg-gradient-to-b from-blue-50/50 to-transparent dark:from-[#14204F]/40 dark:to-transparent backdrop-blur-md">
         {/* Row 1: Title, Subtitle, and Back Button / Status */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start sm:items-center gap-3.5">
-            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-[#EADDFF] dark:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#D0BCFF] dark:border-[#6750A4] shadow-xs shrink-0">
-              <MaterialIcon name="shield" size={24} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-blue-200 dark:border-blue-700/60 shadow-xs shrink-0">
+              <MaterialIcon name="shield" size={24} className="text-[#2563EB] dark:text-blue-300" />
             </div>
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
@@ -120,14 +123,14 @@ export function SecurityInspector({
           {onBackToJournal ? (
             <button
               onClick={onBackToJournal}
-              className="self-start sm:self-center flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold bg-white dark:bg-[#2B2930] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E3E2E6] dark:border-[#49454F] transition-all shadow-xs cursor-pointer shrink-0"
+              className="self-start sm:self-center flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold bg-white dark:bg-[#0B1120] hover:bg-blue-100 dark:hover:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-slate-200 dark:border-blue-900/40 transition-all shadow-xs cursor-pointer shrink-0"
             >
               <MaterialIcon name="chevron_left" size={16} />
               <span>Back to Journal</span>
             </button>
           ) : (
-            <div className="self-start sm:self-center hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#EADDFF]/80 dark:bg-[#381E72]/60 text-[#21005D] dark:text-[#EADDFF] border border-[#D0BCFF] dark:border-[#6750A4] shrink-0">
-              <MaterialIcon name="verified_user" size={16} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+            <div className="self-start sm:self-center hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-100/80 dark:bg-[#14204F]/70 text-[#14204F] dark:text-blue-200 border border-blue-200 dark:border-blue-700/60 shrink-0">
+              <MaterialIcon name="verified_user" size={16} className="text-[#2563EB] dark:text-blue-300" />
               <span>Subcollection Tenant Guard</span>
             </div>
           )}
@@ -136,9 +139,9 @@ export function SecurityInspector({
         {/* Row 2: 3 High-Visibility Architectural Metrics */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
           {/* Metric 1: PII Scrub Count */}
-          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#25232A] border border-[#E3E2E6] dark:border-[#383440] shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-[#EADDFF] dark:bg-[#381E72]/60 text-[#21005D] dark:text-[#EADDFF] flex items-center justify-center shrink-0">
-              <MaterialIcon name="shield" size={20} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/90 dark:bg-[#0B1120]/70 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 shadow-2xs">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-[#14204F]/80 text-[#14204F] dark:text-blue-200 flex items-center justify-center shrink-0">
+              <MaterialIcon name="shield" size={20} className="text-[#2563EB] dark:text-blue-300" />
             </div>
             <div className="min-w-0">
               <div className="text-xs font-bold text-[#1C1B1F] dark:text-[#E6E1E5] flex items-center gap-1.5">
@@ -154,7 +157,7 @@ export function SecurityInspector({
           </div>
 
           {/* Metric 2: Active Gemini Model */}
-          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#25232A] border border-[#E3E2E6] dark:border-[#383440] shadow-2xs">
+          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/90 dark:bg-[#0B1120]/70 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 shadow-2xs">
             <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 flex items-center justify-center shrink-0">
               <MaterialIcon name="memory" size={20} className="text-emerald-600 dark:text-emerald-400" />
             </div>
@@ -169,9 +172,9 @@ export function SecurityInspector({
           </div>
 
           {/* Metric 3: Secret Manager Key */}
-          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#25232A] border border-[#E3E2E6] dark:border-[#383440] shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-[#E8DEF8] dark:bg-[#381E72]/40 text-[#21005D] dark:text-[#EADDFF] flex items-center justify-center shrink-0">
-              <MaterialIcon name="vpn_key" size={20} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/90 dark:bg-[#0B1120]/70 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 shadow-2xs">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-[#14204F]/60 text-[#14204F] dark:text-blue-200 flex items-center justify-center shrink-0">
+              <MaterialIcon name="vpn_key" size={20} className="text-[#2563EB] dark:text-blue-300" />
             </div>
             <div className="min-w-0">
               <div className="text-xs font-bold text-[#1C1B1F] dark:text-[#E6E1E5] truncate">
@@ -192,21 +195,21 @@ export function SecurityInspector({
             onClick={() => setActiveTab('sanitized')}
             className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
               activeTab === 'sanitized'
-                ? 'bg-[#6750A4] text-white border-[#6750A4] shadow-sm ring-2 ring-[#6750A4]/30'
-                : 'bg-white dark:bg-[#25232A] hover:bg-[#F3EEFA] dark:hover:bg-[#2F2C35] text-[#49454F] dark:text-[#CAC4D0] border-[#E3E2E6] dark:border-[#383440]'
+                ? 'bg-[#14204F] text-white border-[#2563EB] shadow-sm ring-2 ring-[#2563EB]/30'
+                : 'bg-white dark:bg-[#0B1120]/70 hover:bg-blue-50/60 dark:hover:bg-[#14204F]/40 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-blue-900/40'
             }`}
           >
             <div className="flex items-center justify-between mb-1.5">
               <MaterialIcon
                 name="shield"
                 size={18}
-                className={activeTab === 'sanitized' ? 'text-white' : 'text-[#6750A4] dark:text-[#D0BCFF]'}
+                className={activeTab === 'sanitized' ? 'text-white' : 'text-[#2563EB] dark:text-blue-300'}
               />
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                   activeTab === 'sanitized'
                     ? 'bg-white/25 text-white'
-                    : 'bg-[#EADDFF] dark:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF]'
+                    : 'bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200'
                 }`}
               >
                 DLP
@@ -226,15 +229,15 @@ export function SecurityInspector({
             onClick={() => setActiveTab('raw')}
             className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
               activeTab === 'raw'
-                ? 'bg-[#6750A4] text-white border-[#6750A4] shadow-sm ring-2 ring-[#6750A4]/30'
-                : 'bg-white dark:bg-[#25232A] hover:bg-[#F3EEFA] dark:hover:bg-[#2F2C35] text-[#49454F] dark:text-[#CAC4D0] border-[#E3E2E6] dark:border-[#383440]'
+                ? 'bg-[#14204F] text-white border-[#2563EB] shadow-sm ring-2 ring-[#2563EB]/30'
+                : 'bg-white dark:bg-[#0B1120]/70 hover:bg-blue-50/60 dark:hover:bg-[#14204F]/40 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-blue-900/40'
             }`}
           >
             <div className="flex items-center justify-between mb-1.5">
               <MaterialIcon
                 name="visibility"
                 size={18}
-                className={activeTab === 'raw' ? 'text-white' : 'text-[#6750A4] dark:text-[#D0BCFF]'}
+                className={activeTab === 'raw' ? 'text-white' : 'text-[#2563EB] dark:text-blue-300'}
               />
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
@@ -260,21 +263,21 @@ export function SecurityInspector({
             onClick={() => setActiveTab('firestore')}
             className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
               activeTab === 'firestore'
-                ? 'bg-[#6750A4] text-white border-[#6750A4] shadow-sm ring-2 ring-[#6750A4]/30'
-                : 'bg-white dark:bg-[#25232A] hover:bg-[#F3EEFA] dark:hover:bg-[#2F2C35] text-[#49454F] dark:text-[#CAC4D0] border-[#E3E2E6] dark:border-[#383440]'
+                ? 'bg-[#14204F] text-white border-[#2563EB] shadow-sm ring-2 ring-[#2563EB]/30'
+                : 'bg-white dark:bg-[#0B1120]/70 hover:bg-blue-50/60 dark:hover:bg-[#14204F]/40 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-blue-900/40'
             }`}
           >
             <div className="flex items-center justify-between mb-1.5">
               <MaterialIcon
                 name="dns"
                 size={18}
-                className={activeTab === 'firestore' ? 'text-white' : 'text-[#6750A4] dark:text-[#D0BCFF]'}
+                className={activeTab === 'firestore' ? 'text-white' : 'text-[#2563EB] dark:text-blue-300'}
               />
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                   activeTab === 'firestore'
                     ? 'bg-white/25 text-white'
-                    : 'bg-[#E8DEF8] dark:bg-[#381E72]/50 text-[#21005D] dark:text-[#EADDFF]'
+                    : 'bg-blue-50 dark:bg-[#14204F]/60 text-[#14204F] dark:text-blue-200'
                 }`}
               >
                 RBAC
@@ -294,15 +297,15 @@ export function SecurityInspector({
             onClick={() => setActiveTab('hud')}
             className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
               activeTab === 'hud'
-                ? 'bg-[#6750A4] text-white border-[#6750A4] shadow-sm ring-2 ring-[#6750A4]/30'
-                : 'bg-white dark:bg-[#25232A] hover:bg-[#F3EEFA] dark:hover:bg-[#2F2C35] text-[#49454F] dark:text-[#CAC4D0] border-[#E3E2E6] dark:border-[#383440]'
+                ? 'bg-[#14204F] text-white border-[#2563EB] shadow-sm ring-2 ring-[#2563EB]/30'
+                : 'bg-white dark:bg-[#0B1120]/70 hover:bg-blue-50/60 dark:hover:bg-[#14204F]/40 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-blue-900/40'
             }`}
           >
             <div className="flex items-center justify-between mb-1.5">
               <MaterialIcon
                 name="insights"
                 size={18}
-                className={activeTab === 'hud' ? 'text-white' : 'text-[#6750A4] dark:text-[#D0BCFF]'}
+                className={activeTab === 'hud' ? 'text-white' : 'text-[#2563EB] dark:text-blue-300'}
               />
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
@@ -372,20 +375,20 @@ export function SecurityInspector({
 
               {/* Token Mapping Table */}
               {Object.keys(tokenMap).length > 0 && (
-                <div className="mt-4 p-4 rounded-2xl bg-[#F3F3FA] dark:bg-[#211F26] border border-[#E3E2E6] dark:border-[#49454F]">
-                  <h5 className="text-xs font-semibold uppercase tracking-wider text-[#21005D] dark:text-[#EADDFF] mb-2.5">
+                <div className="mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-[#0B1120]/60 border border-slate-200 dark:border-blue-900/40">
+                  <h5 className="text-xs font-semibold uppercase tracking-wider text-[#14204F] dark:text-blue-200 mb-2.5">
                     Surrogate Token Translation Dictionary (Server-Side In-Memory Only)
                   </h5>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                     {Object.entries(tokenMap).map(([surrogate, original]) => (
                       <div
                         key={surrogate}
-                        className="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-[#2B2930] border border-[#E3E2E6] dark:border-[#49454F] text-xs"
+                        className="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-blue-900/40 text-xs"
                       >
-                        <span className="font-mono font-bold text-[#6750A4] dark:text-[#D0BCFF]">
+                        <span className="font-mono font-bold text-[#2563EB] dark:text-blue-300">
                           {surrogate}
                         </span>
-                        <span className="text-[#49454F] text-[11px]">maps to</span>
+                        <span className="text-slate-400 text-[11px]">maps to</span>
                         <span className="font-medium text-[#1C1B1F] dark:text-[#E6E1E5] truncate max-w-[100px]">
                           &ldquo;{original}&rdquo;
                         </span>
@@ -409,47 +412,40 @@ export function SecurityInspector({
             >
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-semibold text-[#1C1B1F] dark:text-[#E6E1E5]">
-                  Original User Input with Detected Sensitive Entity Tags
+                  Original Input Analyzed by Client-Side DLP
                 </h4>
                 <span className="text-xs text-[#49454F] dark:text-[#CAC4D0]">
-                  {piiEntities.length} sensitive patterns detected
+                  {piiEntities.length} sensitive entities tagged
                 </span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#F3F3FA] dark:bg-[#211F26] border border-[#E3E2E6] dark:border-[#49454F] text-sm text-[#1C1B1F] dark:text-[#E6E1E5] whitespace-pre-wrap leading-relaxed">
-                {rawPrompt || <span className="text-[#49454F] italic">No prompt provided.</span>}
+              {/* Raw Prompt with Highlighting */}
+              <div className="p-4 rounded-2xl bg-[#141218] font-mono text-xs sm:text-sm leading-relaxed whitespace-pre-wrap border border-[#49454F] shadow-inner text-[#E6E1E5]">
+                {rawPrompt || (
+                  <span className="text-[#CAC4D0] italic">No reflection recorded yet.</span>
+                )}
               </div>
 
-              {/* Entity badges list */}
-              {piiEntities.length > 0 ? (
+              {/* Detected Entities Chips */}
+              {piiEntities.length > 0 && (
                 <div className="space-y-2">
                   <h5 className="text-xs font-semibold uppercase tracking-wider text-[#49454F] dark:text-[#CAC4D0]">
-                    Detected Entity Breakdown
+                    Detected Sensitive Entities
                   </h5>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {piiEntities.map((entity) => (
+                  <div className="flex flex-wrap gap-2">
+                    {piiEntities.map((entity, idx) => (
                       <div
-                        key={entity.id}
-                        className={`p-2.5 rounded-xl border flex items-center justify-between text-xs ${getBadgeColor(
+                        key={idx}
+                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border ${getBadgeColor(
                           entity.type
                         )}`}
                       >
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold px-1.5 py-0.5 rounded bg-white/80 dark:bg-black/40 font-mono text-[10px]">
-                            {entity.type}
-                          </span>
-                          <span className="font-medium">&ldquo;{entity.original}&rdquo;</span>
-                        </div>
-                        <span className="font-mono text-[11px] opacity-80 font-bold">
-                          {entity.surrogate}
-                        </span>
+                        <span className="font-semibold">{entity.type}</span>
+                        <span className="opacity-60">&ldquo;{entity.original || ''}&rdquo;</span>
+                        <span className="font-mono text-[10px] opacity-75">&rarr; {entity.surrogate}</span>
                       </div>
                     ))}
                   </div>
-                </div>
-              ) : (
-                <div className="p-4 rounded-2xl bg-[#F3F3FA] dark:bg-[#211F26] text-center text-xs text-[#49454F]">
-                  No high-risk PII detected in current entry.
                 </div>
               )}
             </motion.div>
@@ -463,46 +459,36 @@ export function SecurityInspector({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.28, ease: M3_DECELERATE }}
-              className="space-y-3"
+              className="space-y-4"
             >
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-semibold text-[#1C1B1F] dark:text-[#E6E1E5]">
-                    Isolated Cloud Firestore Document Path
+                    Isolated Tenant Storage Location
                   </h4>
-                  <p className="text-xs text-[#6750A4] dark:text-[#D0BCFF] font-mono mt-0.5">
-                    /users/&#123;userId&#125;/interactions/&#123;interactionId&#125;
+                  <p className="text-xs text-[#2563EB] dark:text-blue-300 font-mono mt-0.5">
+                    {firestorePath}
                   </p>
                 </div>
-
-                <button
-                  onClick={copyFirestoreJson}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-[#F3F3FA] hover:bg-[#E8E7EF] dark:bg-[#2B2930] dark:hover:bg-[#36343B] text-[#49454F] dark:text-[#CAC4D0] border border-[#E3E2E6] dark:border-[#49454F] transition-colors cursor-pointer"
-                >
-                  {copied ? (
-                    <MaterialIcon name="check" size={15} className="text-emerald-500" />
-                  ) : (
-                    <MaterialIcon name="content_copy" size={15} />
-                  )}
-                  <span>{copied ? 'Copied' : 'Copy JSON'}</span>
-                </button>
+                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                  <MaterialIcon name="lock" size={14} />
+                  RBAC Enforced
+                </span>
               </div>
 
-              <pre className="p-4 rounded-2xl bg-[#141218] text-[#E6E1E5] font-mono text-xs overflow-x-auto border border-[#49454F] leading-relaxed max-h-96">
-                {storedFirestoreDoc
-                  ? JSON.stringify(storedFirestoreDoc, null, 2)
+              <pre className="p-4 rounded-2xl bg-[#141218] text-amber-300 font-mono text-xs leading-relaxed overflow-x-auto border border-[#49454F] shadow-inner max-h-96">
+                {firestoreDoc
+                  ? JSON.stringify(firestoreDoc, null, 2)
                   : JSON.stringify(
                       {
-                        userId: 'authenticated_user_uid',
-                        interactionId: 'inter_sample_123',
-                        title: 'Sample Journal Entry',
-                        rawPrompt: rawPrompt || 'My meeting in Seattle with Sarah...',
+                        userId: 'authenticated-user-uid',
+                        title: 'Morning Reflections',
+                        rawPrompt: rawPrompt || 'My meeting with...',
                         sanitizedPrompt: sanitizedPrompt || 'My meeting [LOCATION_1] with [PERSON_1]...',
                         reflection: 'Your reflection will be persisted securely here.',
                         piiEntitiesCount: piiCountScrubbed,
                         modelUsed: modelUsed || 'gemini-3.6-flash',
                         latencyMs: latencyMs || 410,
-                        createdAt: new Date().toISOString(),
                       },
                       null,
                       2
@@ -531,16 +517,16 @@ export function SecurityInspector({
                 {/* Stat 1: PII Scrubbed */}
                 <motion.div
                   variants={hudCardVariants}
-                  className="p-4 rounded-2xl bg-[#EADDFF]/60 dark:bg-[#381E72]/40 border border-[#D0BCFF] dark:border-[#6750A4]/60"
+                  className="p-4 rounded-2xl bg-blue-100/70 dark:bg-[#14204F]/60 border border-blue-200 dark:border-blue-700/60"
                 >
-                  <div className="flex items-center justify-between text-[#21005D] dark:text-[#EADDFF] mb-1">
+                  <div className="flex items-center justify-between text-[#14204F] dark:text-blue-200 mb-1">
                     <span className="text-xs font-semibold">PII Scrub Count</span>
                     <MaterialIcon name="shield" size={16} />
                   </div>
-                  <div className="text-2xl font-bold text-[#21005D] dark:text-[#EADDFF]">
+                  <div className="text-2xl font-bold text-[#14204F] dark:text-blue-200">
                     {piiCountScrubbed}
                   </div>
-                  <span className="text-[11px] text-[#49454F] dark:text-[#CAC4D0] mt-1 block">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
                     Zero PII sent to AI backend
                   </span>
                 </motion.div>
@@ -548,11 +534,11 @@ export function SecurityInspector({
                 {/* Stat 2: Secret Manager */}
                 <motion.div
                   variants={hudCardVariants}
-                  className="p-4 rounded-2xl bg-[#F3F3FA] dark:bg-[#2B2930] border border-[#E3E2E6] dark:border-[#49454F]"
+                  className="p-4 rounded-2xl bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-blue-900/40"
                 >
                   <div className="flex items-center justify-between text-[#49454F] dark:text-[#CAC4D0] mb-1">
                     <span className="text-xs font-semibold">Secret Management</span>
-                    <MaterialIcon name="vpn_key" size={16} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+                    <MaterialIcon name="vpn_key" size={16} className="text-[#2563EB] dark:text-blue-300" />
                   </div>
                   <div className="text-sm font-bold text-[#1C1B1F] dark:text-[#E6E1E5] truncate">
                     {secretSource}
@@ -565,16 +551,16 @@ export function SecurityInspector({
                 {/* Stat 3: Resolved Model */}
                 <motion.div
                   variants={hudCardVariants}
-                  className="p-4 rounded-2xl bg-[#E8DEF8] dark:bg-[#381E72]/40 border border-[#D0BCFF] dark:border-[#6750A4]/60"
+                  className="p-4 rounded-2xl bg-blue-50 dark:bg-[#14204F]/60 border border-blue-200 dark:border-blue-700/60"
                 >
-                  <div className="flex items-center justify-between text-[#21005D] dark:text-[#EADDFF] mb-1">
+                  <div className="flex items-center justify-between text-[#14204F] dark:text-blue-200 mb-1">
                     <span className="text-xs font-semibold">Active Gemini Model</span>
-                    <MaterialIcon name="memory" size={16} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+                    <MaterialIcon name="memory" size={16} className="text-[#2563EB] dark:text-blue-300" />
                   </div>
-                  <div className="text-sm font-bold text-[#21005D] dark:text-[#EADDFF] truncate">
+                  <div className="text-sm font-bold text-[#14204F] dark:text-blue-200 truncate">
                     {modelUsed || 'gemini-3.6-flash'}
                   </div>
-                  <span className="text-[11px] text-[#49454F] dark:text-[#CAC4D0] mt-1 block">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
                     Step 1 in Resilient Ladder
                   </span>
                 </motion.div>
@@ -582,25 +568,25 @@ export function SecurityInspector({
                 {/* Stat 4: Roundtrip Latency */}
                 <motion.div
                   variants={hudCardVariants}
-                  className="p-4 rounded-2xl bg-[#FFD8E4]/60 dark:bg-[#31111D]/60 border border-[#FFD8E4] dark:border-[#632034]"
+                  className="p-4 rounded-2xl bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-blue-900/40"
                 >
-                  <div className="flex items-center justify-between text-[#31111D] dark:text-[#FFD8E4] mb-1">
+                  <div className="flex items-center justify-between text-[#49454F] dark:text-[#CAC4D0] mb-1">
                     <span className="text-xs font-semibold">Roundtrip Latency</span>
                     <MaterialIcon name="schedule" size={16} className="text-amber-600 dark:text-amber-400" />
                   </div>
-                  <div className="text-2xl font-bold text-[#31111D] dark:text-[#FFD8E4]">
+                  <div className="text-2xl font-bold text-[#1C1B1F] dark:text-[#E6E1E5]">
                     {latencyMs > 0 ? `${latencyMs}ms` : '—'}
                   </div>
-                  <span className="text-[11px] text-[#31111D]/80 dark:text-[#FFD8E4]/80 mt-1 block">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
                     DLP + Inference + Detokenize
                   </span>
                 </motion.div>
               </motion.div>
 
               {/* Model Fallback Ladder Visualizer */}
-              <div className="p-4 rounded-2xl bg-[#F3F3FA] dark:bg-[#211F26] border border-[#E3E2E6] dark:border-[#49454F]">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#0B1120]/60 border border-slate-200 dark:border-blue-900/40">
                 <h5 className="text-xs font-semibold uppercase tracking-wider text-[#1C1B1F] dark:text-[#E6E1E5] mb-3 flex items-center gap-2">
-                  <MaterialIcon name="insights" size={16} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+                  <MaterialIcon name="insights" size={16} className="text-[#2563EB] dark:text-blue-300" />
                   <span>4-Tier Resilient Gemini Fallback Ladder Status</span>
                 </h5>
 
@@ -623,8 +609,8 @@ export function SecurityInspector({
                         variants={hudCardVariants}
                         className={`p-3 rounded-xl border text-xs transition-all ${
                           isCurrent
-                            ? 'bg-[#EADDFF] dark:bg-[#381E72]/70 border-[#D0BCFF] dark:border-[#6750A4] text-[#21005D] dark:text-[#EADDFF] font-semibold'
-                            : 'bg-white dark:bg-[#2B2930] border-[#E3E2E6] dark:border-[#49454F] text-[#49454F] dark:text-[#CAC4D0]'
+                            ? 'bg-blue-100 dark:bg-[#14204F] border-blue-300 dark:border-blue-700 text-[#14204F] dark:text-blue-200 font-semibold shadow-xs'
+                            : 'bg-white dark:bg-[#0B1120]/70 border-slate-200 dark:border-blue-900/40 text-slate-600 dark:text-slate-300'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1">
@@ -634,7 +620,7 @@ export function SecurityInspector({
                           {isCurrent ? (
                             <MaterialIcon name="check_circle" size={15} className="text-emerald-600 dark:text-emerald-400" />
                           ) : (
-                            <span className="w-2 h-2 rounded-full bg-[#E3E2E6] dark:bg-[#49454F]"></span>
+                            <span className="w-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700"></span>
                           )}
                         </div>
                         <div className="font-mono text-xs font-semibold">{item.name}</div>

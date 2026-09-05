@@ -113,7 +113,7 @@ export function Sidebar({
       case 'thoughtful':
         return { label: 'Thoughtful', icon: 'lightbulb', style: 'bg-blue-100 text-blue-900 dark:bg-blue-950/60 dark:text-blue-300' };
       default:
-        return { label: 'Reflective', icon: 'psychology', style: 'bg-[#EADDFF] text-[#21005D] dark:bg-[#381E72]/60 dark:text-[#EADDFF]' };
+        return { label: 'Reflective', icon: 'psychology', style: 'bg-blue-100 text-[#14204F] dark:bg-[#14204F]/80 dark:text-blue-200' };
     }
   };
 
@@ -135,12 +135,12 @@ export function Sidebar({
     <>
       {/* Sidebar Container: Fixed to left on desktop, slide-in drawer on mobile */}
       <aside
-        className={`fixed inset-y-0 lg:top-18 lg:bottom-0 left-0 z-50 lg:z-30 flex flex-col w-80 xl:w-84 bg-white dark:bg-[#19171D] border-r border-[#E8E4EE] dark:border-[#36343B] transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 lg:top-18 lg:bottom-0 left-0 z-50 lg:z-30 flex flex-col w-80 xl:w-84 bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-xl border-r border-slate-200 dark:border-blue-900/40 transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Header & Primary Action */}
-        <div className="p-5 border-b border-[#E8E4EE] dark:border-[#36343B] flex flex-col gap-4">
+        <div className="p-5 border-b border-slate-200 dark:border-blue-900/40 flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold text-[#1C1B1F] dark:text-[#E6E1E5] tracking-tight">
@@ -154,7 +154,7 @@ export function Sidebar({
             <div className="flex items-center gap-1.5">
               <button
                 onClick={onToggle}
-                className="lg:hidden p-2 rounded-full hover:bg-[#F5F2F9] dark:hover:bg-[#232128] text-[#49454F] dark:text-[#CAC4D0]"
+                className="lg:hidden p-2 rounded-full hover:bg-slate-100 dark:hover:bg-[#14204F]/60 text-[#49454F] dark:text-[#CAC4D0]"
                 aria-label="Close Sidebar"
               >
                 <MaterialIcon name="chevron_left" size={20} />
@@ -165,7 +165,7 @@ export function Sidebar({
           <button
             id="new-reflection-sidebar-btn"
             onClick={onNew}
-            className="flex items-center justify-center gap-2 w-full py-3 px-5 rounded-full bg-[#6750A4] hover:bg-[#563E93] active:bg-[#473082] text-white font-semibold text-xs shadow-xs hover:shadow-md transition-all active:scale-[0.98]"
+            className="flex items-center justify-center gap-2 w-full py-3 px-5 rounded-full bg-[#14204F] hover:bg-[#1E3A8A] active:bg-[#172554] text-white font-semibold text-xs shadow-sm hover:shadow-md shadow-blue-950/20 transition-all active:scale-[0.98]"
           >
             <MaterialIcon name="add" size={18} className="text-white" />
             <span>New Reflection</span>
@@ -182,7 +182,7 @@ export function Sidebar({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search thoughts, insights..."
-              className="w-full pl-9 pr-4 py-2 text-xs rounded-full bg-[#F5F2F9] dark:bg-[#232128] border border-[#E8E4EE] dark:border-[#36343B] text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-[#79747E] focus:outline-none focus:border-[#6750A4] focus:ring-1 focus:ring-[#6750A4] transition-all"
+              className="w-full pl-9 pr-4 py-2 text-xs rounded-full bg-slate-100/90 dark:bg-[#14204F]/30 border border-slate-200 dark:border-blue-900/40 text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-slate-400 focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-all"
             />
           </div>
 
@@ -196,8 +196,8 @@ export function Sidebar({
                   onClick={() => setSelectedMood(mood)}
                   className={`px-3 py-1 rounded-full whitespace-nowrap capitalize text-[11px] font-semibold transition-all ${
                     isSelected
-                      ? 'bg-[#6750A4] text-white shadow-xs'
-                      : 'bg-[#F5F2F9] dark:bg-[#232128] text-[#49454F] dark:text-[#CAC4D0] hover:bg-[#E8E4EE] dark:hover:bg-[#2C2932]'
+                      ? 'bg-[#14204F] text-white shadow-xs'
+                      : 'bg-slate-100 dark:bg-[#14204F]/40 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#14204F]/70'
                   }`}
                 >
                   {mood}
@@ -242,8 +242,8 @@ export function Sidebar({
                     onClick={() => onSelect(item)}
                     className={`group relative p-4 rounded-2xl cursor-pointer transition-colors border ${
                       isSelected
-                        ? 'bg-[#F5F0FB] dark:bg-[#251F30] border-[#6750A4] shadow-xs'
-                        : 'bg-white dark:bg-[#1E1C23] border-[#E8E4EE] dark:border-[#36343B] hover:border-[#D0BCFF] hover:shadow-xs'
+                        ? 'bg-blue-50/90 dark:bg-[#14204F]/50 border-[#2563EB] shadow-xs backdrop-blur-md'
+                        : 'bg-white/90 dark:bg-[#0E1528]/80 backdrop-blur-md border-slate-200 dark:border-blue-900/40 hover:border-blue-400 hover:shadow-xs'
                     }`}
                   >
                     {/* Top Bar: Mood & Date */}
@@ -271,15 +271,15 @@ export function Sidebar({
                     </p>
 
                     {item.location?.name && (
-                      <div className="mt-2 flex items-center gap-1 text-[10px] text-indigo-600 dark:text-indigo-400 font-medium">
+                      <div className="mt-2 flex items-center gap-1 text-[10px] text-blue-600 dark:text-blue-400 font-medium">
                         <MaterialIcon name="place" size={12} />
                         <span className="truncate max-w-[200px]">{item.location.name}</span>
                       </div>
                     )}
 
                     {/* Bottom Meta & Delete button */}
-                    <div className="mt-3 pt-2.5 border-t border-[#E8E4EE]/70 dark:border-[#36343B]/70 flex items-center justify-between text-[11px]">
-                      <div className="flex items-center gap-1 text-[#6750A4] dark:text-[#D0BCFF] font-medium">
+                    <div className="mt-3 pt-2.5 border-t border-slate-200/70 dark:border-blue-900/40 flex items-center justify-between text-[11px]">
+                      <div className="flex items-center gap-1 text-[#2563EB] dark:text-blue-300 font-medium">
                         <MaterialIcon name="shield" size={14} />
                         <span>{item.piiEntitiesCount} PII scrubbed</span>
                       </div>

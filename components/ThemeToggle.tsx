@@ -57,7 +57,7 @@ export function ThemeToggle() {
       {isDark ? (
         <MaterialIcon name="light_mode" className="text-amber-400" size={22} />
       ) : (
-        <MaterialIcon name="dark_mode" className="text-[#6750A4] dark:text-[#D0BCFF]" size={22} />
+        <MaterialIcon name="dark_mode" className="text-[#2563EB] dark:text-[#60A5FA]" size={22} />
       )}
     </button>
   );

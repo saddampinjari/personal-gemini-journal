@@ -109,18 +109,18 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
       initial="hidden"
       animate="visible"
       id="reflection-composer-card"
-      className="bg-white dark:bg-[#1E1C23] rounded-3xl border border-[#E8E4EE] dark:border-[#36343B] shadow-xs p-6 sm:p-9 transition-colors duration-200"
+      className="bg-white/95 dark:bg-[#0E1528]/85 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-blue-900/40 shadow-sm p-6 sm:p-9 transition-colors duration-200"
     >
       {/* Top Header Section: Clean, Spacious, Matching Security HUD */}
       <motion.div
         variants={itemVariants}
-        className="p-5 sm:p-7 border-b border-[#E8E4EE] dark:border-[#36343B] bg-[#F7F5FA] dark:bg-[#1E1B24] -m-6 sm:-m-9 mb-6 sm:mb-8"
+        className="p-5 sm:p-7 border-b border-slate-200 dark:border-blue-900/40 bg-gradient-to-b from-blue-50/50 to-transparent dark:from-[#14204F]/40 dark:to-transparent -m-6 sm:-m-9 mb-6 sm:mb-8 backdrop-blur-md"
       >
         {/* Row 1: Icon, Title, and Privacy Status Badge */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start sm:items-center gap-3.5">
-            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-[#EADDFF] dark:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#D0BCFF] dark:border-[#6750A4] shadow-xs shrink-0">
-              <MaterialIcon name="edit_note" size={26} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-blue-200 dark:border-blue-700/60 shadow-xs shrink-0">
+              <MaterialIcon name="edit_note" size={26} className="text-[#2563EB] dark:text-blue-300" />
             </div>
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
@@ -139,8 +139,8 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
           </div>
 
           {/* Right Status Badge */}
-          <div className="self-start sm:self-center flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-[#25232A] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#383440] shadow-2xs shrink-0">
-            <MaterialIcon name="shield" size={16} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+          <div className="self-start sm:self-center flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/80 dark:bg-[#14204F]/60 backdrop-blur-md text-[#14204F] dark:text-blue-200 border border-slate-200 dark:border-blue-800/40 shadow-2xs shrink-0">
+            <MaterialIcon name="shield" size={16} className="text-[#2563EB] dark:text-blue-300" />
             <span>
               {livePreview.scrubCount > 0
                 ? `${livePreview.scrubCount} PII Entities Detected`
@@ -152,9 +152,9 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
         {/* Row 2: 3 Informative Metric Cards Matching Security HUD */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
           {/* Card 1: DLP De-identification Status */}
-          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#25232A] border border-[#E8E4EE] dark:border-[#383440] shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-[#EADDFF] dark:bg-[#381E72]/60 text-[#21005D] dark:text-[#EADDFF] flex items-center justify-center shrink-0">
-              <MaterialIcon name="shield" size={20} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/90 dark:bg-[#0B1120]/70 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 shadow-2xs">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-[#14204F]/80 text-[#14204F] dark:text-blue-200 flex items-center justify-center shrink-0">
+              <MaterialIcon name="shield" size={20} className="text-[#2563EB] dark:text-blue-300" />
             </div>
             <div className="min-w-0">
               <div className="text-xs font-bold text-[#1C1B1F] dark:text-[#E6E1E5]">
@@ -167,9 +167,9 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
           </div>
 
           {/* Card 2: Isolated Firestore Storage */}
-          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#25232A] border border-[#E8E4EE] dark:border-[#383440] shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-[#E8DEF8] dark:bg-[#381E72]/40 text-[#21005D] dark:text-[#EADDFF] flex items-center justify-center shrink-0">
-              <MaterialIcon name="dns" size={20} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/90 dark:bg-[#0B1120]/70 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 shadow-2xs">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-[#14204F]/60 text-[#14204F] dark:text-blue-200 flex items-center justify-center shrink-0">
+              <MaterialIcon name="dns" size={20} className="text-[#2563EB] dark:text-blue-300" />
             </div>
             <div className="min-w-0">
               <div className="text-xs font-bold text-[#1C1B1F] dark:text-[#E6E1E5]">
@@ -182,7 +182,7 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
           </div>
 
           {/* Card 3: Model Target */}
-          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#25232A] border border-[#E8E4EE] dark:border-[#383440] shadow-2xs">
+          <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/90 dark:bg-[#0B1120]/70 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 shadow-2xs">
             <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 flex items-center justify-center shrink-0">
               <MaterialIcon name="memory" size={20} className="text-emerald-600 dark:text-emerald-400" />
             </div>
@@ -216,8 +216,8 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
                   onClick={() => setMood(m.id)}
                   className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-colors text-center cursor-pointer ${
                     isSelected
-                      ? 'bg-[#F5F0FB] dark:bg-[#2C2438] border-[#6750A4] text-[#6750A4] dark:text-[#D0BCFF] shadow-xs ring-1 ring-[#6750A4]'
-                      : 'bg-[#FAF8FD] dark:bg-[#232128] border-[#E8E4EE] dark:border-[#36343B] text-[#49454F] dark:text-[#CAC4D0] hover:border-[#D0BCFF]'
+                      ? 'bg-blue-50 dark:bg-[#14204F]/70 border-[#2563EB] text-[#2563EB] dark:text-blue-300 shadow-xs ring-1 ring-[#2563EB]'
+                      : 'bg-slate-50/70 dark:bg-[#0B1120]/60 border-slate-200 dark:border-blue-900/40 text-slate-600 dark:text-slate-300 hover:border-blue-400'
                   }`}
                 >
                   <MaterialIcon name={m.icon} size={24} className="mb-1" />
@@ -251,7 +251,7 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
               placeholder="What is on your mind today? (e.g. meetings, feelings, personal hurdles, milestones...)"
               rows={6}
               maxLength={10000}
-              className="w-full p-5 text-base rounded-2xl bg-[#FAF8FD] dark:bg-[#232128] border border-[#E8E4EE] dark:border-[#36343B] text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-[#79747E] focus:outline-hidden focus:border-[#6750A4] focus:ring-2 focus:ring-[#6750A4]/20 transition-all resize-y leading-relaxed disabled:opacity-60"
+              className="w-full p-5 text-base rounded-2xl bg-slate-50/60 dark:bg-[#0B1120]/60 border border-slate-200 dark:border-blue-900/40 text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-slate-400 focus:outline-hidden focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 transition-all resize-y leading-relaxed disabled:opacity-60"
             />
           </div>
 
@@ -261,7 +261,7 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
               <button
                 type="button"
                 onClick={() => setShowLiveDlp(!showLiveDlp)}
-                className="flex items-center gap-1.5 text-xs font-semibold text-[#6750A4] dark:text-[#D0BCFF] hover:underline cursor-pointer"
+                className="flex items-center gap-1.5 text-xs font-semibold text-[#2563EB] dark:text-blue-300 hover:underline cursor-pointer"
               >
                 <MaterialIcon name={showLiveDlp ? "visibility_off" : "visibility"} size={16} />
                 <span>
@@ -311,12 +311,12 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
                 key={i}
                 onClick={() => handleSelectInspiration(insp.text)}
                 disabled={isLoading}
-                className="p-4 rounded-2xl bg-[#FAF8FD] dark:bg-[#232128] border border-[#E8E4EE] dark:border-[#36343B] hover:border-[#D0BCFF] text-left transition-colors group cursor-pointer"
+                className="p-4 rounded-2xl bg-slate-50/60 dark:bg-[#0B1120]/60 border border-slate-200 dark:border-blue-900/40 hover:border-blue-400 text-left transition-colors group cursor-pointer"
               >
-                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#EADDFF] dark:bg-[#381E72]/50 text-[#21005D] dark:text-[#EADDFF] mb-1.5">
+                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 dark:bg-[#14204F]/70 text-[#14204F] dark:text-blue-200 mb-1.5">
                   {insp.category}
                 </span>
-                <h4 className="font-bold text-xs text-[#1C1B1F] dark:text-[#E6E1E5] group-hover:text-[#6750A4] dark:group-hover:text-[#D0BCFF] line-clamp-1">
+                <h4 className="font-bold text-xs text-[#1C1B1F] dark:text-[#E6E1E5] group-hover:text-[#2563EB] dark:group-hover:text-blue-300 line-clamp-1">
                   {insp.title}
                 </h4>
                 <p className="text-[11px] text-[#79747E] dark:text-[#938F99] mt-1 line-clamp-2 leading-relaxed">
@@ -330,7 +330,7 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
         {/* Bottom Submission Bar */}
         <motion.div
           variants={itemVariants}
-          className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#E8E4EE] dark:border-[#36343B]"
+          className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200 dark:border-blue-900/40"
         >
           <div className="flex items-center gap-2 text-xs text-[#79747E] dark:text-[#938F99]">
             <MaterialIcon name="check_circle" size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
@@ -343,7 +343,7 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
             id="submit-reflection-btn"
             type="submit"
             disabled={!prompt.trim() || isLoading}
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#6750A4] hover:bg-[#563E93] active:bg-[#473082] text-white font-bold text-sm shadow-xs hover:shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#14204F] hover:bg-[#1E3A8A] active:bg-[#172554] text-white font-bold text-sm shadow-md shadow-blue-950/25 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isLoading ? (
               <>

@@ -88,9 +88,9 @@ export function WelcomeView({
       {/* Hero Eyebrow Pill */}
       <motion.div
         variants={heroItemVariants}
-        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-[#EADDFF] dark:bg-[#381E72]/60 text-[#21005D] dark:text-[#EADDFF] border border-[#D0BCFF] dark:border-[#6750A4] mb-6 shadow-xs"
+        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-[#14204F]/80 text-[#14204F] dark:text-blue-200 border border-blue-200 dark:border-blue-700/60 mb-6 shadow-xs backdrop-blur-md"
       >
-        <MaterialIcon name="auto_awesome" size={16} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+        <MaterialIcon name="auto_awesome" size={16} className="text-[#2563EB] dark:text-blue-300" />
         <span>Zero-Trust AI Architecture &bull; Google Cloud Run</span>
       </motion.div>
 
@@ -100,7 +100,7 @@ export function WelcomeView({
         className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-center text-[#1C1B1F] dark:text-[#E6E1E5] tracking-tight max-w-4xl leading-[1.15]"
       >
         Reflect with Deep Insight. <br className="hidden sm:inline" />
-        <span className="font-serif italic font-normal text-[#6750A4] dark:text-[#D0BCFF]">
+        <span className="font-serif italic font-normal text-[#2563EB] dark:text-blue-300">
           Protected in Seconds.
         </span>
       </motion.h1>
@@ -110,7 +110,7 @@ export function WelcomeView({
         className="mt-5 text-base sm:text-lg text-center text-[#49454F] dark:text-[#CAC4D0] max-w-2xl leading-relaxed"
       >
         A private sanctuary for daily mindfulness and mental clarity, fortified by a server-side{' '}
-        <span className="font-semibold text-[#6750A4] dark:text-[#D0BCFF]">Zero-Trust Privacy Gateway</span>,
+        <span className="font-semibold text-[#2563EB] dark:text-blue-300">Zero-Trust Privacy Gateway</span>,
         GCP Secret Manager key isolation, and tenant-isolated Cloud Firestore.
       </motion.p>
 
@@ -137,7 +137,7 @@ export function WelcomeView({
           id="google-signin-btn"
           onClick={handleGoogleClick}
           disabled={isLoading}
-          className="w-full sm:w-auto flex-1 flex items-center justify-center gap-3 px-7 py-3.5 rounded-full bg-white hover:bg-[#F5F2F9] dark:bg-[#232128] dark:hover:bg-[#2C2932] text-[#1C1B1F] dark:text-[#E6E1E5] border border-[#E8E4EE] dark:border-[#36343B] shadow-xs font-semibold text-sm transition-colors hover:border-[#D0BCFF] disabled:opacity-50 cursor-pointer"
+          className="w-full sm:w-auto flex-1 flex items-center justify-center gap-3 px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 dark:bg-[#0B1120] dark:hover:bg-[#14204F]/60 text-[#1C1B1F] dark:text-[#E6E1E5] border border-slate-200 dark:border-blue-900/40 shadow-xs font-semibold text-sm transition-colors hover:border-blue-400 disabled:opacity-50 cursor-pointer"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -167,7 +167,7 @@ export function WelcomeView({
           transition={{ duration: 0.2 }}
           id="demo-session-btn"
           onClick={onStartDemoSession}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#6750A4] hover:bg-[#563E93] active:bg-[#473082] text-white font-semibold text-sm shadow-xs hover:shadow-md transition-colors cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#14204F] hover:bg-[#1E3A8A] active:bg-[#172554] text-white font-semibold text-sm shadow-md shadow-blue-950/20 transition-colors cursor-pointer"
         >
           <span>Test Demo Session</span>
           <MaterialIcon name="arrow_forward" size={18} />
@@ -178,7 +178,7 @@ export function WelcomeView({
         <motion.button
           variants={heroItemVariants}
           onClick={onOpenAccountPicker}
-          className="mt-3.5 text-xs text-[#6750A4] dark:text-[#D0BCFF] hover:underline font-semibold cursor-pointer"
+          className="mt-3.5 text-xs text-[#2563EB] dark:text-blue-300 hover:underline font-semibold cursor-pointer"
         >
           Or choose/switch Google Account &rarr;
         </motion.button>
@@ -187,7 +187,7 @@ export function WelcomeView({
       {/* 4 Zero-Trust Architecture Cards - Sequenced Material Entrance */}
       <div className="mt-16 w-full">
         <motion.div variants={heroItemVariants} className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-[#1E1C23] border border-[#E8E4EE] dark:border-[#36343B] shadow-xs mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 dark:bg-[#14204F]/60 border border-slate-200 dark:border-blue-900/40 shadow-xs mb-3 backdrop-blur-md">
             <div className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-[#4285F4]" />
               <span className="w-2 h-2 rounded-full bg-[#EA4335]" />
@@ -218,7 +218,7 @@ export function WelcomeView({
             <motion.div
               variants={cardItemVariants}
               whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25, ease: 'easeOut' } }}
-              className="group relative rounded-3xl bg-gradient-to-br from-blue-50/90 via-white/95 to-blue-100/40 dark:from-blue-950/30 dark:via-[#1E1C23] dark:to-blue-900/15 border border-blue-200/80 dark:border-blue-800/40 hover:border-[#4285F4] dark:hover:border-[#4285F4] shadow-xs hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              className="group relative rounded-3xl bg-gradient-to-br from-blue-50/90 via-white/95 to-blue-100/40 dark:from-blue-950/40 dark:via-[#14204F]/50 dark:to-blue-900/20 backdrop-blur-md border border-blue-200/80 dark:border-blue-800/40 hover:border-[#4285F4] dark:hover:border-[#4285F4] shadow-xs hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 flex flex-col justify-between overflow-hidden"
             >
               {/* Top Google Blue Accent Bar */}
               <div className="h-1.5 w-full bg-gradient-to-r from-[#4285F4] via-blue-400 to-sky-300" />
@@ -252,7 +252,7 @@ export function WelcomeView({
             <motion.div
               variants={cardItemVariants}
               whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25, ease: 'easeOut' } }}
-              className="group relative rounded-3xl bg-gradient-to-br from-red-50/90 via-white/95 to-red-100/40 dark:from-red-950/30 dark:via-[#1E1C23] dark:to-red-900/15 border border-red-200/80 dark:border-red-800/40 hover:border-[#EA4335] dark:hover:border-[#EA4335] shadow-xs hover:shadow-xl hover:shadow-red-500/10 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              className="group relative rounded-3xl bg-gradient-to-br from-red-50/90 via-white/95 to-red-100/40 dark:from-red-950/30 dark:via-[#14204F]/40 dark:to-red-900/15 backdrop-blur-md border border-red-200/80 dark:border-red-800/40 hover:border-[#EA4335] dark:hover:border-[#EA4335] shadow-xs hover:shadow-xl hover:shadow-red-500/10 transition-all duration-300 flex flex-col justify-between overflow-hidden"
             >
               {/* Top Google Red Accent Bar */}
               <div className="h-1.5 w-full bg-gradient-to-r from-[#EA4335] via-red-400 to-rose-300" />
@@ -286,7 +286,7 @@ export function WelcomeView({
             <motion.div
               variants={cardItemVariants}
               whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25, ease: 'easeOut' } }}
-              className="group relative rounded-3xl bg-gradient-to-br from-yellow-50/95 via-amber-50/60 to-yellow-100/70 dark:from-yellow-950/35 dark:via-[#1E1C23] dark:to-amber-900/20 border border-yellow-300 dark:border-yellow-600/50 hover:border-[#FBBC05] dark:hover:border-[#FBBC05] shadow-xs hover:shadow-xl hover:shadow-yellow-500/15 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              className="group relative rounded-3xl bg-gradient-to-br from-yellow-50/95 via-amber-50/60 to-yellow-100/70 dark:from-yellow-950/35 dark:via-[#14204F]/40 dark:to-amber-900/20 backdrop-blur-md border border-yellow-300 dark:border-yellow-600/50 hover:border-[#FBBC05] dark:hover:border-[#FBBC05] shadow-xs hover:shadow-xl hover:shadow-yellow-500/15 transition-all duration-300 flex flex-col justify-between overflow-hidden"
             >
               {/* Top Google Yellow Accent Bar */}
               <div className="h-1.5 w-full bg-gradient-to-r from-[#FBBC05] via-yellow-400 to-amber-300" />
@@ -320,7 +320,7 @@ export function WelcomeView({
             <motion.div
               variants={cardItemVariants}
               whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25, ease: 'easeOut' } }}
-              className="group relative rounded-3xl bg-gradient-to-br from-emerald-50/90 via-white/95 to-green-100/40 dark:from-emerald-950/30 dark:via-[#1E1C23] dark:to-emerald-900/15 border border-emerald-200/80 dark:border-emerald-800/40 hover:border-[#34A853] dark:hover:border-[#34A853] shadow-xs hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              className="group relative rounded-3xl bg-gradient-to-br from-emerald-50/90 via-white/95 to-green-100/40 dark:from-emerald-950/30 dark:via-[#14204F]/40 dark:to-emerald-900/15 backdrop-blur-md border border-emerald-200/80 dark:border-emerald-800/40 hover:border-[#34A853] dark:hover:border-[#34A853] shadow-xs hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col justify-between overflow-hidden"
             >
               {/* Top Google Green Accent Bar */}
               <div className="h-1.5 w-full bg-gradient-to-r from-[#34A853] via-emerald-400 to-teal-300" />

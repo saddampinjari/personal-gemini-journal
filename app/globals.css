@@ -8,22 +8,22 @@
     --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-mono: 'Roboto Mono', monospace;
-    --bg-vibrant: #FAF8FD;
-    --text-vibrant: #1C1B1F;
-    --primary-vibrant: #6750A4;
-    --primary-container: #EADDFF;
-    --on-primary-container: #21005D;
-    --surface-vibrant: #F5F2F9;
-    --border-vibrant: #E8E4EE;
+    --bg-vibrant: #F8FAFC;
+    --text-vibrant: #0F172A;
+    --primary-vibrant: #14204F;
+    --primary-container: #DBEAFE;
+    --on-primary-container: #14204F;
+    --surface-vibrant: #F1F5F9;
+    --border-vibrant: #E2E8F0;
     --accent-pii: #FFD8E4;
     --on-accent-pii: #31111D;
   }
 
   .dark {
-    --bg-vibrant: #131118;
-    --text-vibrant: #E6E1E5;
-    --surface-vibrant: #1F1D24;
-    --border-vibrant: #36343B;
+    --bg-vibrant: #0B1120;
+    --text-vibrant: #F1F5F9;
+    --surface-vibrant: #0E172F;
+    --border-vibrant: #1E293B;
   }
 }
 
@@ -43,11 +43,11 @@ body {
 }
 
 html.dark body {
-  background-color: #141218;
-  color: #E6E1E5;
+  background-color: #0B1120;
+  color: #F1F5F9;
 }
 
-/* Custom scrollbars for clean M3 aesthetic */
+/* Custom scrollbars for clean blue aesthetic */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -56,11 +56,11 @@ html.dark body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(103, 80, 164, 0.2);
+  background: rgba(37, 99, 235, 0.25);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(103, 80, 164, 0.4);
+  background: rgba(37, 99, 235, 0.45);
 }
 
 /* Leaflet Map Styling Fixes */
@@ -73,7 +73,7 @@ html.dark body {
 }
 
 html.dark .leaflet-container {
-  background-color: #1e1b24 !important;
+  background-color: #0B1120 !important;
 }
 
 .custom-map-pin {

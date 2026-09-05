@@ -92,32 +92,32 @@ export function ReflectionViewer({
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="bg-white dark:bg-[#1D1B20] rounded-3xl border border-[#E3E2E6] dark:border-[#49454F] shadow-xs overflow-hidden transition-all duration-200"
+      className="bg-white/95 dark:bg-[#0E1528]/85 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-blue-900/40 shadow-sm overflow-hidden transition-all duration-200"
     >
       {/* Reflection Header: Clean, Spacious, Matching Security HUD */}
       <motion.div
         variants={itemVariants}
-        className="p-5 sm:p-7 border-b border-[#E8E4EE] dark:border-[#36343B] bg-[#F7F5FA] dark:bg-[#1E1B24]"
+        className="p-5 sm:p-7 border-b border-slate-200 dark:border-blue-900/40 bg-gradient-to-b from-blue-50/50 to-transparent dark:from-[#14204F]/40 dark:to-transparent backdrop-blur-md"
       >
         {/* Row 1: Title, Meta, and Actions */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
           <div className="flex items-start sm:items-center gap-3.5">
-            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-[#EADDFF] dark:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#D0BCFF] dark:border-[#6750A4] shadow-xs shrink-0">
-              <MaterialIcon name="auto_awesome" size={24} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-blue-200 dark:border-blue-700/60 shadow-xs shrink-0">
+              <MaterialIcon name="auto_awesome" size={24} className="text-[#2563EB] dark:text-blue-300" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="font-bold text-lg sm:text-xl text-[#1C1B1F] dark:text-[#E6E1E5] tracking-tight">
                   {title || 'AI Journal Reflection'}
                 </h3>
-                <span className="capitalize px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#EADDFF] dark:bg-[#381E72]/60 text-[#21005D] dark:text-[#EADDFF]">
+                <span className="capitalize px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 dark:bg-[#14204F]/80 text-[#14204F] dark:text-blue-200">
                   {mood || 'Reflective'}
                 </span>
                 {location?.name && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/80">
-                    <MaterialIcon name="place" size={14} className="text-indigo-600 dark:text-indigo-400" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-[#14204F]/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80">
+                    <MaterialIcon name="place" size={14} className="text-blue-600 dark:text-blue-400" />
                     <span>{location.name}</span>
-                    <span className="text-[10px] text-indigo-500 font-mono">(DLP Masked)</span>
+                    <span className="text-[10px] text-blue-500 font-mono">(DLP Masked)</span>
                   </span>
                 )}
               </div>
@@ -134,7 +134,7 @@ export function ReflectionViewer({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={onScrollToInspector}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-white dark:bg-[#25232A] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#383440] shadow-2xs transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-white dark:bg-[#0B1120] hover:bg-blue-100 dark:hover:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-slate-200 dark:border-blue-900/40 shadow-2xs transition-colors cursor-pointer"
               >
                 <MaterialIcon name="verified_user" size={16} className="text-emerald-600 dark:text-emerald-400" />
                 <span>Security HUD</span>
@@ -146,7 +146,7 @@ export function ReflectionViewer({
               whileTap={{ scale: 0.98 }}
               id="copy-reflection-btn"
               onClick={handleCopy}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-white dark:bg-[#25232A] hover:bg-[#F5F2F9] dark:hover:bg-[#2C2932] text-[#1C1B1F] dark:text-[#E6E1E5] border border-[#E8E4EE] dark:border-[#383440] shadow-2xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-white dark:bg-[#0B1120] hover:bg-slate-100 dark:hover:bg-[#14204F]/50 text-[#1C1B1F] dark:text-[#E6E1E5] border border-slate-200 dark:border-blue-900/40 shadow-2xs transition-colors cursor-pointer"
               title="Copy to clipboard"
             >
               {copied ? (
@@ -162,7 +162,7 @@ export function ReflectionViewer({
               whileTap={{ scale: 0.98 }}
               id="export-reflection-btn"
               onClick={handleExport}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-[#6750A4] hover:bg-[#563E93] text-white shadow-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-[#14204F] hover:bg-[#1E3A8A] text-white shadow-xs shadow-blue-950/20 transition-colors cursor-pointer"
               title="Export Markdown file"
             >
               <MaterialIcon name="file_download" size={16} />
@@ -174,7 +174,7 @@ export function ReflectionViewer({
         {/* Row 2: 3 Informative Meta Stat Cards Matching Security HUD */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
           {/* Card 1: Active Model */}
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white dark:bg-[#25232A] border border-[#E8E4EE] dark:border-[#383440] shadow-2xs">
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/90 dark:bg-[#0B1120]/70 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 shadow-2xs">
             <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 flex items-center justify-center shrink-0">
               <MaterialIcon name="memory" size={18} className="text-emerald-600 dark:text-emerald-400" />
             </div>
@@ -189,7 +189,7 @@ export function ReflectionViewer({
           </div>
 
           {/* Card 2: Latency */}
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white dark:bg-[#25232A] border border-[#E8E4EE] dark:border-[#383440] shadow-2xs">
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/90 dark:bg-[#0B1120]/70 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 shadow-2xs">
             <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 flex items-center justify-center shrink-0">
               <MaterialIcon name="schedule" size={18} className="text-amber-600 dark:text-amber-400" />
             </div>
@@ -204,9 +204,9 @@ export function ReflectionViewer({
           </div>
 
           {/* Card 3: PII Scanned & Redacted */}
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white dark:bg-[#25232A] border border-[#E8E4EE] dark:border-[#383440] shadow-2xs">
-            <div className="w-9 h-9 rounded-xl bg-[#EADDFF] dark:bg-[#381E72]/60 text-[#21005D] dark:text-[#EADDFF] flex items-center justify-center shrink-0">
-              <MaterialIcon name="shield" size={18} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/90 dark:bg-[#0B1120]/70 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 shadow-2xs">
+            <div className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-[#14204F]/80 text-[#14204F] dark:text-blue-200 flex items-center justify-center shrink-0">
+              <MaterialIcon name="shield" size={18} className="text-[#2563EB] dark:text-blue-300" />
             </div>
             <div className="min-w-0">
               <div className="text-xs font-bold text-[#1C1B1F] dark:text-[#E6E1E5]">
@@ -246,7 +246,7 @@ export function ReflectionViewer({
                   key={index}
                   className="font-semibold text-[#1C1B1F] dark:text-[#E6E1E5] text-base mt-4 mb-2 flex items-center gap-2"
                 >
-                  <span className="w-1.5 h-4 bg-[#6750A4] rounded-full"></span>
+                  <span className="w-1.5 h-4 bg-[#2563EB] rounded-full"></span>
                   <span>{headingText}</span>
                 </h4>
               );
@@ -262,13 +262,13 @@ export function ReflectionViewer({
 
         {/* Multi-turn Conversational Dialogue Thread */}
         {conversation && conversation.length > 2 && (
-          <div className="mt-8 pt-6 border-t border-[#E8E4EE] dark:border-[#36343B] space-y-4">
+          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-blue-900/40 space-y-4">
             <div className="flex items-center gap-2 mb-3">
-              <MaterialIcon name="forum" size={20} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+              <MaterialIcon name="forum" size={20} className="text-[#2563EB] dark:text-blue-300" />
               <h4 className="text-sm font-bold uppercase tracking-wider text-[#1C1B1F] dark:text-[#E6E1E5]">
                 Continued Multi-Turn Dialogue
               </h4>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-[#14204F]/60 text-blue-700 dark:text-blue-300 font-semibold border border-blue-200 dark:border-blue-800">
                 {Math.floor((conversation.length - 2) / 2) + 1} Exchanges
               </span>
             </div>
@@ -280,7 +280,7 @@ export function ReflectionViewer({
                   className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
                     msg.role === 'user'
                       ? 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 ml-4 sm:ml-8'
-                      : 'bg-[#F5F0FB] dark:bg-[#251F30] border-[#6750A4]/30 text-[#1C1B1F] dark:text-[#E6E1E5] mr-4 sm:mr-8 shadow-2xs'
+                      : 'bg-blue-50/70 dark:bg-[#14204F]/40 border-blue-200 dark:border-blue-900/40 text-[#1C1B1F] dark:text-[#E6E1E5] mr-4 sm:mr-8 shadow-2xs'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1.5">
@@ -288,7 +288,7 @@ export function ReflectionViewer({
                       <MaterialIcon
                         name={msg.role === 'user' ? 'person' : 'auto_awesome'}
                         size={14}
-                        className={msg.role === 'user' ? 'text-slate-500' : 'text-[#6750A4] dark:text-[#D0BCFF]'}
+                        className={msg.role === 'user' ? 'text-slate-500' : 'text-[#2563EB] dark:text-blue-300'}
                       />
                       <span>{msg.role === 'user' ? 'You' : 'Gemini Companion'}</span>
                     </span>
@@ -307,10 +307,10 @@ export function ReflectionViewer({
 
         {/* Interactive Multi-Turn Follow-Up Composer */}
         {onFollowUpSubmit && (
-          <div className="mt-8 pt-6 border-t border-[#E8E4EE] dark:border-[#36343B] space-y-3">
+          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-blue-900/40 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-[#79747E] dark:text-[#938F99] flex items-center gap-1.5">
-                <MaterialIcon name="chat" size={16} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+                <MaterialIcon name="chat" size={16} className="text-[#2563EB] dark:text-blue-300" />
                 <span>Delve Deeper with Gemini</span>
               </span>
               <span className="text-[11px] text-slate-400">Multi-Turn Session</span>
@@ -350,12 +350,12 @@ export function ReflectionViewer({
                 onChange={(e) => setFollowUpText(e.target.value)}
                 disabled={isFollowUpLoading}
                 placeholder="Ask a follow-up question or explore this thought further..."
-                className="flex-1 px-4 py-2.5 text-xs sm:text-sm rounded-2xl bg-[#FAF8FD] dark:bg-[#232128] border border-[#E8E4EE] dark:border-[#36343B] text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-[#79747E] focus:outline-hidden focus:border-[#6750A4] focus:ring-2 focus:ring-[#6750A4]/20 transition-all disabled:opacity-60"
+                className="flex-1 px-4 py-2.5 text-xs sm:text-sm rounded-2xl bg-slate-50/60 dark:bg-[#0B1120]/60 border border-slate-200 dark:border-blue-900/40 text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-slate-400 focus:outline-hidden focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 transition-all disabled:opacity-60"
               />
               <button
                 type="submit"
                 disabled={!followUpText.trim() || isFollowUpLoading}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-[#6750A4] hover:bg-[#523e85] text-white text-xs sm:text-sm font-semibold shadow-xs disabled:opacity-50 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-[#14204F] hover:bg-[#1E3A8A] text-white text-xs sm:text-sm font-semibold shadow-xs shadow-blue-950/20 disabled:opacity-50 transition-colors cursor-pointer"
               >
                 {isFollowUpLoading ? (
                   <>

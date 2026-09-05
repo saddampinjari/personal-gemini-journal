@@ -689,9 +689,9 @@ export default function HomePage() {
                 <div className="flex items-center justify-between lg:hidden pb-1">
                 <button
                   onClick={() => setSidebarOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#232128] border border-[#E8E4EE] dark:border-[#36343B] text-xs font-semibold text-[#1C1B1F] dark:text-[#E6E1E5] shadow-xs cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/85 dark:bg-[#14204F]/70 backdrop-blur-xl border border-slate-200/80 dark:border-blue-900/40 text-xs font-semibold text-slate-800 dark:text-blue-100 shadow-xs cursor-pointer"
                 >
-                  <MaterialIcon name="menu" size={18} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+                  <MaterialIcon name="menu" size={18} className="text-[#2563EB] dark:text-blue-300" />
                   <span>Journals ({journalItems.length})</span>
                 </button>
 
@@ -700,7 +700,7 @@ export default function HomePage() {
                     handleNewReflection();
                     setDashboardTab('journal');
                   }}
-                  className="px-4 py-2 rounded-full bg-[#6750A4] hover:bg-[#563E93] text-white text-xs font-semibold shadow-xs cursor-pointer"
+                  className="px-4 py-2 rounded-full bg-[#14204F] hover:bg-[#1E3A8A] text-white text-xs font-semibold shadow-xs cursor-pointer"
                 >
                   + New Reflection
                 </button>
@@ -708,12 +708,12 @@ export default function HomePage() {
 
               {/* Error Notification */}
               {errorMessage && (
-                <div className="p-4 rounded-2xl bg-[#FFD8E4]/60 dark:bg-[#31111D]/60 border border-[#FFD8E4] dark:border-[#632034] text-[#31111D] dark:text-[#FFD8E4] text-xs flex items-center gap-2 shadow-xs">
-                  <MaterialIcon name="error_outline" size={18} className="shrink-0 text-[#B3261E] dark:text-[#F2B8B5]" />
+                <div className="p-4 rounded-2xl bg-red-500/10 dark:bg-red-950/40 backdrop-blur-md border border-red-200 dark:border-red-900/40 text-red-900 dark:text-red-200 text-xs flex items-center gap-2 shadow-xs">
+                  <MaterialIcon name="error_outline" size={18} className="shrink-0 text-red-600 dark:text-red-400" />
                   <span className="flex-1">{errorMessage}</span>
                   <button
                     onClick={() => setErrorMessage(null)}
-                    className="font-bold px-2 py-0.5 hover:bg-[#FFD8E4] dark:hover:bg-[#632034] rounded cursor-pointer"
+                    className="font-bold px-2 py-0.5 hover:bg-red-500/20 dark:hover:bg-red-900/40 rounded cursor-pointer"
                   >
                     Dismiss
                   </button>
@@ -746,13 +746,13 @@ export default function HomePage() {
                           <div className="flex items-center justify-between pb-1">
                             <button
                               onClick={() => handleNewReflection()}
-                              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-[#1E1C23] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#36343B] transition-all shadow-xs cursor-pointer"
+                              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white/90 dark:bg-[#14204F]/60 backdrop-blur-md hover:bg-blue-50 dark:hover:bg-[#14204F] text-[#14204F] dark:text-blue-100 border border-slate-200/80 dark:border-blue-800/50 transition-all shadow-xs cursor-pointer"
                             >
                               <MaterialIcon name="add" size={16} />
                               <span>Create New Reflection</span>
                             </button>
-                            <div className="flex items-center gap-2 text-xs text-[#79747E] dark:text-[#938F99] font-medium">
-                              <span className="w-2 h-2 rounded-full bg-[#6750A4] dark:bg-[#D0BCFF]"></span>
+                            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-blue-300/80 font-medium">
+                              <span className="w-2 h-2 rounded-full bg-[#2563EB] dark:bg-blue-400"></span>
                               <span>Viewing Archival Record</span>
                             </div>
                           </div>
@@ -789,16 +789,16 @@ export default function HomePage() {
                     </AnimatePresence>
 
                     {/* Security Telemetry Banner (Spacious & Clean) */}
-                    <div className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#1E1C23] border border-[#E8E4EE] dark:border-[#36343B] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+                    <div className="p-5 sm:p-6 rounded-3xl bg-white/85 dark:bg-[#0E1528]/85 backdrop-blur-xl border border-slate-200/80 dark:border-blue-900/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-[#EADDFF] dark:bg-[#381E72]/60 text-[#21005D] dark:text-[#EADDFF] flex items-center justify-center shrink-0">
-                          <MaterialIcon name="shield" size={20} className="text-[#6750A4] dark:text-[#D0BCFF]" />
+                        <div className="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200 flex items-center justify-center shrink-0 border border-blue-200/60 dark:border-blue-800/40">
+                          <MaterialIcon name="shield" size={20} className="text-[#2563EB] dark:text-blue-400" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-sm text-[#1C1B1F] dark:text-[#E6E1E5]">
+                          <h4 className="font-bold text-sm text-slate-900 dark:text-blue-50">
                             Zero-Trust Security Gateway Active
                           </h4>
-                          <p className="text-xs text-[#79747E] dark:text-[#938F99] mt-0.5">
+                          <p className="text-xs text-slate-500 dark:text-blue-200/70 mt-0.5">
                             {inspectorData?.piiCountScrubbed || 0} PII entities identified &bull; Secret Manager key cached &bull; Subcollection RBAC
                           </p>
                         </div>
@@ -807,13 +807,13 @@ export default function HomePage() {
                       <div className="flex items-center gap-2 w-full sm:w-auto">
                         <button
                           onClick={() => setDashboardTab('map')}
-                          className="flex-1 sm:flex-none px-4 py-2.5 rounded-full text-xs font-bold bg-white dark:bg-[#232128] hover:bg-slate-100 dark:hover:bg-[#2C2932] text-slate-700 dark:text-slate-300 border border-[#E8E4EE] dark:border-[#36343B] transition-colors cursor-pointer"
+                          className="flex-1 sm:flex-none px-4 py-2.5 rounded-full text-xs font-bold bg-white/90 dark:bg-[#14204F]/50 backdrop-blur-md hover:bg-slate-100 dark:hover:bg-[#14204F] text-slate-700 dark:text-blue-200 border border-slate-200 dark:border-blue-900/40 transition-colors cursor-pointer"
                         >
                           View Map &rarr;
                         </button>
                         <button
                           onClick={() => setDashboardTab('inspector')}
-                          className="flex-1 sm:flex-none px-5 py-2.5 rounded-full text-xs font-bold bg-[#F5F2F9] dark:bg-[#2A2830] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#36343B] transition-colors cursor-pointer"
+                          className="flex-1 sm:flex-none px-5 py-2.5 rounded-full text-xs font-bold bg-[#14204F] hover:bg-[#1E3A8A] text-white border border-[#2563EB]/40 shadow-xs transition-colors cursor-pointer"
                         >
                           Security HUD &rarr;
                         </button>
@@ -832,13 +832,13 @@ export default function HomePage() {
                     <div className="flex items-center justify-between pb-1">
                       <button
                         onClick={() => setDashboardTab('journal')}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-[#1E1C23] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#36343B] transition-all shadow-xs cursor-pointer"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white/90 dark:bg-[#14204F]/60 backdrop-blur-md hover:bg-blue-50 dark:hover:bg-[#14204F] text-[#14204F] dark:text-blue-100 border border-slate-200/80 dark:border-blue-800/50 transition-all shadow-xs cursor-pointer"
                       >
                         <MaterialIcon name="arrow_back" size={16} />
                         <span>Return to Workspace</span>
                       </button>
-                      <div className="flex items-center gap-2 text-xs text-[#79747E] dark:text-[#938F99] font-medium">
-                        <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-blue-300/80 font-medium">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
                         <span>Geospatial Privacy Active</span>
                       </div>
                     </div>
@@ -865,12 +865,12 @@ export default function HomePage() {
                     <div className="flex items-center justify-between pb-1">
                       <button
                         onClick={() => setDashboardTab('journal')}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-[#1E1C23] hover:bg-[#EADDFF] dark:hover:bg-[#381E72] text-[#21005D] dark:text-[#EADDFF] border border-[#E8E4EE] dark:border-[#36343B] transition-all shadow-xs cursor-pointer"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white/90 dark:bg-[#14204F]/60 backdrop-blur-md hover:bg-blue-50 dark:hover:bg-[#14204F] text-[#14204F] dark:text-blue-100 border border-slate-200/80 dark:border-blue-800/50 transition-all shadow-xs cursor-pointer"
                       >
                         <MaterialIcon name="arrow_back" size={16} />
                         <span>Return to Journal Workspace</span>
                       </button>
-                      <div className="flex items-center gap-2 text-xs text-[#79747E] dark:text-[#938F99] font-medium">
+                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-blue-300/80 font-medium">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span>Zero-Trust Audit Stream</span>
                       </div>

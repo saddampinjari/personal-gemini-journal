@@ -12,7 +12,7 @@ interface JournalMapViewProps {
 }
 
 const MOOD_COLORS: Record<string, { bg: string; text: string; pinHex: string }> = {
-  reflective: { bg: 'bg-purple-100 dark:bg-purple-950/60', text: 'text-purple-700 dark:text-purple-300', pinHex: '#9333EA' },
+  reflective: { bg: 'bg-blue-100 dark:bg-blue-950/60', text: 'text-blue-700 dark:text-blue-300', pinHex: '#2563EB' },
   grateful: { bg: 'bg-emerald-100 dark:bg-emerald-950/60', text: 'text-emerald-700 dark:text-emerald-300', pinHex: '#059669' },
   anxious: { bg: 'bg-amber-100 dark:bg-amber-950/60', text: 'text-amber-700 dark:text-amber-300', pinHex: '#D97706' },
   energized: { bg: 'bg-blue-100 dark:bg-blue-950/60', text: 'text-blue-700 dark:text-blue-300', pinHex: '#2563EB' },
@@ -280,7 +280,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
       marker.bindTooltip(
         `<div style="font-family: sans-serif; font-size: 12px; padding: 2px 4px;">
            <strong style="color: #111827;">${item.title || 'Journal Entry'}</strong><br/>
-           <span style="color: #6750A4; font-weight: 600;">📍 ${cityName}</span>
+           <span style="color: #2563EB; font-weight: 600;">📍 ${cityName}</span>
          </div>`,
         { direction: 'top', offset: [0, -28] }
       );
@@ -315,9 +315,9 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
   return (
     <div className="w-full max-w-6xl mx-auto space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 dark:from-[#1E1B24] dark:via-[#1A1829] dark:to-[#161B2B] border border-indigo-100 dark:border-indigo-950/60 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-blue-50/80 via-sky-50/50 to-indigo-50/60 dark:from-[#14204F]/60 dark:via-[#0F1A3B]/60 dark:to-[#0B1120] border border-blue-100 dark:border-blue-900/40 shadow-sm backdrop-blur-md">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100/70 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/70 dark:bg-[#14204F]/70 text-blue-700 dark:text-blue-300 text-xs font-semibold">
             <MaterialIcon name="map" className="text-sm" />
             <span>Interactive Geospatial Journal</span>
           </div>
@@ -325,7 +325,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
             Location-Aware Reflections Map
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-xl">
-            Explore your reflections across cities and continents. The Zero-Trust Privacy Gateway masks every location name to <span className="font-mono text-indigo-600 dark:text-indigo-400 font-semibold">[LOCATION_1]</span> before sending to Gemini, preserving complete privacy.
+            Explore your reflections across cities and continents. The Zero-Trust Privacy Gateway masks every location name to <span className="font-mono text-blue-600 dark:text-blue-400 font-semibold">[LOCATION_1]</span> before sending to Gemini, preserving complete privacy.
           </p>
         </div>
 
@@ -335,7 +335,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
             onClick={() => setFilterMood('all')}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
               filterMood === 'all'
-                ? 'bg-[#6750A4] text-white shadow-sm'
+                ? 'bg-[#14204F] text-white shadow-sm'
                 : 'bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
             }`}
           >
@@ -347,7 +347,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
               onClick={() => setFilterMood(m)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-all cursor-pointer ${
                 filterMood === m
-                  ? 'bg-[#6750A4] text-white shadow-sm'
+                  ? 'bg-[#14204F] text-white shadow-sm'
                   : 'bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
               }`}
             >
@@ -360,7 +360,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
       {/* Main Map Container */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Real Leaflet Map Container */}
-        <div className="lg:col-span-2 relative h-[520px] rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl bg-slate-100 dark:bg-slate-900 flex flex-col">
+        <div className="lg:col-span-2 relative h-[520px] rounded-3xl overflow-hidden border border-slate-200 dark:border-blue-900/40 shadow-xl bg-slate-100 dark:bg-[#0B1120] flex flex-col">
           {/* Map Controls Top Bar */}
           <div className="absolute top-4 left-4 right-4 z-[500] flex items-center justify-between pointer-events-none">
             <div className="flex items-center gap-2">
@@ -372,7 +372,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
               <button
                 onClick={handleFitPins}
                 title="Fit to All Locations"
-                className="px-2.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 shadow-md pointer-events-auto flex items-center gap-1 cursor-pointer transition-colors"
+                className="px-2.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 shadow-md pointer-events-auto flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <MaterialIcon name="my_location" className="text-sm" />
                 <span className="hidden sm:inline">Fit Pins</span>
@@ -381,7 +381,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
               <button
                 onClick={handleResetWorld}
                 title="Reset to World View"
-                className="px-2.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 shadow-md pointer-events-auto flex items-center gap-1 cursor-pointer transition-colors"
+                className="px-2.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 shadow-md pointer-events-auto flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <MaterialIcon name="public" className="text-sm" />
                 <span className="hidden sm:inline">World</span>
@@ -394,7 +394,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
                 onClick={() => setMapStyle('clean')}
                 className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer ${
                   mapStyle === 'clean'
-                    ? 'bg-[#6750A4] text-white shadow-xs'
+                    ? 'bg-[#14204F] text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-black dark:hover:text-white'
                 }`}
               >
@@ -404,7 +404,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
                 onClick={() => setMapStyle('dark')}
                 className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer ${
                   mapStyle === 'dark'
-                    ? 'bg-[#6750A4] text-white shadow-xs'
+                    ? 'bg-[#14204F] text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-black dark:hover:text-white'
                 }`}
               >
@@ -414,7 +414,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
                 onClick={() => setMapStyle('standard')}
                 className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer ${
                   mapStyle === 'standard'
-                    ? 'bg-[#6750A4] text-white shadow-xs'
+                    ? 'bg-[#14204F] text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-black dark:hover:text-white'
                 }`}
               >
@@ -479,8 +479,8 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
                   </div>
 
                   {/* AI Reflection preview */}
-                  <div className="p-3 rounded-2xl bg-purple-50/50 dark:bg-purple-950/20 border border-purple-100 dark:border-purple-900/30">
-                    <div className="text-[11px] font-semibold text-purple-700 dark:text-purple-300 flex items-center gap-1 mb-1">
+                  <div className="p-3 rounded-2xl bg-blue-50/60 dark:bg-[#14204F]/30 border border-blue-100 dark:border-blue-900/40">
+                    <div className="text-[11px] font-semibold text-blue-700 dark:text-blue-300 flex items-center gap-1 mb-1">
                       <MaterialIcon name="psychology" className="text-xs" />
                       <span>Gemini Reflection Preview</span>
                     </div>
@@ -493,11 +493,11 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
                 {/* Open Button */}
                 <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                   <div className="text-[11px] text-slate-500">
-                    Model: <span className="font-mono text-indigo-600 dark:text-indigo-400">{selectedItem.modelUsed || 'gemini-2.5-flash'}</span>
+                    Model: <span className="font-mono text-blue-600 dark:text-blue-400">{selectedItem.modelUsed || 'gemini-2.5-flash'}</span>
                   </div>
                   <button
                     onClick={() => onSelectItem(selectedItem)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#6750A4] text-white text-xs font-semibold hover:bg-[#523e85] transition-colors shadow-sm cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#14204F] text-white text-xs font-semibold hover:bg-[#1E3A8A] transition-colors shadow-sm cursor-pointer"
                   >
                     <span>Open in Workspace</span>
                     <MaterialIcon name="arrow_forward" className="text-xs" />

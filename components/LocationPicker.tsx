@@ -147,10 +147,10 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
       )}
 
       {isOpen && (
-        <div className="absolute left-0 bottom-full mb-2 w-72 sm:w-80 bg-white dark:bg-[#1E1B24] rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-3 z-50 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute left-0 bottom-full mb-2 w-72 sm:w-80 bg-white/95 dark:bg-[#0E1528]/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-200 dark:border-blue-900/40 p-3 z-50 animate-in fade-in zoom-in-95 duration-200">
           <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
-              <MaterialIcon name="place" className="text-sm text-[#6750A4]" />
+              <MaterialIcon name="place" className="text-sm text-[#2563EB]" />
               <span>Location Context</span>
             </div>
             <button
@@ -163,14 +163,14 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
           </div>
 
           <div className="text-[11px] text-slate-500 dark:text-slate-400 mb-2 leading-tight">
-            Tag where you are reflecting. The Zero-Trust Gateway will redact it to <span className="font-mono text-indigo-600 dark:text-indigo-300 font-semibold">[LOCATION_1]</span> before invoking Gemini.
+            Tag where you are reflecting. The Zero-Trust Gateway will redact it to <span className="font-mono text-blue-600 dark:text-blue-300 font-semibold">[LOCATION_1]</span> before invoking Gemini.
           </div>
 
           <button
             type="button"
             onClick={handleDetectLocation}
             disabled={isDetecting}
-            className="w-full flex items-center justify-center gap-1.5 py-1.5 mb-2 px-3 rounded-xl bg-[#6750A4]/10 hover:bg-[#6750A4]/20 text-[#6750A4] dark:text-[#D0BCFF] text-xs font-medium transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 mb-2 px-3 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-[#14204F]/60 dark:hover:bg-[#14204F]/80 text-[#14204F] dark:text-blue-300 text-xs font-medium transition-colors cursor-pointer"
           >
             <MaterialIcon name="my_location" className={`text-sm ${isDetecting ? 'animate-spin' : ''}`} />
             <span>{isDetecting ? 'Detecting GPS...' : 'Use Current Device Location'}</span>
@@ -209,12 +209,12 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
               value={customInput}
               onChange={(e) => setCustomInput(e.target.value)}
               placeholder="Or type city/place..."
-              className="flex-1 px-2.5 py-1 text-xs rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-[#6750A4]"
+              className="flex-1 px-2.5 py-1 text-xs rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-[#2563EB]"
             />
             <button
               type="submit"
               disabled={!customInput.trim()}
-              className="px-2.5 py-1 rounded-xl bg-[#6750A4] text-white text-xs font-medium disabled:opacity-50 hover:bg-[#523e85] transition-colors"
+              className="px-2.5 py-1 rounded-xl bg-[#14204F] text-white text-xs font-medium disabled:opacity-50 hover:bg-[#1E3A8A] transition-colors cursor-pointer"
             >
               Pin
             </button>
