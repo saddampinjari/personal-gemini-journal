@@ -127,26 +127,22 @@ export function ReflectionViewer({
             </div>
           </div>
 
-          {/* Action buttons */}
+          {/* Action buttons - M3 Unified Buttons */}
           <div className="flex items-center gap-2.5 flex-wrap self-start lg:self-center">
             {onScrollToInspector && (
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 onClick={onScrollToInspector}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-white dark:bg-[#0B1120] hover:bg-blue-100 dark:hover:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-slate-200 dark:border-blue-900/40 shadow-2xs transition-colors cursor-pointer"
+                className="m3-btn m3-btn-tonal text-xs h-9 px-4"
               >
                 <MaterialIcon name="verified_user" size={16} className="text-emerald-600 dark:text-emerald-400" />
                 <span>Security HUD</span>
-              </motion.button>
+              </button>
             )}
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               id="copy-reflection-btn"
               onClick={handleCopy}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-white dark:bg-[#0B1120] hover:bg-slate-100 dark:hover:bg-[#14204F]/50 text-[#1C1B1F] dark:text-[#E6E1E5] border border-slate-200 dark:border-blue-900/40 shadow-2xs transition-colors cursor-pointer"
+              className="m3-btn m3-btn-outlined text-xs h-9 px-4"
               title="Copy to clipboard"
             >
               {copied ? (
@@ -155,19 +151,17 @@ export function ReflectionViewer({
                 <MaterialIcon name="content_copy" size={16} />
               )}
               <span>{copied ? 'Copied' : 'Copy'}</span>
-            </motion.button>
+            </button>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               id="export-reflection-btn"
               onClick={handleExport}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold bg-[#14204F] hover:bg-[#1E3A8A] text-white shadow-xs shadow-blue-950/20 transition-colors cursor-pointer"
+              className="m3-btn m3-btn-filled text-xs h-9 px-4"
               title="Export Markdown file"
             >
               <MaterialIcon name="file_download" size={16} />
               <span>Export</span>
-            </motion.button>
+            </button>
           </div>
         </div>
 
@@ -327,9 +321,10 @@ export function ReflectionViewer({
                   key={i}
                   type="button"
                   onClick={() => setFollowUpText(suggestion)}
-                  className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
+                  className="m3-chip text-[11px] h-7"
                 >
-                  {suggestion}
+                  <MaterialIcon name="lightbulb" size={12} className="text-[#2563EB] dark:text-blue-300" />
+                  <span>{suggestion}</span>
                 </button>
               ))}
             </div>
@@ -350,12 +345,12 @@ export function ReflectionViewer({
                 onChange={(e) => setFollowUpText(e.target.value)}
                 disabled={isFollowUpLoading}
                 placeholder="Ask a follow-up question or explore this thought further..."
-                className="flex-1 px-4 py-2.5 text-xs sm:text-sm rounded-2xl bg-slate-50/60 dark:bg-[#0B1120]/60 border border-slate-200 dark:border-blue-900/40 text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-slate-400 focus:outline-hidden focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 transition-all disabled:opacity-60"
+                className="flex-1 px-4 py-2 text-xs sm:text-sm rounded-full bg-slate-50/60 dark:bg-[#070A12]/60 border border-slate-200 dark:border-blue-900/40 text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-slate-400 focus:outline-hidden focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 transition-all disabled:opacity-60"
               />
               <button
                 type="submit"
                 disabled={!followUpText.trim() || isFollowUpLoading}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-2xl bg-[#14204F] hover:bg-[#1E3A8A] text-white text-xs sm:text-sm font-semibold shadow-xs shadow-blue-950/20 disabled:opacity-50 transition-colors cursor-pointer"
+                className="m3-btn m3-btn-filled text-xs sm:text-sm h-10 px-5"
               >
                 {isFollowUpLoading ? (
                   <>

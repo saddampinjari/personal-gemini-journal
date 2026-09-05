@@ -123,7 +123,7 @@ export function SecurityInspector({
           {onBackToJournal ? (
             <button
               onClick={onBackToJournal}
-              className="self-start sm:self-center flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold bg-white dark:bg-[#0B1120] hover:bg-blue-100 dark:hover:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-slate-200 dark:border-blue-900/40 transition-all shadow-xs cursor-pointer shrink-0"
+              className="m3-btn m3-btn-tonal text-xs h-9 px-4 self-start sm:self-center shrink-0"
             >
               <MaterialIcon name="chevron_left" size={16} />
               <span>Back to Journal</span>
@@ -470,10 +470,20 @@ export function SecurityInspector({
                     {firestorePath}
                   </p>
                 </div>
-                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-                  <MaterialIcon name="lock" size={14} />
-                  RBAC Enforced
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                    <MaterialIcon name="lock" size={14} />
+                    RBAC Enforced
+                  </span>
+                  <button
+                    onClick={copyFirestoreJson}
+                    className="m3-btn m3-btn-outlined text-xs h-8 px-3"
+                    title="Copy Firestore JSON"
+                  >
+                    <MaterialIcon name={copied ? "check" : "content_copy"} size={14} />
+                    <span>{copied ? 'Copied' : 'Copy JSON'}</span>
+                  </button>
+                </div>
               </div>
 
               <pre className="p-4 rounded-2xl bg-[#141218] text-amber-300 font-mono text-xs leading-relaxed overflow-x-auto border border-[#49454F] shadow-inner max-h-96">

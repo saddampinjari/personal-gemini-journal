@@ -337,13 +337,11 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
             <span>Encrypted with Secret Manager &bull; Isolated Firestore Subcollections</span>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             id="submit-reflection-btn"
             type="submit"
             disabled={!prompt.trim() || isLoading}
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#14204F] hover:bg-[#1E3A8A] active:bg-[#172554] text-white font-bold text-sm shadow-md shadow-blue-950/25 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="m3-btn m3-btn-filled h-12 px-8 text-sm font-medium w-full sm:w-auto"
           >
             {isLoading ? (
               <>
@@ -357,7 +355,7 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
                 <MaterialIcon name="send" size={16} className="ml-0.5" />
               </>
             )}
-          </motion.button>
+          </button>
         </motion.div>
       </form>
     </motion.div>

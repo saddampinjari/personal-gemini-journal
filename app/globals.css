@@ -20,10 +20,10 @@
   }
 
   .dark {
-    --bg-vibrant: #0B1120;
+    --bg-vibrant: #070A12;
     --text-vibrant: #F1F5F9;
-    --surface-vibrant: #0E172F;
-    --border-vibrant: #1E293B;
+    --surface-vibrant: #0D1426;
+    --border-vibrant: #172554;
   }
 }
 
@@ -43,8 +43,208 @@ body {
 }
 
 html.dark body {
-  background-color: #0B1120;
+  background-color: #070A12;
   color: #F1F5F9;
+}
+
+/* Material Design 3 (M3) Unified Button System */
+.m3-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: 0.01em;
+  border-radius: 9999px;
+  transition: all 0.2s cubic-bezier(0.05, 0.7, 0.1, 1.0);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  white-space: nowrap;
+}
+.m3-btn:active {
+  transform: scale(0.98);
+}
+.m3-btn:focus-visible {
+  outline: 2px solid #2563EB;
+  outline-offset: 2px;
+}
+.m3-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* M3 Filled Button (High emphasis) */
+.m3-btn-filled {
+  height: 2.5rem;
+  padding: 0 1.5rem;
+  background-color: #14204F;
+  color: #FFFFFF;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+.m3-btn-filled:hover {
+  background-color: #1E3A8A;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+html.dark .m3-btn-filled {
+  background-color: #2563EB;
+  color: #FFFFFF;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+}
+html.dark .m3-btn-filled:hover {
+  background-color: #1D4ED8;
+  box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.3);
+}
+
+/* M3 Filled Tonal Button (Medium-high emphasis) */
+.m3-btn-tonal {
+  height: 2.5rem;
+  padding: 0 1.25rem;
+  background-color: #DBEAFE;
+  color: #14204F;
+  border: 1px solid rgba(191, 219, 254, 0.6);
+}
+.m3-btn-tonal:hover {
+  background-color: #BFDBFE;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+html.dark .m3-btn-tonal {
+  background-color: rgba(20, 32, 79, 0.8);
+  color: #DBEAFE;
+  border: 1px solid rgba(37, 99, 235, 0.4);
+}
+html.dark .m3-btn-tonal:hover {
+  background-color: #1E3A8A;
+  color: #FFFFFF;
+}
+
+/* M3 Elevated Button */
+.m3-btn-elevated {
+  height: 2.5rem;
+  padding: 0 1.25rem;
+  background-color: #FFFFFF;
+  color: #14204F;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+}
+.m3-btn-elevated:hover {
+  background-color: #F8FAFC;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+html.dark .m3-btn-elevated {
+  background-color: #0E172F;
+  color: #DBEAFE;
+  border: 1px solid rgba(30, 58, 138, 0.5);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+}
+html.dark .m3-btn-elevated:hover {
+  background-color: #14204F;
+}
+
+/* M3 Outlined Button */
+.m3-btn-outlined {
+  height: 2.5rem;
+  padding: 0 1.25rem;
+  background-color: transparent;
+  color: #14204F;
+  border: 1px solid #CBD5E1;
+}
+.m3-btn-outlined:hover {
+  background-color: rgba(219, 234, 254, 0.5);
+  border-color: #94A3B8;
+}
+html.dark .m3-btn-outlined {
+  color: #93C5FD;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+html.dark .m3-btn-outlined:hover {
+  background-color: rgba(20, 32, 79, 0.5);
+  border-color: #3B82F6;
+}
+
+/* M3 Text Button */
+.m3-btn-text {
+  height: 2.5rem;
+  padding: 0 1rem;
+  background-color: transparent;
+  color: #2563EB;
+}
+.m3-btn-text:hover {
+  background-color: rgba(219, 234, 254, 0.5);
+}
+html.dark .m3-btn-text {
+  color: #60A5FA;
+}
+html.dark .m3-btn-text:hover {
+  background-color: rgba(20, 32, 79, 0.5);
+}
+
+/* M3 Icon Button (Standard 40x40 circular) */
+.m3-btn-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: #475569;
+}
+.m3-btn-icon:hover {
+  background-color: #F1F5F9;
+  color: #0F172A;
+}
+html.dark .m3-btn-icon {
+  color: #94A3B8;
+}
+html.dark .m3-btn-icon:hover {
+  background-color: rgba(20, 32, 79, 0.6);
+  color: #F1F5F9;
+}
+
+/* M3 Chip */
+.m3-chip {
+  height: 2rem;
+  padding: 0 0.875rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid #E2E8F0;
+  background-color: #FFFFFF;
+  color: #334155;
+}
+.m3-chip:hover {
+  background-color: #F8FAFC;
+  border-color: #CBD5E1;
+}
+html.dark .m3-chip {
+  background-color: #0B1120;
+  border-color: rgba(30, 58, 138, 0.4);
+  color: #CBD5E1;
+}
+html.dark .m3-chip:hover {
+  background-color: rgba(20, 32, 79, 0.6);
+  border-color: #2563EB;
+}
+.m3-chip-selected {
+  background-color: #14204F !important;
+  color: #FFFFFF !important;
+  border-color: #14204F !important;
+}
+html.dark .m3-chip-selected {
+  background-color: #2563EB !important;
+  color: #FFFFFF !important;
+  border-color: #2563EB !important;
 }
 
 /* Custom scrollbars for clean blue aesthetic */

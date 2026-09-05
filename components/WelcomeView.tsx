@@ -124,22 +124,19 @@ export function WelcomeView({
         </motion.div>
       )}
 
-      {/* Sign-In & Demo Actions */}
+      {/* Sign-In & Demo Actions - M3 Button Specification */}
       <motion.div
         variants={heroItemVariants}
         className="mt-8 flex flex-col sm:flex-row items-center gap-3.5 w-full max-w-md justify-center"
       >
-        {/* Google Sign In Brand Button */}
-        <motion.button
-          whileHover={{ y: -2, scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          transition={{ duration: 0.2 }}
+        {/* Google Sign In Brand Button - M3 Elevated */}
+        <button
           id="google-signin-btn"
           onClick={handleGoogleClick}
           disabled={isLoading}
-          className="w-full sm:w-auto flex-1 flex items-center justify-center gap-3 px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 dark:bg-[#0B1120] dark:hover:bg-[#14204F]/60 text-[#1C1B1F] dark:text-[#E6E1E5] border border-slate-200 dark:border-blue-900/40 shadow-xs font-semibold text-sm transition-colors hover:border-blue-400 disabled:opacity-50 cursor-pointer"
+          className="m3-btn m3-btn-elevated h-12 px-6 w-full sm:w-auto flex-1 font-medium text-sm"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
@@ -158,29 +155,28 @@ export function WelcomeView({
             />
           </svg>
           <span>{isLoading ? 'Connecting...' : 'Sign In with Google'}</span>
-        </motion.button>
+        </button>
 
-        {/* Quick Demo Launch Button */}
-        <motion.button
-          whileHover={{ y: -2, scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          transition={{ duration: 0.2 }}
+        {/* Quick Demo Launch Button - M3 Filled */}
+        <button
           id="demo-session-btn"
           onClick={onStartDemoSession}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#14204F] hover:bg-[#1E3A8A] active:bg-[#172554] text-white font-semibold text-sm shadow-md shadow-blue-950/20 transition-colors cursor-pointer"
+          className="m3-btn m3-btn-filled h-12 px-7 w-full sm:w-auto font-medium text-sm"
         >
+          <MaterialIcon name="auto_awesome" size={18} />
           <span>Test Demo Session</span>
-          <MaterialIcon name="arrow_forward" size={18} />
-        </motion.button>
+          <MaterialIcon name="arrow_forward" size={16} />
+        </button>
       </motion.div>
 
       {onOpenAccountPicker && (
         <motion.button
           variants={heroItemVariants}
           onClick={onOpenAccountPicker}
-          className="mt-3.5 text-xs text-[#2563EB] dark:text-blue-300 hover:underline font-semibold cursor-pointer"
+          className="m3-btn m3-btn-text mt-3.5 text-xs font-semibold"
         >
-          Or choose/switch Google Account &rarr;
+          <span>Or choose/switch Google Account</span>
+          <MaterialIcon name="arrow_forward" size={14} />
         </motion.button>
       )}
 

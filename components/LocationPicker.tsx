@@ -139,9 +139,9 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium transition-all"
+          className="m3-chip text-xs hover:border-blue-400"
         >
-          <MaterialIcon name="add_location_alt" className="text-sm text-slate-500 dark:text-slate-400" />
+          <MaterialIcon name="add_location_alt" size={14} className="text-[#2563EB] dark:text-blue-400" />
           <span>Add Location</span>
         </button>
       )}
@@ -150,15 +150,15 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
         <div className="absolute left-0 bottom-full mb-2 w-72 sm:w-80 bg-white/95 dark:bg-[#0E1528]/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-200 dark:border-blue-900/40 p-3 z-50 animate-in fade-in zoom-in-95 duration-200">
           <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
-              <MaterialIcon name="place" className="text-sm text-[#2563EB]" />
+              <MaterialIcon name="place" size={14} className="text-[#2563EB]" />
               <span>Location Context</span>
             </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              className="m3-btn-icon w-7 h-7 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
             >
-              <MaterialIcon name="close" className="text-xs" />
+              <MaterialIcon name="close" size={14} />
             </button>
           </div>
 
@@ -170,9 +170,9 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
             type="button"
             onClick={handleDetectLocation}
             disabled={isDetecting}
-            className="w-full flex items-center justify-center gap-1.5 py-1.5 mb-2 px-3 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-[#14204F]/60 dark:hover:bg-[#14204F]/80 text-[#14204F] dark:text-blue-300 text-xs font-medium transition-colors cursor-pointer"
+            className="m3-btn m3-btn-tonal text-xs h-8.5 w-full mb-2"
           >
-            <MaterialIcon name="my_location" className={`text-sm ${isDetecting ? 'animate-spin' : ''}`} />
+            <MaterialIcon name="my_location" size={14} className={isDetecting ? 'animate-spin' : ''} />
             <span>{isDetecting ? 'Detecting GPS...' : 'Use Current Device Location'}</span>
           </button>
 
@@ -195,7 +195,7 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
                     onChange(loc);
                     setIsOpen(false);
                   }}
-                  className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-medium transition-colors"
+                  className="m3-chip text-[11px] h-6 px-2.5"
                 >
                   {loc.name.split(',')[0]}
                 </button>
@@ -209,12 +209,12 @@ export function LocationPicker({ location, onChange }: LocationPickerProps) {
               value={customInput}
               onChange={(e) => setCustomInput(e.target.value)}
               placeholder="Or type city/place..."
-              className="flex-1 px-2.5 py-1 text-xs rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-[#2563EB]"
+              className="flex-1 px-3 py-1 text-xs rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-[#2563EB]"
             />
             <button
               type="submit"
               disabled={!customInput.trim()}
-              className="px-2.5 py-1 rounded-xl bg-[#14204F] text-white text-xs font-medium disabled:opacity-50 hover:bg-[#1E3A8A] transition-colors cursor-pointer"
+              className="m3-btn m3-btn-filled text-xs h-8 px-3.5"
             >
               Pin
             </button>

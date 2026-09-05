@@ -154,7 +154,7 @@ export function Sidebar({
             <div className="flex items-center gap-1.5">
               <button
                 onClick={onToggle}
-                className="lg:hidden p-2 rounded-full hover:bg-slate-100 dark:hover:bg-[#14204F]/60 text-[#49454F] dark:text-[#CAC4D0]"
+                className="lg:hidden m3-btn-icon"
                 aria-label="Close Sidebar"
               >
                 <MaterialIcon name="chevron_left" size={20} />
@@ -165,7 +165,7 @@ export function Sidebar({
           <button
             id="new-reflection-sidebar-btn"
             onClick={onNew}
-            className="flex items-center justify-center gap-2 w-full py-3 px-5 rounded-full bg-[#14204F] hover:bg-[#1E3A8A] active:bg-[#172554] text-white font-semibold text-xs shadow-sm hover:shadow-md shadow-blue-950/20 transition-all active:scale-[0.98]"
+            className="m3-btn m3-btn-filled w-full h-11 text-xs"
           >
             <MaterialIcon name="add" size={18} className="text-white" />
             <span>New Reflection</span>
@@ -173,7 +173,7 @@ export function Sidebar({
 
           {/* Search Box */}
           <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#79747E] dark:text-[#938F99] flex items-center pointer-events-none">
+            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#79747E] dark:text-[#938F99] flex items-center pointer-events-none">
               <MaterialIcon name="search" size={18} />
             </div>
             <input
@@ -182,11 +182,11 @@ export function Sidebar({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search thoughts, insights..."
-              className="w-full pl-9 pr-4 py-2 text-xs rounded-full bg-slate-100/90 dark:bg-[#14204F]/30 border border-slate-200 dark:border-blue-900/40 text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-slate-400 focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-all"
+              className="w-full pl-10 pr-4 py-2 text-xs rounded-full bg-slate-100/90 dark:bg-[#14204F]/30 border border-slate-200 dark:border-blue-900/40 text-[#1C1B1F] dark:text-[#E6E1E5] placeholder-slate-400 focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-all"
             />
           </div>
 
-          {/* Mood Filter Pills */}
+          {/* Mood Filter Pills - M3 Filter Chips */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
             {['all', 'reflective', 'grateful', 'anxious', 'energized', 'thoughtful'].map((mood) => {
               const isSelected = selectedMood === mood;
@@ -194,11 +194,7 @@ export function Sidebar({
                 <button
                   key={mood}
                   onClick={() => setSelectedMood(mood)}
-                  className={`px-3 py-1 rounded-full whitespace-nowrap capitalize text-[11px] font-semibold transition-all ${
-                    isSelected
-                      ? 'bg-[#14204F] text-white shadow-xs'
-                      : 'bg-slate-100 dark:bg-[#14204F]/40 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#14204F]/70'
-                  }`}
+                  className={`m3-chip ${isSelected ? 'm3-chip-selected' : ''} capitalize whitespace-nowrap`}
                 >
                   {mood}
                 </button>

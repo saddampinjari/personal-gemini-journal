@@ -130,16 +130,13 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading }: AuthModa
             className="w-full max-w-md bg-white/95 dark:bg-[#0E1528]/95 backdrop-blur-2xl rounded-3xl border border-slate-200 dark:border-blue-900/50 shadow-2xl p-6 sm:p-7 relative overflow-hidden"
           >
             {/* Close Button */}
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 90 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ duration: 0.2 }}
+            <button
               onClick={onClose}
-              className="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-[#14204F]/50 text-slate-500 dark:text-slate-400 transition-colors"
+              className="absolute top-4 right-4 m3-btn-icon text-slate-500 dark:text-slate-400"
               aria-label="Close modal"
             >
               <MaterialIcon name="close" size={20} />
-            </motion.button>
+            </button>
 
             {/* Modal Header */}
             <motion.div variants={itemVariants} className="flex items-center gap-3 mb-5">
@@ -269,9 +266,10 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading }: AuthModa
               {!showCustomInput ? (
                 <button
                   onClick={() => setShowCustomInput(true)}
-                  className="text-xs font-semibold text-[#2563EB] dark:text-blue-300 hover:underline block mx-auto cursor-pointer"
+                  className="m3-btn m3-btn-text text-xs block mx-auto"
                 >
-                  Sign in with another Google Email &rarr;
+                  <span>Sign in with another Google Email</span>
+                  <MaterialIcon name="arrow_forward" size={14} />
                 </button>
               ) : (
                 <motion.form
@@ -288,7 +286,7 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading }: AuthModa
                       value={customEmail}
                       onChange={(e) => setCustomEmail(e.target.value)}
                       placeholder="name@gmail.com"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-blue-900/40 text-xs text-[#1C1B1F] dark:text-[#E6E1E5] focus:outline-hidden focus:ring-2 focus:ring-[#2563EB]"
+                      className="w-full px-3.5 py-2.5 rounded-full bg-slate-50 dark:bg-[#070A12] border border-slate-200 dark:border-blue-900/40 text-xs text-[#1C1B1F] dark:text-[#E6E1E5] focus:outline-hidden focus:ring-2 focus:ring-[#2563EB]"
                     />
                   </div>
                   <div className="flex gap-2">
@@ -297,11 +295,11 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading }: AuthModa
                       value={customName}
                       onChange={(e) => setCustomName(e.target.value)}
                       placeholder="Full Name (optional)"
-                      className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-[#0B1120] border border-slate-200 dark:border-blue-900/40 text-xs text-[#1C1B1F] dark:text-[#E6E1E5] focus:outline-hidden focus:ring-2 focus:ring-[#2563EB]"
+                      className="flex-1 px-3.5 py-2.5 rounded-full bg-slate-50 dark:bg-[#070A12] border border-slate-200 dark:border-blue-900/40 text-xs text-[#1C1B1F] dark:text-[#E6E1E5] focus:outline-hidden focus:ring-2 focus:ring-[#2563EB]"
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2.5 rounded-xl bg-[#14204F] text-white text-xs font-semibold hover:bg-[#1E3A8A] transition-colors cursor-pointer"
+                      className="m3-btn m3-btn-filled text-xs h-9 px-4"
                     >
                       Continue
                     </button>

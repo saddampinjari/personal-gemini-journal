@@ -62,12 +62,12 @@ export function Header({
           </div>
         </div>
 
-        {/* View Switcher (Visible when user is authenticated) */}
+        {/* View Switcher (Visible when user is authenticated) - M3 Segmented Button Group */}
         {user && onTabChange && (
-          <div className="flex items-center bg-slate-100/90 dark:bg-[#0B1120]/90 backdrop-blur-md p-1 rounded-full border border-slate-200 dark:border-blue-900/40">
+          <div className="flex items-center bg-slate-100/90 dark:bg-[#070A12]/90 backdrop-blur-md p-1 rounded-full border border-slate-200 dark:border-blue-900/40">
             <button
               onClick={() => onTabChange('journal')}
-              className={`flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer ${
                 activeTab === 'journal'
                   ? 'bg-white dark:bg-[#14204F] text-[#2563EB] dark:text-blue-300 shadow-xs border border-blue-100 dark:border-blue-700/50'
                   : 'text-[#49454F] dark:text-[#CAC4D0] hover:text-[#1C1B1F] dark:hover:text-white'
@@ -79,7 +79,7 @@ export function Header({
 
             <button
               onClick={() => onTabChange('map')}
-              className={`flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer ${
                 activeTab === 'map'
                   ? 'bg-white dark:bg-[#14204F] text-[#2563EB] dark:text-blue-300 shadow-xs border border-blue-100 dark:border-blue-700/50'
                   : 'text-[#49454F] dark:text-[#CAC4D0] hover:text-[#1C1B1F] dark:hover:text-white'
@@ -91,7 +91,7 @@ export function Header({
 
             <button
               onClick={() => onTabChange('inspector')}
-              className={`flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all cursor-pointer ${
                 activeTab === 'inspector'
                   ? 'bg-white dark:bg-[#14204F] text-[#2563EB] dark:text-blue-300 shadow-xs border border-blue-100 dark:border-blue-700/50'
                   : 'text-[#49454F] dark:text-[#CAC4D0] hover:text-[#1C1B1F] dark:hover:text-white'
@@ -123,7 +123,7 @@ export function Header({
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100/80 dark:bg-[#0B1120]/80 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 text-[#1C1B1F] dark:text-[#E6E1E5] text-xs font-medium"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100/80 dark:bg-[#070A12]/80 backdrop-blur-md border border-slate-200 dark:border-blue-900/40 text-[#1C1B1F] dark:text-[#E6E1E5] text-xs font-medium"
               >
                 <div className="w-6 h-6 rounded-full bg-[#14204F] dark:bg-[#2563EB] text-white flex items-center justify-center text-xs font-bold shadow-xs">
                   {(user.displayName || user.email || 'U')[0].toUpperCase()}
@@ -142,23 +142,21 @@ export function Header({
                 id="sign-out-btn"
                 onClick={onSignOut}
                 title="Sign Out"
-                className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-[#14204F]/50 text-[#49454F] hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
+                className="m3-btn-icon hover:text-rose-600 dark:hover:text-rose-400"
                 aria-label="Sign Out"
               >
                 <MaterialIcon name="logout" size={18} />
               </button>
             </div>
           ) : (
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+            <button
               id="header-sign-in-btn"
               onClick={onOpenAuth}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold bg-[#14204F] hover:bg-[#1E3A8A] text-white shadow-xs shadow-blue-950/20 transition-colors cursor-pointer"
+              className="m3-btn m3-btn-filled text-xs h-10 px-5"
             >
               <MaterialIcon name="person" size={18} />
               <span>Sign In</span>
-            </motion.button>
+            </button>
           )}
         </div>
       </div>

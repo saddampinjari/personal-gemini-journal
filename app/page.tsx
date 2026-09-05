@@ -611,7 +611,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#FDF8FF] dark:bg-[#141218] text-[#1C1B1F] dark:text-[#E6E1E5] flex flex-col font-sans transition-colors duration-200 overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#F8FAFC] dark:bg-[#070A12] text-[#1C1B1F] dark:text-[#E6E1E5] flex flex-col font-sans transition-colors duration-200 overflow-x-hidden">
       {/* Gemini Signature Ambient Central Glow */}
       <GeminiBackgroundGlow />
 
@@ -639,266 +639,267 @@ export default function HomePage() {
         ) : (
           <AnimatePresence mode="wait">
             {!currentUser ? (
-              /* Welcome / Auth View */
               <motion.div
-                key="welcome-view"
-                variants={viewTransitionVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
+                key="view-welcome"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.35, ease: M3_DECELERATE }}
+                className="flex-1 flex items-center justify-center"
+              >
+                <WelcomeView
+                  onSignInWithGoogle={handleGoogleSignIn}
+                  onStartDemoSession={handleStartDemoSession}
+                  onOpenAccountPicker={() => setIsAuthModalOpen(true)}
+                  isLoading={isAuthLoading}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="view-authenticated"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35, ease: M3_DECELERATE }}
                 className="flex-1 flex flex-col"
               >
-              <WelcomeView
-                onSignInWithGoogle={handleGoogleSignIn}
-                onStartDemoSession={handleStartDemoSession}
-                onOpenAccountPicker={() => setIsAuthModalOpen(true)}
-                isLoading={isAuthLoading}
-              />
-            </motion.div>
-          ) : (
-            /* Authenticated Journal Dashboard */
-            <motion.div
-              key="dashboard-view"
-              variants={viewTransitionVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="flex-1 w-full min-h-[calc(100vh-4.5rem)] flex flex-col"
-            >
-            {/* History Sidebar: Fixed on the left */}
-            <Sidebar
-              items={journalItems}
-              selectedId={activeItem?.interactionId || null}
-              onSelect={(item) => {
-                handleSelectItem(item);
-                setDashboardTab('journal');
-              }}
-              onNew={() => {
-                handleNewReflection();
-                setDashboardTab('journal');
-              }}
-              onDelete={handleDeleteItem}
-              isOpen={sidebarOpen}
-              onToggle={() => setSidebarOpen(!sidebarOpen)}
-            />
-
-            {/* Main Content Workspace: Offset by the fixed sidebar and centered */}
-            <main className="flex-1 w-full lg:pl-80 xl:pl-84 flex flex-col items-center">
-              <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 py-7 space-y-7">
-                {/* Top action bar on mobile */}
-                <div className="flex items-center justify-between lg:hidden pb-1">
-                <button
-                  onClick={() => setSidebarOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/85 dark:bg-[#14204F]/70 backdrop-blur-xl border border-slate-200/80 dark:border-blue-900/40 text-xs font-semibold text-slate-800 dark:text-blue-100 shadow-xs cursor-pointer"
-                >
-                  <MaterialIcon name="menu" size={18} className="text-[#2563EB] dark:text-blue-300" />
-                  <span>Journals ({journalItems.length})</span>
-                </button>
-
-                <button
-                  onClick={() => {
+                {/* Fixed Drawer / Desktop Sidebar */}
+                <Sidebar
+                  items={journalItems}
+                  selectedId={activeItem?.interactionId || null}
+                  onSelect={(item) => {
+                    handleSelectItem(item);
+                    setDashboardTab('journal');
+                  }}
+                  onNew={() => {
                     handleNewReflection();
                     setDashboardTab('journal');
                   }}
-                  className="px-4 py-2 rounded-full bg-[#14204F] hover:bg-[#1E3A8A] text-white text-xs font-semibold shadow-xs cursor-pointer"
-                >
-                  + New Reflection
-                </button>
-              </div>
+                  onDelete={handleDeleteItem}
+                  isOpen={sidebarOpen}
+                  onToggle={() => setSidebarOpen(!sidebarOpen)}
+                />
 
-              {/* Error Notification */}
-              {errorMessage && (
-                <div className="p-4 rounded-2xl bg-red-500/10 dark:bg-red-950/40 backdrop-blur-md border border-red-200 dark:border-red-900/40 text-red-900 dark:text-red-200 text-xs flex items-center gap-2 shadow-xs">
-                  <MaterialIcon name="error_outline" size={18} className="shrink-0 text-red-600 dark:text-red-400" />
-                  <span className="flex-1">{errorMessage}</span>
-                  <button
-                    onClick={() => setErrorMessage(null)}
-                    className="font-bold px-2 py-0.5 hover:bg-red-500/20 dark:hover:bg-red-900/40 rounded cursor-pointer"
-                  >
-                    Dismiss
-                  </button>
-                </div>
-              )}
+                {/* Main Content Workspace: Offset by the fixed sidebar and centered */}
+                <main className="flex-1 w-full lg:pl-80 xl:pl-84 flex flex-col items-center">
+                  <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 py-7 space-y-7">
+                    {/* Top action bar on mobile */}
+                    <div className="flex items-center justify-between lg:hidden pb-1">
+                      <button
+                        onClick={() => setSidebarOpen(true)}
+                        className="m3-btn m3-btn-tonal text-xs h-9 px-4"
+                      >
+                        <MaterialIcon name="menu" size={18} className="text-[#2563EB] dark:text-blue-300" />
+                        <span>Journals ({journalItems.length})</span>
+                      </button>
 
-              {/* Tab Content with M3 Transitions */}
-              <AnimatePresence mode="wait">
-                {dashboardTab === 'journal' ? (
-                  <motion.div
-                    key="tab-journal"
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -14 }}
-                    transition={{ duration: 0.35, ease: M3_DECELERATE }}
-                    className="space-y-7"
-                  >
-                    {/* Animated Card View Switcher */}
-                    <AnimatePresence mode="wait" initial={false}>
-                      {activeItem && !isSubmitting ? (
-                        <motion.div
-                          key={activeItem.interactionId}
-                          initial={{ opacity: 0, y: 8 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -8 }}
-                          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                          className="space-y-4"
+                      <button
+                        onClick={() => {
+                          handleNewReflection();
+                          setDashboardTab('journal');
+                        }}
+                        className="m3-btn m3-btn-filled text-xs h-9 px-4"
+                      >
+                        <MaterialIcon name="add" size={16} />
+                        <span>New Reflection</span>
+                      </button>
+                    </div>
+
+                    {/* Error Notification */}
+                    {errorMessage && (
+                      <div className="p-4 rounded-2xl bg-red-500/10 dark:bg-red-950/40 backdrop-blur-md border border-red-200 dark:border-red-900/40 text-red-900 dark:text-red-200 text-xs flex items-center gap-2 shadow-xs">
+                        <MaterialIcon name="error_outline" size={18} className="shrink-0 text-red-600 dark:text-red-400" />
+                        <span className="flex-1">{errorMessage}</span>
+                        <button
+                          onClick={() => setErrorMessage(null)}
+                          className="font-bold px-2 py-0.5 hover:bg-red-500/20 dark:hover:bg-red-900/40 rounded cursor-pointer"
                         >
-                          {/* Clear Top Navigation Bar Matching Security HUD */}
+                          Dismiss
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Tab Content with M3 Transitions */}
+                    <AnimatePresence mode="wait">
+                      {dashboardTab === 'journal' ? (
+                        <motion.div
+                          key="tab-journal"
+                          initial={{ opacity: 0, y: 14 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -14 }}
+                          transition={{ duration: 0.35, ease: M3_DECELERATE }}
+                          className="space-y-7"
+                        >
+                          {/* Animated Card View Switcher */}
+                          <AnimatePresence mode="wait" initial={false}>
+                            {activeItem && !isSubmitting ? (
+                              <motion.div
+                                key={activeItem.interactionId}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -8 }}
+                                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                                className="space-y-4"
+                              >
+                                {/* Clear Top Navigation Bar Matching Security HUD */}
+                                <div className="flex items-center justify-between pb-1">
+                                  <button
+                                    onClick={() => handleNewReflection()}
+                                    className="m3-btn m3-btn-tonal text-xs h-9 px-4"
+                                  >
+                                    <MaterialIcon name="add" size={16} />
+                                    <span>Create New Reflection</span>
+                                  </button>
+                                  <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-blue-300/80 font-medium">
+                                    <span className="w-2 h-2 rounded-full bg-[#2563EB] dark:bg-blue-400"></span>
+                                    <span>Viewing Archival Record</span>
+                                  </div>
+                                </div>
+
+                                <ReflectionViewer
+                                  title={activeItem.title}
+                                  reflection={activeItem.reflection}
+                                  mood={activeItem.mood}
+                                  modelUsed={activeItem.modelUsed}
+                                  piiEntitiesCount={activeItem.piiEntitiesCount}
+                                  latencyMs={activeItem.latencyMs}
+                                  createdAt={activeItem.createdAt}
+                                  location={activeItem.location}
+                                  conversation={activeItem.conversation}
+                                  onFollowUpSubmit={handleFollowUpReflection}
+                                  isFollowUpLoading={isFollowUpLoading}
+                                  onScrollToInspector={handleScrollToInspector}
+                                />
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key="composer-view"
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -8 }}
+                                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                              >
+                                <ReflectionComposer
+                                  onSubmit={handleCreateReflection}
+                                  isLoading={isSubmitting}
+                                />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+
+                          {/* Security Telemetry Banner (Spacious & Clean) */}
+                          <div className="p-5 sm:p-6 rounded-3xl bg-white/85 dark:bg-[#0E1528]/85 backdrop-blur-xl border border-slate-200/80 dark:border-blue-900/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200 flex items-center justify-center shrink-0 border border-blue-200/60 dark:border-blue-800/40">
+                                <MaterialIcon name="shield" size={20} className="text-[#2563EB] dark:text-blue-400" />
+                              </div>
+                              <div>
+                                <h4 className="font-bold text-sm text-slate-900 dark:text-blue-50">
+                                  Zero-Trust Security Gateway Active
+                                </h4>
+                                <p className="text-xs text-slate-500 dark:text-blue-200/70 mt-0.5">
+                                  {inspectorData?.piiCountScrubbed || 0} PII entities identified &bull; Secret Manager key cached &bull; Subcollection RBAC
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                              <button
+                                onClick={() => setDashboardTab('map')}
+                                className="m3-btn m3-btn-outlined text-xs h-10 px-5 flex-1 sm:flex-none"
+                              >
+                                <span>View Map</span>
+                                <MaterialIcon name="arrow_forward" size={14} />
+                              </button>
+                              <button
+                                onClick={() => setDashboardTab('inspector')}
+                                className="m3-btn m3-btn-filled text-xs h-10 px-5 flex-1 sm:flex-none"
+                              >
+                                <MaterialIcon name="verified_user" size={16} />
+                                <span>Security HUD</span>
+                              </button>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ) : dashboardTab === 'map' ? (
+                        <motion.div
+                          key="tab-map"
+                          initial={{ opacity: 0, y: 14 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -14 }}
+                          transition={{ duration: 0.35, ease: M3_DECELERATE }}
+                          className="space-y-6"
+                        >
                           <div className="flex items-center justify-between pb-1">
                             <button
-                              onClick={() => handleNewReflection()}
-                              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white/90 dark:bg-[#14204F]/60 backdrop-blur-md hover:bg-blue-50 dark:hover:bg-[#14204F] text-[#14204F] dark:text-blue-100 border border-slate-200/80 dark:border-blue-800/50 transition-all shadow-xs cursor-pointer"
+                              onClick={() => setDashboardTab('journal')}
+                              className="m3-btn m3-btn-tonal text-xs h-9 px-4"
                             >
-                              <MaterialIcon name="add" size={16} />
-                              <span>Create New Reflection</span>
+                              <MaterialIcon name="arrow_back" size={16} />
+                              <span>Return to Workspace</span>
                             </button>
                             <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-blue-300/80 font-medium">
-                              <span className="w-2 h-2 rounded-full bg-[#2563EB] dark:bg-blue-400"></span>
-                              <span>Viewing Archival Record</span>
+                              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                              <span>Geospatial Privacy Active</span>
                             </div>
                           </div>
 
-                          <ReflectionViewer
-                            title={activeItem.title}
-                            reflection={activeItem.reflection}
-                            mood={activeItem.mood}
-                            modelUsed={activeItem.modelUsed}
-                            piiEntitiesCount={activeItem.piiEntitiesCount}
-                            latencyMs={activeItem.latencyMs}
-                            createdAt={activeItem.createdAt}
-                            location={activeItem.location}
-                            conversation={activeItem.conversation}
-                            onFollowUpSubmit={handleFollowUpReflection}
-                            isFollowUpLoading={isFollowUpLoading}
-                            onScrollToInspector={handleScrollToInspector}
+                          <JournalMapView
+                            items={journalItems}
+                            onSelectItem={(item) => {
+                              handleSelectItem(item);
+                              setDashboardTab('journal');
+                            }}
                           />
                         </motion.div>
                       ) : (
                         <motion.div
-                          key="composer-view"
-                          initial={{ opacity: 0, y: 8 }}
+                          key="tab-inspector"
+                          ref={inspectorRef}
+                          initial={{ opacity: 0, y: 14 }}
                           animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -8 }}
-                          transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                          exit={{ opacity: 0, y: -14 }}
+                          transition={{ duration: 0.35, ease: M3_DECELERATE }}
+                          className="space-y-4"
                         >
-                          <ReflectionComposer
-                            onSubmit={handleCreateReflection}
-                            isLoading={isSubmitting}
+                          {/* Top Navigation Bar with Clear Breadcrumb & Status */}
+                          <div className="flex items-center justify-between pb-1">
+                            <button
+                              onClick={() => setDashboardTab('journal')}
+                              className="m3-btn m3-btn-tonal text-xs h-9 px-4"
+                            >
+                              <MaterialIcon name="arrow_back" size={16} />
+                              <span>Return to Journal Workspace</span>
+                            </button>
+                            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-blue-300/80 font-medium">
+                              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                              <span>Zero-Trust Audit Stream</span>
+                            </div>
+                          </div>
+
+                          <SecurityInspector
+                            rawPrompt={inspectorData?.rawPrompt || ''}
+                            sanitizedPrompt={inspectorData?.sanitizedPrompt || ''}
+                            piiEntities={inspectorData?.piiEntities || []}
+                            piiCountScrubbed={inspectorData?.piiCountScrubbed || 0}
+                            tokenMap={inspectorData?.tokenMap || {}}
+                            modelUsed={inspectorData?.modelUsed || 'gemini-2.5-flash'}
+                            fallbackTrail={inspectorData?.fallbackTrail || []}
+                            latencyMs={inspectorData?.latencyMs || 0}
+                            secretSource={inspectorData?.secretSource || 'Google Cloud Secret Manager'}
+                            secretCached={inspectorData?.secretCached ?? true}
+                            storedFirestoreDoc={inspectorData?.storedFirestoreDoc}
+                            onBackToJournal={() => setDashboardTab('journal')}
                           />
                         </motion.div>
                       )}
                     </AnimatePresence>
-
-                    {/* Security Telemetry Banner (Spacious & Clean) */}
-                    <div className="p-5 sm:p-6 rounded-3xl bg-white/85 dark:bg-[#0E1528]/85 backdrop-blur-xl border border-slate-200/80 dark:border-blue-900/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200 flex items-center justify-center shrink-0 border border-blue-200/60 dark:border-blue-800/40">
-                          <MaterialIcon name="shield" size={20} className="text-[#2563EB] dark:text-blue-400" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-sm text-slate-900 dark:text-blue-50">
-                            Zero-Trust Security Gateway Active
-                          </h4>
-                          <p className="text-xs text-slate-500 dark:text-blue-200/70 mt-0.5">
-                            {inspectorData?.piiCountScrubbed || 0} PII entities identified &bull; Secret Manager key cached &bull; Subcollection RBAC
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <button
-                          onClick={() => setDashboardTab('map')}
-                          className="flex-1 sm:flex-none px-4 py-2.5 rounded-full text-xs font-bold bg-white/90 dark:bg-[#14204F]/50 backdrop-blur-md hover:bg-slate-100 dark:hover:bg-[#14204F] text-slate-700 dark:text-blue-200 border border-slate-200 dark:border-blue-900/40 transition-colors cursor-pointer"
-                        >
-                          View Map &rarr;
-                        </button>
-                        <button
-                          onClick={() => setDashboardTab('inspector')}
-                          className="flex-1 sm:flex-none px-5 py-2.5 rounded-full text-xs font-bold bg-[#14204F] hover:bg-[#1E3A8A] text-white border border-[#2563EB]/40 shadow-xs transition-colors cursor-pointer"
-                        >
-                          Security HUD &rarr;
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : dashboardTab === 'map' ? (
-                  <motion.div
-                    key="tab-map"
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -14 }}
-                    transition={{ duration: 0.35, ease: M3_DECELERATE }}
-                    className="space-y-6"
-                  >
-                    <div className="flex items-center justify-between pb-1">
-                      <button
-                        onClick={() => setDashboardTab('journal')}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white/90 dark:bg-[#14204F]/60 backdrop-blur-md hover:bg-blue-50 dark:hover:bg-[#14204F] text-[#14204F] dark:text-blue-100 border border-slate-200/80 dark:border-blue-800/50 transition-all shadow-xs cursor-pointer"
-                      >
-                        <MaterialIcon name="arrow_back" size={16} />
-                        <span>Return to Workspace</span>
-                      </button>
-                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-blue-300/80 font-medium">
-                        <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                        <span>Geospatial Privacy Active</span>
-                      </div>
-                    </div>
-
-                    <JournalMapView
-                      items={journalItems}
-                      onSelectItem={(item) => {
-                        handleSelectItem(item);
-                        setDashboardTab('journal');
-                      }}
-                    />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="tab-inspector"
-                    ref={inspectorRef}
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -14 }}
-                    transition={{ duration: 0.35, ease: M3_DECELERATE }}
-                    className="space-y-4"
-                  >
-                    {/* Top Navigation Bar with Clear Breadcrumb & Status */}
-                    <div className="flex items-center justify-between pb-1">
-                      <button
-                        onClick={() => setDashboardTab('journal')}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-white/90 dark:bg-[#14204F]/60 backdrop-blur-md hover:bg-blue-50 dark:hover:bg-[#14204F] text-[#14204F] dark:text-blue-100 border border-slate-200/80 dark:border-blue-800/50 transition-all shadow-xs cursor-pointer"
-                      >
-                        <MaterialIcon name="arrow_back" size={16} />
-                        <span>Return to Journal Workspace</span>
-                      </button>
-                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-blue-300/80 font-medium">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span>Zero-Trust Audit Stream</span>
-                      </div>
-                    </div>
-
-                    <SecurityInspector
-                      rawPrompt={inspectorData?.rawPrompt || ''}
-                      sanitizedPrompt={inspectorData?.sanitizedPrompt || ''}
-                      piiEntities={inspectorData?.piiEntities || []}
-                      piiCountScrubbed={inspectorData?.piiCountScrubbed || 0}
-                      tokenMap={inspectorData?.tokenMap || {}}
-                      modelUsed={inspectorData?.modelUsed || 'gemini-2.5-flash'}
-                      fallbackTrail={inspectorData?.fallbackTrail || []}
-                      latencyMs={inspectorData?.latencyMs || 0}
-                      secretSource={inspectorData?.secretSource || 'Google Cloud Secret Manager'}
-                      secretCached={inspectorData?.secretCached ?? true}
-                      storedFirestoreDoc={inspectorData?.storedFirestoreDoc}
-                      onBackToJournal={() => setDashboardTab('journal')}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              </div>
-            </main>
-          </motion.div>
+                  </div>
+                </main>
+              </motion.div>
+            )}
+          </AnimatePresence>
         )}
-        </AnimatePresence>
-      )}
       </div>
     </div>
   );

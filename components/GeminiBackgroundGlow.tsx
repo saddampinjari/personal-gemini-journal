@@ -7,56 +7,44 @@ export function GeminiBackgroundGlow() {
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none"
+      className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none flex items-center justify-center"
     >
-      {/* Primary Center Gemini Luminous Halo */}
-      <div className="absolute top-[28%] sm:top-[32%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[850px] lg:w-[1100px] h-[500px] sm:h-[650px] lg:h-[800px] flex items-center justify-center">
-        {/* Outer Atmospheric Aura - Soft Expansion */}
-        <motion.div
-          animate={{
-            scale: [1, 1.08, 1],
-            opacity: [0.75, 0.95, 0.75],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute inset-0 rounded-full blur-[90px] sm:blur-[130px] lg:blur-[160px] opacity-70 dark:opacity-60 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-300/50 via-blue-200/30 via-[#14204F]/15 to-transparent dark:from-[#14204F]/50 dark:via-[#1E3A8A]/30 dark:via-[#0E172F]/20 dark:to-transparent will-change-transform"
-        />
+      {/* Primary Gemini Luminous Elliptical Spotlight - Exactly matching Gemini screenshot */}
+      <motion.div
+        animate={{
+          scale: [1, 1.04, 1],
+          opacity: [0.92, 1, 0.92],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+        className="w-[120vw] max-w-[1700px] h-[580px] sm:h-[720px] lg:h-[840px] rounded-[100%] blur-[75px] sm:blur-[95px] lg:blur-[120px]
+          bg-[radial-gradient(ellipse_70%_45%_at_50%_50%,_rgba(26,44,104,0.95)_0%,_rgba(18,30,76,0.75)_35%,_rgba(10,16,42,0.45)_65%,_transparent_80%)]
+          dark:bg-[radial-gradient(ellipse_70%_45%_at_50%_50%,_rgba(28,48,118,0.98)_0%,_rgba(18,30,76,0.80)_35%,_rgba(10,16,42,0.50)_65%,_transparent_85%)]
+          will-change-transform"
+      />
 
-        {/* Secondary Core Chromatic Bloom - Theme Blue based on #14204F */}
-        <motion.div
-          animate={{
-            scale: [1.05, 0.96, 1.05],
-            rotate: [0, 45, 90, 180, 270, 360],
-            opacity: [0.6, 0.85, 0.6],
-          }}
-          transition={{
-            scale: { duration: 9, repeat: Infinity, ease: 'easeInOut' },
-            rotate: { duration: 40, repeat: Infinity, ease: 'linear' },
-            opacity: { duration: 7, repeat: Infinity, ease: 'easeInOut' },
-          }}
-          className="absolute w-[420px] sm:w-[580px] lg:w-[720px] h-[340px] sm:h-[460px] lg:h-[560px] rounded-full blur-[70px] sm:blur-[95px] opacity-65 dark:opacity-55 bg-gradient-to-tr from-[#14204F]/40 via-[#2563EB]/25 via-[#38BDF8]/15 to-blue-200/20 dark:from-[#1E3A8A]/50 dark:via-[#14204F]/40 dark:via-[#2563EB]/20 dark:to-blue-950/20 will-change-transform"
-        />
+      {/* Radiant Focal Core - Soft inner sapphire depth */}
+      <motion.div
+        animate={{
+          scale: [0.96, 1.05, 0.96],
+          opacity: [0.75, 0.95, 0.75],
+        }}
+        transition={{
+          duration: 7,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+        className="absolute w-[80vw] max-w-[950px] h-[320px] sm:h-[420px] rounded-[100%] blur-[50px] sm:blur-[70px]
+          bg-[radial-gradient(ellipse_60%_40%_at_50%_50%,_rgba(37,99,235,0.40)_0%,_rgba(20,32,79,0.55)_50%,_transparent_75%)]
+          dark:bg-[radial-gradient(ellipse_60%_40%_at_50%_50%,_rgba(37,99,235,0.45)_0%,_rgba(20,32,79,0.65)_50%,_transparent_80%)]
+          will-change-transform"
+      />
 
-        {/* Dense Radiant Focal Core - Soft radiant bloom in theme color */}
-        <motion.div
-          animate={{
-            scale: [0.95, 1.12, 0.95],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute w-[240px] sm:w-[320px] lg:w-[400px] h-[180px] sm:h-[240px] lg:h-[300px] rounded-full blur-[45px] sm:blur-[60px] opacity-80 dark:opacity-75 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#2563EB]/35 via-[#14204F]/25 to-transparent dark:from-blue-400/30 dark:via-[#1E3A8A]/35 dark:to-transparent will-change-transform"
-        />
-      </div>
-
-      {/* Subtle Secondary Ambient Gradient in Lower Viewport for continuity */}
-      <div className="absolute bottom-[-10%] left-1/2 -translate-x-1/2 w-[700px] sm:w-[1000px] h-[350px] sm:h-[450px] rounded-full blur-[120px] opacity-35 dark:opacity-25 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-200/40 via-[#14204F]/15 to-transparent dark:from-[#1E3A8A]/30 dark:via-[#14204F]/15 dark:to-transparent pointer-events-none" />
+      {/* Light Mode Delicate Horizon Ambient Glow */}
+      <div className="absolute inset-0 dark:hidden bg-[radial-gradient(ellipse_80%_50%_at_50%_50%,_rgba(219,234,254,0.75)_0%,_rgba(191,219,254,0.40)_40%,_transparent_75%)] pointer-events-none" />
     </div>
   );
 }

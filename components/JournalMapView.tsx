@@ -329,15 +329,11 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
           </p>
         </div>
 
-        {/* Mood filter chips */}
+        {/* Mood filter chips - M3 Filter Chips */}
         <div className="flex flex-wrap items-center gap-1.5 self-start sm:self-center">
           <button
             onClick={() => setFilterMood('all')}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-              filterMood === 'all'
-                ? 'bg-[#14204F] text-white shadow-sm'
-                : 'bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-            }`}
+            className={`m3-chip ${filterMood === 'all' ? 'm3-chip-selected' : ''}`}
           >
             All ({items.length})
           </button>
@@ -345,11 +341,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
             <button
               key={m}
               onClick={() => setFilterMood(m)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-all cursor-pointer ${
-                filterMood === m
-                  ? 'bg-[#14204F] text-white shadow-sm'
-                  : 'bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-              }`}
+              className={`m3-chip capitalize ${filterMood === m ? 'm3-chip-selected' : ''}`}
             >
               {m}
             </button>
@@ -360,7 +352,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
       {/* Main Map Container */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Real Leaflet Map Container */}
-        <div className="lg:col-span-2 relative h-[520px] rounded-3xl overflow-hidden border border-slate-200 dark:border-blue-900/40 shadow-xl bg-slate-100 dark:bg-[#0B1120] flex flex-col">
+        <div className="lg:col-span-2 relative h-[520px] rounded-3xl overflow-hidden border border-slate-200 dark:border-blue-900/40 shadow-xl bg-slate-100 dark:bg-[#070A12] flex flex-col">
           {/* Map Controls Top Bar */}
           <div className="absolute top-4 left-4 right-4 z-[500] flex items-center justify-between pointer-events-none">
             <div className="flex items-center gap-2">
@@ -372,18 +364,18 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
               <button
                 onClick={handleFitPins}
                 title="Fit to All Locations"
-                className="px-2.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 shadow-md pointer-events-auto flex items-center gap-1 cursor-pointer transition-colors"
+                className="m3-btn m3-btn-elevated h-8 px-3 text-xs pointer-events-auto shadow-md"
               >
-                <MaterialIcon name="my_location" className="text-sm" />
+                <MaterialIcon name="my_location" size={14} />
                 <span className="hidden sm:inline">Fit Pins</span>
               </button>
 
               <button
                 onClick={handleResetWorld}
                 title="Reset to World View"
-                className="px-2.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 shadow-md pointer-events-auto flex items-center gap-1 cursor-pointer transition-colors"
+                className="m3-btn m3-btn-elevated h-8 px-3 text-xs pointer-events-auto shadow-md"
               >
-                <MaterialIcon name="public" className="text-sm" />
+                <MaterialIcon name="public" size={14} />
                 <span className="hidden sm:inline">World</span>
               </button>
             </div>
@@ -497,10 +489,10 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
                   </div>
                   <button
                     onClick={() => onSelectItem(selectedItem)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#14204F] text-white text-xs font-semibold hover:bg-[#1E3A8A] transition-colors shadow-sm cursor-pointer"
+                    className="m3-btn m3-btn-filled text-xs h-9 px-4"
                   >
                     <span>Open in Workspace</span>
-                    <MaterialIcon name="arrow_forward" className="text-xs" />
+                    <MaterialIcon name="arrow_forward" size={14} />
                   </button>
                 </div>
               </motion.div>
