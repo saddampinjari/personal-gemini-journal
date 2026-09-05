@@ -18,12 +18,17 @@ steps:
       - 'build'
       - '-t'
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/personal-gemini-journal:$COMMIT_SHA'
-      - '-t'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/personal-gemini-journal:latest'
       - '.'
     id: 'build-image'
 
-  # 2. Deploy to Google Cloud Run with official Hackathon parameters & Secret Manager integration
+  # 2. Push image to Artifact Registry BEFORE deploying to Cloud Run
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/personal-gemini-journal:$COMMIT_SHA'
+    id: 'push-image'
+
+  # 3. Deploy to Google Cloud Run with official Hackathon parameters & Secret Manager integration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -44,10 +49,8 @@ steps:
       - '--labels=dev-tutorial=cloud-run-ai-challenge'
     id: 'deploy-cloud-run'
 
-# Cloud Build automatically pushes images listed here using native IAM credentials
 images:
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/personal-gemini-journal:$COMMIT_SHA'
-  - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/personal-gemini-journal:latest'
 
 options:
   logging: CLOUD_LOGGING_ONLY
