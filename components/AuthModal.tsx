@@ -48,20 +48,38 @@ const modalVariants: Variants = {
   },
 };
 
+function formatFirebaseError(err: unknown): string {
+  if (!(err instanceof Error)) return 'Authentication failed. Please try again.';
+  const msg = err.message || '';
+
+  if (msg.includes('auth/operation-not-allowed')) {
+    return 'Sign-in provider not enabled in Firebase Console. Go to Firebase Console > Authentication > Sign-in method, and enable Google and/or Email/Password.';
+  }
+  if (msg.includes('auth/popup-closed-by-user')) {
+    return 'The sign-in popup was closed before finishing.';
+  }
+  if (msg.includes('auth/user-not-found') || msg.includes('auth/wrong-password') || msg.includes('auth/invalid-credential')) {
+    return 'Incorrect email or password. If you don\'t have an account yet, click "Switch to Sign Up".';
+  }
+  if (msg.includes('auth/email-already-in-use')) {
+    return 'An account already exists with this email. Please switch to Sign In.';
+  }
+  if (msg.includes('auth/weak-password')) {
+    return 'Password is too weak. Please use at least 6 characters.';
+  }
+  if (msg.includes('auth/invalid-email')) {
+    return 'Please enter a valid email address.';
+  }
+  return msg;
+}
+
 export function AuthModal({ isOpen, onClose, onSelectUser, isLoading: parentLoading }: AuthModalProps) {
-  const [activeTab, setActiveTab] = useState<'google' | 'email' | 'config'>('google');
+  const [activeTab, setActiveTab] = useState<'google' | 'email'>('google');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Quick config state
-  const [cfgApiKey, setCfgApiKey] = useState('');
-  const [cfgProjectId, setCfgProjectId] = useState('');
-  const [cfgAuthDomain, setCfgAuthDomain] = useState('');
-  const [cfgAppId, setCfgAppId] = useState('');
-  const [cfgSaved, setCfgSaved] = useState(false);
 
   const configured = isFirebaseConfigured();
 
@@ -75,11 +93,7 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading: parentLoad
         onClose();
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Google Sign-In failed.';
-      setError(msg);
-      if (msg.includes('Missing') || msg.includes('not connected') || !configured) {
-        setActiveTab('config');
-      }
+      setError(formatFirebaseError(err));
     } finally {
       setLoading(false);
     }
@@ -101,49 +115,7 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading: parentLoad
         onClose();
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Authentication failed.';
-      setError(msg);
-      if (msg.includes('Missing') || msg.includes('not connected') || !configured) {
-        setActiveTab('config');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSaveConfig = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!cfgApiKey || !cfgProjectId) {
-      setError('Please provide at least the Firebase API Key and Project ID.');
-      return;
-    }
-    setError(null);
-    setLoading(true);
-
-    try {
-      const res = await fetch('/api/auth/setup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          apiKey: cfgApiKey,
-          projectId: cfgProjectId,
-          authDomain: cfgAuthDomain || `${cfgProjectId}.firebaseapp.com`,
-          appId: cfgAppId,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to save configuration.');
-      }
-
-      setCfgSaved(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 800);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to save config';
-      setError(msg);
+      setError(formatFirebaseError(err));
     } finally {
       setLoading(false);
     }
@@ -188,10 +160,10 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading: parentLoad
               </div>
               <div>
                 <h3 className="text-lg font-bold text-[#1C1B1F] dark:text-[#E6E1E5]">
-                  Firebase Authentication
+                  Sign In
                 </h3>
                 <p className="text-xs text-[#49454F] dark:text-[#CAC4D0]">
-                  Official Google Firebase Auth Provider
+                  Firebase Authentication &bull; Zero-Leakage Privacy
                 </p>
               </div>
             </div>
@@ -206,7 +178,7 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading: parentLoad
               ) : (
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300">
                   <MaterialIcon name="warning" size={14} className="text-amber-600 dark:text-amber-400" />
-                  <span>Firebase Credentials Pending in .env.local</span>
+                  <span>Firebase Credentials Pending in Environment</span>
                 </div>
               )}
             </div>
@@ -215,33 +187,23 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading: parentLoad
             <div className="flex p-1 rounded-full bg-slate-100 dark:bg-[#070A12] mb-5 border border-slate-200 dark:border-blue-900/40">
               <button
                 onClick={() => { setActiveTab('google'); setError(null); }}
-                className={`flex-1 py-1.5 text-xs font-semibold rounded-full transition-all ${
+                className={`flex-1 py-2 text-xs font-semibold rounded-full transition-all ${
                   activeTab === 'google'
                     ? 'bg-white dark:bg-[#14204F] text-[#14204F] dark:text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-400'
                 }`}
               >
-                Google Popup
+                Google Account
               </button>
               <button
                 onClick={() => { setActiveTab('email'); setError(null); }}
-                className={`flex-1 py-1.5 text-xs font-semibold rounded-full transition-all ${
+                className={`flex-1 py-2 text-xs font-semibold rounded-full transition-all ${
                   activeTab === 'email'
                     ? 'bg-white dark:bg-[#14204F] text-[#14204F] dark:text-white shadow-xs'
                     : 'text-slate-600 dark:text-slate-400'
                 }`}
               >
                 Email / Password
-              </button>
-              <button
-                onClick={() => { setActiveTab('config'); setError(null); }}
-                className={`flex-1 py-1.5 text-xs font-semibold rounded-full transition-all ${
-                  activeTab === 'config'
-                    ? 'bg-white dark:bg-[#14204F] text-[#14204F] dark:text-white shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400'
-                }`}
-              >
-                Connect Keys
               </button>
             </div>
 
@@ -259,7 +221,7 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading: parentLoad
             {activeTab === 'google' && (
               <div className="space-y-4">
                 <p className="text-xs text-[#49454F] dark:text-[#CAC4D0] leading-relaxed">
-                  Signs in using Google Identity through Firebase Authentication. Opens the official Google OAuth consent popup window.
+                  Signs in using Google Identity through Firebase Authentication. Opens the official Google OAuth consent window.
                 </p>
 
                 <button
@@ -288,18 +250,6 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading: parentLoad
                   </svg>
                   <span>{loading ? 'Opening Google Popup...' : 'Sign In with Google'}</span>
                 </button>
-
-                {!configured && (
-                  <div className="p-3.5 rounded-2xl bg-blue-50/70 dark:bg-[#14204F]/40 border border-blue-200 dark:border-blue-900/40 text-xs text-[#14204F] dark:text-blue-200">
-                    <p className="font-semibold flex items-center gap-1 mb-1">
-                      <MaterialIcon name="info" size={14} className="text-[#2563EB] dark:text-blue-300" />
-                      <span>Firebase Keys Needed for Live Popup</span>
-                    </p>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">
-                      To enable the official Google popup in your browser, switch to the <strong>Connect Keys</strong> tab and enter your Firebase credentials.
-                    </p>
-                  </div>
-                )}
               </div>
             )}
 
@@ -344,70 +294,12 @@ export function AuthModal({ isOpen, onClose, onSelectUser, isLoading: parentLoad
                   </button>
                   <button
                     type="button"
-                    onClick={() => setIsSignUp(!isSignUp)}
+                    onClick={() => { setIsSignUp(!isSignUp); setError(null); }}
                     className="m3-btn m3-btn-outlined text-xs h-10 px-3"
                   >
                     {isSignUp ? 'Switch to Sign In' : 'Sign Up'}
                   </button>
                 </div>
-              </form>
-            )}
-
-            {/* TAB 3: CONNECT KEYS */}
-            {activeTab === 'config' && (
-              <form onSubmit={handleSaveConfig} className="space-y-3">
-                <div className="p-3 rounded-2xl bg-blue-50 dark:bg-[#14204F]/40 border border-blue-200 dark:border-blue-800 text-[11px] text-[#14204F] dark:text-blue-200">
-                  <span>Get these from <strong>Firebase Console &gt; Project Settings &gt; Your Apps &gt; Web app</strong>:</span>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-semibold text-[#49454F] dark:text-[#CAC4D0] block">
-                    Firebase API Key (AIzaSy...) *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={cfgApiKey}
-                    onChange={(e) => setCfgApiKey(e.target.value)}
-                    placeholder="AIzaSyB..."
-                    className="w-full px-3.5 py-2 rounded-full bg-slate-50 dark:bg-[#070A12] border border-slate-200 dark:border-blue-900/40 text-xs text-[#1C1B1F] dark:text-[#E6E1E5] font-mono focus:outline-hidden focus:ring-2 focus:ring-[#2563EB]"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-semibold text-[#49454F] dark:text-[#CAC4D0] block">
-                    Firebase Project ID *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={cfgProjectId}
-                    onChange={(e) => setCfgProjectId(e.target.value)}
-                    placeholder="personal-gemini-journal-123"
-                    className="w-full px-3.5 py-2 rounded-full bg-slate-50 dark:bg-[#070A12] border border-slate-200 dark:border-blue-900/40 text-xs text-[#1C1B1F] dark:text-[#E6E1E5] font-mono focus:outline-hidden focus:ring-2 focus:ring-[#2563EB]"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-semibold text-[#49454F] dark:text-[#CAC4D0] block">
-                    App ID (optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={cfgAppId}
-                    onChange={(e) => setCfgAppId(e.target.value)}
-                    placeholder="1:1234567890:web:abcdef..."
-                    className="w-full px-3.5 py-2 rounded-full bg-slate-50 dark:bg-[#070A12] border border-slate-200 dark:border-blue-900/40 text-xs text-[#1C1B1F] dark:text-[#E6E1E5] font-mono focus:outline-hidden focus:ring-2 focus:ring-[#2563EB]"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading || cfgSaved}
-                  className="m3-btn m3-btn-filled w-full h-10 text-xs font-semibold mt-2"
-                >
-                  {cfgSaved ? 'Saved! Reloading...' : loading ? 'Saving...' : 'Save & Connect to Firebase'}
-                </button>
               </form>
             )}
           </motion.div>
