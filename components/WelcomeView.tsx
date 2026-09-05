@@ -11,28 +11,28 @@ interface WelcomeViewProps {
   isLoading: boolean;
 }
 
-// Material Design 3 Emphasized Easings
-const M3_DECELERATE = [0.05, 0.7, 0.1, 1.0] as const;
+// Material Design 3 Fluid Animation Specs
+const M3_EMPHASIZED = [0.16, 1, 0.3, 1] as const;
 
 const pageContainerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.05,
+      staggerChildren: 0.04,
+      delayChildren: 0.02,
     },
   },
 };
 
 const heroItemVariants: Variants = {
-  hidden: { opacity: 0, y: 22 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.55,
-      ease: M3_DECELERATE,
+      duration: 0.3,
+      ease: M3_EMPHASIZED,
     },
   },
 };
@@ -42,21 +42,20 @@ const cardsContainerVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.15,
+      staggerChildren: 0.05,
+      delayChildren: 0.04,
     },
   },
 };
 
 const cardItemVariants: Variants = {
-  hidden: { opacity: 0, y: 35, scale: 0.93 },
+  hidden: { opacity: 0, y: 14 },
   visible: {
     opacity: 1,
     y: 0,
-    scale: 1,
     transition: {
-      duration: 0.6,
-      ease: M3_DECELERATE,
+      duration: 0.32,
+      ease: M3_EMPHASIZED,
     },
   },
 };
@@ -213,8 +212,8 @@ export function WelcomeView({
             {/* Card 1: Google Blue - DLP Engine */}
             <motion.div
               variants={cardItemVariants}
-              whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25, ease: 'easeOut' } }}
-              className="group relative rounded-3xl bg-gradient-to-br from-blue-50/90 via-white/95 to-blue-100/40 dark:from-blue-950/40 dark:via-[#14204F]/50 dark:to-blue-900/20 backdrop-blur-md border border-blue-200/80 dark:border-blue-800/40 hover:border-[#4285F4] dark:hover:border-[#4285F4] shadow-xs hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              whileHover={{ y: -4, transition: { duration: 0.18, ease: 'easeOut' } }}
+              className="group relative rounded-3xl bg-gradient-to-br from-blue-50/90 via-white/95 to-blue-100/40 dark:from-blue-950/40 dark:via-[#14204F]/50 dark:to-blue-900/20 backdrop-blur-md border border-blue-200/80 dark:border-blue-800/40 hover:border-[#4285F4] dark:hover:border-[#4285F4] shadow-xs hover:shadow-xl hover:shadow-blue-500/10 transform-gpu transition-[border-color,box-shadow] duration-200 flex flex-col justify-between overflow-hidden"
             >
               {/* Top Google Blue Accent Bar */}
               <div className="h-1.5 w-full bg-gradient-to-r from-[#4285F4] via-blue-400 to-sky-300" />
@@ -247,8 +246,8 @@ export function WelcomeView({
             {/* Card 2: Google Red - Secret Manager */}
             <motion.div
               variants={cardItemVariants}
-              whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25, ease: 'easeOut' } }}
-              className="group relative rounded-3xl bg-gradient-to-br from-red-50/90 via-white/95 to-red-100/40 dark:from-red-950/30 dark:via-[#14204F]/40 dark:to-red-900/15 backdrop-blur-md border border-red-200/80 dark:border-red-800/40 hover:border-[#EA4335] dark:hover:border-[#EA4335] shadow-xs hover:shadow-xl hover:shadow-red-500/10 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              whileHover={{ y: -4, transition: { duration: 0.18, ease: 'easeOut' } }}
+              className="group relative rounded-3xl bg-gradient-to-br from-red-50/90 via-white/95 to-red-100/40 dark:from-red-950/30 dark:via-[#14204F]/40 dark:to-red-900/15 backdrop-blur-md border border-red-200/80 dark:border-red-800/40 hover:border-[#EA4335] dark:hover:border-[#EA4335] shadow-xs hover:shadow-xl hover:shadow-red-500/10 transform-gpu transition-[border-color,box-shadow] duration-200 flex flex-col justify-between overflow-hidden"
             >
               {/* Top Google Red Accent Bar */}
               <div className="h-1.5 w-full bg-gradient-to-r from-[#EA4335] via-red-400 to-rose-300" />
@@ -281,8 +280,8 @@ export function WelcomeView({
             {/* Card 3: Google Yellow - Resilient Fallback */}
             <motion.div
               variants={cardItemVariants}
-              whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25, ease: 'easeOut' } }}
-              className="group relative rounded-3xl bg-gradient-to-br from-yellow-50/95 via-amber-50/60 to-yellow-100/70 dark:from-yellow-950/35 dark:via-[#14204F]/40 dark:to-amber-900/20 backdrop-blur-md border border-yellow-300 dark:border-yellow-600/50 hover:border-[#FBBC05] dark:hover:border-[#FBBC05] shadow-xs hover:shadow-xl hover:shadow-yellow-500/15 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              whileHover={{ y: -4, transition: { duration: 0.18, ease: 'easeOut' } }}
+              className="group relative rounded-3xl bg-gradient-to-br from-yellow-50/95 via-amber-50/60 to-yellow-100/70 dark:from-yellow-950/35 dark:via-[#14204F]/40 dark:to-amber-900/20 backdrop-blur-md border border-yellow-300 dark:border-yellow-600/50 hover:border-[#FBBC05] dark:hover:border-[#FBBC05] shadow-xs hover:shadow-xl hover:shadow-yellow-500/15 transform-gpu transition-[border-color,box-shadow] duration-200 flex flex-col justify-between overflow-hidden"
             >
               {/* Top Google Yellow Accent Bar */}
               <div className="h-1.5 w-full bg-gradient-to-r from-[#FBBC05] via-yellow-400 to-amber-300" />
@@ -315,8 +314,8 @@ export function WelcomeView({
             {/* Card 4: Google Green - Tenant Firestore */}
             <motion.div
               variants={cardItemVariants}
-              whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.25, ease: 'easeOut' } }}
-              className="group relative rounded-3xl bg-gradient-to-br from-emerald-50/90 via-white/95 to-green-100/40 dark:from-emerald-950/30 dark:via-[#14204F]/40 dark:to-emerald-900/15 backdrop-blur-md border border-emerald-200/80 dark:border-emerald-800/40 hover:border-[#34A853] dark:hover:border-[#34A853] shadow-xs hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              whileHover={{ y: -4, transition: { duration: 0.18, ease: 'easeOut' } }}
+              className="group relative rounded-3xl bg-gradient-to-br from-emerald-50/90 via-white/95 to-green-100/40 dark:from-emerald-950/30 dark:via-[#14204F]/40 dark:to-emerald-900/15 backdrop-blur-md border border-emerald-200/80 dark:border-emerald-800/40 hover:border-[#34A853] dark:hover:border-[#34A853] shadow-xs hover:shadow-xl hover:shadow-emerald-500/10 transform-gpu transition-[border-color,box-shadow] duration-200 flex flex-col justify-between overflow-hidden"
             >
               {/* Top Google Green Accent Bar */}
               <div className="h-1.5 w-full bg-gradient-to-r from-[#34A853] via-emerald-400 to-teal-300" />
