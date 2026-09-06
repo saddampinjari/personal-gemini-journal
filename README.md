@@ -1,45 +1,58 @@
 # Personal Gemini Journal
 
 > **Enterprise Zero-Trust AI Journal & Reflection Space**  
-> Fortified by a server-side **Zero-Trust Privacy Gateway (Cloud DLP)**, runtime **Google Cloud Secret Manager** key injection with in-memory caching, multi-tier **Gemini Model Fallback Ladder**, and tenant-isolated **Cloud Firestore** native persistence. Deployed to **Google Cloud Run** with automated GitHub CI/CD.
+> Fortified by a server-side **Zero-Trust Privacy Gateway (Cloud DLP)**, runtime **Google Cloud Secret Manager** key injection with in-memory caching, multi-tier **Gemini Model Fallback Ladder**, and tenant-isolated **Cloud Firestore** native persistence. Deployed to **Google Cloud Run** with automated CI/CD.
 
-- 🌐 **Live Cloud Run Web App**: [https://personal-gemini-journal-454901294317.us-central1.run.app/](https://personal-gemini-journal-454901294317.us-central1.run.app/)
-- 💻 **GitHub Repository**: [https://github.com/saddampinjari/personal-gemini-journal](https://github.com/saddampinjari/personal-gemini-journal)
-- 🏷️ **Cloud Run Service Label**: `dev-tutorial=cloud-run-ai-challenge`
-
----
-
-## Brief Description (What We Built & Cloud Services Used)
-
-**Personal Gemini Journal** is an AI-powered mindfulness and reflection web application engineered with an enterprise **Zero-Trust** security architecture that guarantees absolute user data sovereignty.
-
-- **Firebase Authentication**: Provides secure, authenticated entry using Google Identity OAuth popups and Email/Password with verification links. No synthetic bypass accounts or mock users exist; unauthenticated access to reflections is strictly blocked (HTTP 401).
-- **Google Cloud Run**: Hosts the containerized Next.js 15 App Router frontend and backend APIs on a serverless, auto-scaling runtime with low latency, HTTPS termination, and automated CI/CD deployment via Cloud Build triggers from GitHub.
-- **Google Gemini API**: Delivers empathetic psychological framing, multi-turn reflective dialogue, and cognitive clarity using a resilient 3-tier model fallback ladder (`gemini-2.5-flash` → `gemini-2.0-flash` → `gemini-1.5-flash`).
-- **Cloud Firestore**: Persists reflections with zero cross-tenant data leakage strictly partitioned at `/users/{userId}/interactions/{interactionId}`. Enforced by granular Firestore Security Rules preventing any user from accessing another's journal.
-- **Google Cloud Secret Manager**: Safely resolves the runtime `GEMINI_API_KEY` directly from the Cloud Run container environment with in-memory caching. Zero API keys are hardcoded in git or exposed in client JavaScript bundles.
-- **Zero-Trust Privacy Gateway (DLP)**: Scrubs names, emails, locations, and phones into surrogate tokens (`[PERSON_1]`, `[LOCATION_1]`) *before* prompts reach Gemini, restoring the context for the user upon return.
-
-## 1. Mandatory Agentic Threat Model: 5-Zone Security Matrix
-
-| # | Threat Zone | Concrete Threat & Attack Vector | Impact & Risk Level | Enterprise Countermeasure & Mitigation |
-|---|-------------|---------------------------------|---------------------|------------------------------------------|
-| **1** | **Input Surfaces** | Raw reflection payloads containing customer PII (names, emails, phones, SSNs, credit cards, locations), malformed JSON, and oversized injection payloads. | **CRITICAL**: PII exfiltration, identity leaks to 3rd-party model providers, DoS attacks. | **Server-Side Zero-Trust Privacy Gateway**: High-precision DLP engine scans and replaces all sensitive entities with surrogate tokens (`[PERSON_1]`, `[LOCATION_1]`) *before* invoking Gemini. Enforces strict input validation (`size <= 10,000` chars). |
-| **2** | **Planning & Reasoning** | Prompt injection, role hijacking, instruction dumping, or manipulation of psychological framing. | **HIGH**: Model deviation, unhelpful or unsafe coaching outputs. | **Hardened System Instructions**: System prompts enforce active empathetic listening, non-judgmental reframing, and preservation of token bracket formatting. Zero raw PII is exposed to the reasoning context. |
-| **3** | **Tool Execution & Model Resilience** | Upstream Gemini API outages (503), rate limiting (429), model alias deprecation (404), or internal errors (500). | **HIGH**: Service denial, dropped user reflections, user frustration. | **3-Tier Resilient Model Fallback Ladder**: Automated cascading recovery ladder (`gemini-2.5-flash` &rarr; `gemini-2.0-flash` &rarr; `gemini-1.5-flash`) with telemetry trail recording. |
-| **4** | **Memory & State** | Cross-tenant data scraping, unauthorized Firestore reads/writes, session hijacking, orphaned records. | **CRITICAL**: Exposure of sensitive personal journals across users. | **Subcollection Tenant Isolation & ABAC**: Data stored strictly at `/users/{userId}/interactions/{interactionId}`. Enforced via Firestore Security Rules requiring `request.auth.uid == userId`, bounded string lengths, and field immutability. |
-| **5** | **Inter-System Communication** | API secret exposure in client bundles, unencrypted transit, stolen JWT tokens. | **CRITICAL**: Cloud account compromise, API quota draining. | **Zero Client Credential Exposure**: `GEMINI_API_KEY` is fetched dynamically at runtime from **Google Cloud Secret Manager** and cached in-memory across warm starts. Backend verifies JWTs via `firebase-admin.auth().verifyIdToken()`. |
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Cloud_Run-4285F4?style=flat&logo=googlecloud)](https://personal-gemini-journal-454901294317.us-central1.run.app/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-8E75FF?style=flat&logo=google)](https://ai.google.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-Auth_%26_Firestore-FFCA28?style=flat&logo=firebase)](https://firebase.google.com/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 ---
 
-## 2. Zero-Trust Privacy Gateway Architecture
+## Overview
+
+**Personal Gemini Journal** is a modern mindfulness and reflective journaling web application engineered with an enterprise **Zero-Trust** security architecture. 
+
+While conventional AI journaling tools transmit unencrypted personal thoughts directly to LLM providers, Personal Gemini Journal sanitizes all user entries through an automated **Privacy Gateway (Cloud DLP)** prior to model inference, retrieves API credentials dynamically via **Google Cloud Secret Manager**, and cryptographically sandboxes user reflections inside tenant-isolated **Cloud Firestore** subcollections.
+
+---
+
+## Key Architecture & Features
+
+### 1. Zero-Trust Privacy Gateway (Cloud DLP)
+- **Automatic PII De-identification**: Analyzes input text to identify personally identifiable information (PII) including names, emails, phone numbers, and locations.
+- **Surrogate Tokenization**: Converts sensitive strings into format-preserving surrogate tokens (e.g., `Sarah Connor` &rarr; `[PERSON_1]`, `Seattle` &rarr; `[LOCATION_1]`) *before* invoking Gemini.
+- **Server-Side Detokenization**: Restores the original entities only in the final response returned to the authenticated user. Raw PII never leaves the secure server boundary.
+
+### 2. Multi-Turn Gemini Reflections
+- **Empathetic Psychological Reframing**: Provides grounded cognitive clarity, emotional tone analysis, and mindful inquiries.
+- **Multi-Turn Conversational Memory**: Supports iterative dialogue allowing users to ask follow-up questions while maintaining thread context.
+- **Resilient Fallback Engine**: Implements an autonomous cascading ladder (`gemini-2.5-flash` &rarr; `gemini-2.0-flash` &rarr; `gemini-1.5-flash`) with local resilience against network spikes or rate limits.
+
+### 3. Tenant-Isolated Firestore Storage
+- **Cryptographic User Sandboxing**: All user reflections, mood tags, and conversation threads are stored strictly at `/users/{userId}/interactions/{interactionId}`.
+- **Zero Cross-Tenant Leakage**: Enforced by comprehensive Firestore Security Rules that validate incoming user ownership (`request.auth.uid == userId`) and prohibit cross-user access.
+
+### 4. Enterprise Secret Management
+- **Zero Client Bundle Leaks**: API credentials (`GEMINI_API_KEY`) are fetched at container startup directly from **Google Cloud Secret Manager**.
+- **In-Memory Caching**: Minimizes Secret Manager API latency by maintaining warm in-memory caches across Cloud Run instance lifecycles.
+
+### 5. Location-Aware Privacy Journaling
+- **Interactive Material 3 Map**: Geospatially pins user entries on an interactive map colored by emotional tone (Joy, Gratitude, Resilience, Reflection).
+- **Zero Geospatial Tracking**: The Privacy Gateway tokenizes locations so Gemini understands geographical context without tracking real-world coordinates.
+
+---
+
+## System Architecture
 
 ```
-[ User Browser (Client) ]
+[ User Browser ]
        │
        │ HTTPS / Authorization: Bearer <Firebase_JWT>
        ▼
-[ Google Cloud Run Container ]
+[ Google Cloud Run Container (Next.js 15 Standalone) ]
        │
        ├─► 1. Identity Verification (firebase-admin.auth().verifyIdToken())
        │
@@ -47,138 +60,117 @@
        │       • Replaces Sarah Connor -> [PERSON_1]
        │       • Replaces Seattle      -> [LOCATION_1]
        │
-       ├─► 3. Dynamic Secret Manager (Fetch & In-Memory Cache GEMINI_API_KEY)
+       ├─► 3. Secret Manager (Runtime fetch & cache GEMINI_API_KEY)
        │
-       ├─► 4. Resilient Gemini Engine (Ladder: 2.5-flash -> 2.0-flash -> 1.5-flash)
-       │       • Sends ONLY sanitized string with surrogate tokens
+       ├─► 4. Resilient Gemini Engine (Multi-turn ladder: 2.5-flash -> 2.0-flash -> 1.5-flash)
+       │       • Sends ONLY sanitized prompt with surrogate tokens
        │
        ├─► 5. Server-Side Detokenization (Restores entities for authenticated user)
        │
-       ├─► 6. Tenant-Isolated Firestore Write (/users/{uid}/interactions/{id})
+       ├─► 6. Tenant-Isolated Firestore Persistence (/users/{uid}/interactions/{id})
        │
        ▼
-[ Client Security Inspector HUD ] (Live visual proof of DLP, secret cache, and model metrics)
+[ Client Security Inspector HUD ] (Live transparency: DLP tokens, latency & model telemetry)
 ```
 
 ---
 
-## 3. Google Cloud Secret Manager Provisioning & IAM Setup
+## Getting Started
 
-### Step 1: Create the Secret in Secret Manager
+### Prerequisites
+- **Node.js**: v20 or higher
+- **npm** or **bun**
+- A **Google Cloud Project** with Cloud Run, Firestore, and Secret Manager enabled
+- A **Firebase Project** with Authentication (Google Sign-In) enabled
+
+### 1. Clone the Repository
 ```bash
-# Set your active GCP project ID
-export PROJECT_ID=$(gcloud config get-value project)
-
-# Create the GEMINI_API_KEY secret
-gcloud secrets create GEMINI_API_KEY \
-    --project="${PROJECT_ID}" \
-    --replication-policy="automatic"
-
-# Add the secret payload version
-echo -n "YOUR_ACTUAL_GEMINI_API_KEY" | gcloud secrets versions add GEMINI_API_KEY \
-    --project="${PROJECT_ID}" \
-    --data-file=-
+git clone https://github.com/saddampinjari/personal-gemini-journal.git
+cd personal-gemini-journal
 ```
 
-### Step 2: Grant Cloud Run Service Account Access
+### 2. Install Dependencies
 ```bash
-# Retrieve the default Compute Engine or Cloud Run service account
-export SERVICE_ACCOUNT="${PROJECT_ID}-compute@developer.gserviceaccount.com"
-
-# Grant Secret Accessor role to the service account
-gcloud secrets add-iam-policy-binding GEMINI_API_KEY \
-    --project="${PROJECT_ID}" \
-    --member="serviceAccount:${SERVICE_ACCOUNT}" \
-    --role="roles/secretmanager.secretAccessor"
+npm install
 ```
+
+### 3. Configure Environment Variables
+Create a `.env.local` file in the project root:
+
+```env
+# Google Cloud
+GOOGLE_CLOUD_PROJECT=your-project-id
+
+# Gemini API (Local Dev fallback; production uses GCP Secret Manager)
+GEMINI_API_KEY=your-gemini-api-key
+
+# Firebase Web App Config (From Firebase Console > Project Settings)
+NEXT_PUBLIC_FIREBASE_API_KEY=your-firebase-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+```
+
+### 4. Run Locally
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 4. Cloud Run Deployment Command
+## Deployment to Google Cloud Run
 
-Deploy directly to Google Cloud Run with the mandatory challenge verification label:
+### Option 1: Automated CI/CD via Google Cloud Build (Recommended)
+This repository contains a production-ready `cloudbuild.yaml` configured for Google Cloud Build:
+1. Connect your repository to **Cloud Build Triggers** in the Google Cloud Console.
+2. Every `git push origin main` triggers a multi-stage Docker build, pushes to Google Artifact Registry, and deploys to Cloud Run with zero downtime.
 
+### Option 2: Manual CLI Deployment
 ```bash
+# Build and deploy using Google Cloud SDK
 gcloud run deploy personal-gemini-journal \
-    --project="${PROJECT_ID}" \
-    --region="us-central1" \
     --source="." \
+    --region="us-central1" \
     --platform="managed" \
     --allow-unauthenticated \
-    --port=3000 \
-    --set-env-vars="GOOGLE_CLOUD_PROJECT=${PROJECT_ID},GEMINI_SECRET_NAME=GEMINI_API_KEY" \
-    --update-labels=dev-tutorial=cloud-run-ai-challenge
+    --port=8080 \
+    --set-env-vars="GOOGLE_CLOUD_PROJECT=your-project-id" \
+    --set-secrets="GEMINI_API_KEY=GEMINI_API_KEY:latest"
 ```
 
 ---
 
-## 5. Cloud Firestore Security Rules (`firestore.rules`)
+## Cloud Firestore Security Rules
+
+Deploy the included `firestore.rules` to enforce strict zero-trust data access:
 
 ```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
     function isSignedIn() {
       return request.auth != null;
     }
-
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    function isValidId(id) {
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
-    }
-
-    function incoming() {
-      return request.resource.data;
-    }
-
-    function existing() {
-      return resource.data;
-    }
-
-    function isValidInteraction(data, userId) {
-      return data.userId == userId
-        && data.userId == request.auth.uid
-        && data.rawPrompt is string
-        && data.rawPrompt.size() > 0
-        && data.rawPrompt.size() <= 10000
-        && data.sanitizedPrompt is string
-        && data.sanitizedPrompt.size() <= 10000
-        && data.reflection is string
-        && data.reflection.size() <= 20000
-        && (data.title == null || (data.title is string && data.title.size() <= 200))
-        && (data.mood == null || (data.mood is string && data.mood.size() <= 32))
-        && (data.piiEntitiesCount == null || data.piiEntitiesCount is number)
-        && (data.modelUsed == null || (data.modelUsed is string && data.modelUsed.size() <= 64))
-        && (data.latencyMs == null || data.latencyMs is number);
-    }
-
+    // Default deny catch-all
     match /{document=**} {
       allow read, write: if false;
     }
 
     // User root profile document
     match /users/{userId} {
-      allow read, write: if isOwner(userId) && isValidId(userId);
+      allow read, write: if isOwner(userId);
     }
 
+    // User interactions subcollection (Strict Isolation)
     match /users/{userId}/interactions/{interactionId} {
-      allow get: if isOwner(userId) && isValidId(userId) && isValidId(interactionId);
-      allow list: if isOwner(userId) && isValidId(userId);
-      allow create: if isOwner(userId)
-        && isValidId(userId)
-        && isValidId(interactionId)
-        && isValidInteraction(incoming(), userId);
-      allow update: if isOwner(userId)
-        && isValidId(userId)
-        && isValidId(interactionId)
-        && isValidInteraction(incoming(), userId)
-        && incoming().userId == existing().userId
-        && (existing().createdAt == null || incoming().createdAt == existing().createdAt);
-      allow delete: if isOwner(userId) && isValidId(userId) && isValidId(interactionId);
+      allow read, write: if isOwner(userId);
     }
   }
 }
@@ -186,69 +178,22 @@ service cloud.firestore {
 
 ---
 
-## 6. Functional Walkthrough Test Cases
+## Technology Stack
 
-| Test Case | Interaction Steps | Expected Outcome |
-|-----------|-------------------|------------------|
-| **TC-1: Theme Toggle** | Click the theme icon (Sun/Moon) in the top header. | The application smoothly toggles between Google Material 3 Light Mode (clean tonal surfaces) and Dark Mode (deep slate surfaces) and persists preference in `localStorage`. |
-| **TC-2: Authentic Firebase Authentication** | Click "Sign In with Google" or "Sign In" in the header. | Opens the authentic Firebase Google OAuth popup or Email/Password modal, safely authenticating and displaying the user's Google profile and avatar. |
-| **TC-3: Live PII De-identification Preview** | Type `"Had lunch in Seattle with Dr. Sarah Connor about our project at sarah@ai.com."` into the composer. | The live preview card displays `2` or `3` PII entities detected (`[LOCATION_1]`, `[PERSON_1]`, `[EMAIL_1]`) in real-time before submission. |
-| **TC-4: Zero-Trust Reflection Generation** | Select mood `"Grateful"` and click `"Generate Reflection"`. | The button enters an animated processing state. The empathetic reflection appears with key insights, and the Security Inspector HUD updates with exact telemetry. |
-| **TC-5: Security Inspector Verification** | Click on `"1. Redacted Context Sent to Gemini (DLP)"` in the Security Inspector. | The code viewer shows the exact surrogate string (`"Had lunch in [LOCATION_1] with [PERSON_1]..."`) proving no raw PII reached the AI model. |
-| **TC-6: Firestore Document Inspection** | Click on `"3. Stored Firestore Document"` tab and click `"Copy JSON"`. | Displays the exact structured document saved under `/users/{uid}/interactions/inter_*` with zero `undefined` values. |
-| **TC-7: Resilient Model Fallback HUD** | Click on `"4. Privacy & Resilience Telemetry HUD"`. | Displays the active model (`gemini-2.5-flash`), roundtrip latency in ms, PII entity count, and Secret Manager warm cache status. |
-| **TC-8: Journal History Search & Filtering** | Click `"Grateful"` mood filter chip or type `"Seattle"` in the search bar. | The history sidebar dynamically filters entries matching the query or mood. |
-| **TC-9: Location-Aware Privacy Journaling** | Click `"Add Location"` in the composer (e.g., select Seattle, WA) and submit. | The location is pinned to your journal entry. In the Security Inspector, verify that the location name was tokenized to `[LOCATION_1]` by the Zero-Trust Gateway before reaching Gemini. |
-| **TC-10: Interactive Map View** | Click `"Map View"` in the top navigation header. | Displays the interactive Material 3 world map with pins colored by emotional mood tone. Clicking any pin opens a preview card with DLP status and quick navigation. |
-| **TC-11: Multi-Turn Gemini Conversation** | Scroll to the bottom of any reflection, type a follow-up inquiry (or click a suggestion chip), and click `"Reply"`. | Gemini continues the psychological reflection in a multi-turn conversation thread, preserving earlier context without leaking PII. |
-| **TC-12: Firestore Cross-Session Persistence** | Click sign out, then sign in again. | The journal automatically calls `GET /api/journal/history` and restores all saved reflections from Firestore `/users/{uid}/interactions`. |
+| Layer | Technology | Purpose |
+|---|---|---|
+| **Frontend** | Next.js 15, React 19, TailwindCSS | App Router, Server Components, Material 3 UI |
+| **Animation** | Motion (`motion/react`) | Fluid transitions, ambient background glow, micro-interactions |
+| **Authentication** | Firebase Authentication | Google OAuth popup, Email/Password verification |
+| **Database** | Google Cloud Firestore | Tenant-partitioned NoSQL document storage |
+| **AI Inference** | Google Gemini API | Empathetic reflection & psychological reframing |
+| **Privacy / DLP** | Custom Cloud DLP Engine | PII entity detection, masking, and detokenization |
+| **Secrets** | Google Cloud Secret Manager | Dynamic runtime credential resolution |
+| **Container / Hosting** | Docker, Google Cloud Run | Serverless, auto-scaling production runtime |
+| **CI/CD** | Google Cloud Build, GitHub Actions | Automated build, test, and deployment pipeline |
 
 ---
 
-## 7. Google AI Studio Publishing & Mandatory Cloud Run Verification Label
+## License
 
-To ensure your submission qualifies for automated verification and scoring:
-
-### Step 1: Deploy / Publish from AI Studio
-1. In Google AI Studio, locate the **Publish** button on the top right of your app dashboard.
-2. Select your preferences and create a unique **App URL**.
-3. Click **Publish Your App**. Once published, test your live app link!
-
-### Step 2: Apply the Mandatory Cloud Run Verification Label
-1. In the AI Studio dashboard, click **Advanced settings** to see the Cloud Run service your app is running on in Google Cloud.
-2. Note the service name next to the green checkmark.
-3. In the Google Cloud Console, navigate to **Cloud Run** &rarr; **Services**.
-4. Check the box next to your service name.
-5. Click **Labels** in the top action bar where it says *"1 service selected"*.
-6. Click **+ Add label**:
-   * **Key**: `dev-tutorial`
-   * **Value**: `cloud-run-ai-challenge`
-7. Click **Save**.
-
-*(Or via Google Cloud Shell CLI):*
-```bash
-gcloud run services update personal-gemini-journal \
-    --update-labels=dev-tutorial=cloud-run-ai-challenge \
-    --region=us-central1
-```
-
----
-
-## 8. Ready-to-Use Social Post Draft (`#AccelerateAIwithCloudRun`)
-
-Copy and paste this post to LinkedIn, X (Twitter), or Medium to complete the submission requirement:
-
-```markdown
-🚀 Excited to share my submission for the Google Cloud Run AI Challenge: Personal Gemini Journal! 🛡️✨
-
-I built an enterprise Zero-Trust AI Journal featuring:
-🔒 Server-Side Zero-Trust Privacy Gateway (DLP): Automatically scrubs PII (names, emails, phones, and locations) into surrogate tokens before Gemini inference, detokenizing reflections on the fly.
-📍 Location-Aware Privacy Journaling: Interactive Material 3 Map allowing users to tag reflections while proving zero geospatial tracking by the LLM.
-💬 Multi-Turn Gemini Reflections: Empathetic psychological reframing with full multi-turn conversational dialogue.
-⚡ Resilient Model Ladder: 3-tier fallback matrix (gemini-2.5-flash -> gemini-2.0-flash -> gemini-1.5-flash) cached with Google Cloud Secret Manager.
-💾 Subcollection Tenant Isolation: Private per-user storage strictly inside Cloud Firestore.
-
-Built with Google AI Studio, deployed to Google Cloud Run!
-
-#AccelerateAIwithCloudRun #GoogleCloud #GeminiAI #CloudRun #ZeroTrust #AppDevelopment
-```
+Distributed under the Apache 2.0 License. See `LICENSE` for more information.
