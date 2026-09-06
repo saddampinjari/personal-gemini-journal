@@ -15,6 +15,16 @@ export const metadata: Metadata = {
     title: 'Personal Gemini Journal',
     description: 'Enterprise Zero-Trust AI Journal featuring a client-side de-identification Privacy Gateway, Secret Manager integration, and resilient Gemini model fallback ladder deployed on Google Cloud Run.',
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon.png', type: 'image/png', sizes: '512x512' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
