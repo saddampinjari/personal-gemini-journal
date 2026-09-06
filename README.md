@@ -196,4 +196,6 @@ service cloud.firestore {
 
 ## License
 
-Distributed under the Apache 2.0 License. See `LICENSE` for more information.
+Copyright (c) 2026 Saddam Pinjari. All rights reserved.
+
+Distributed under the Apache 2.0 License. See [`LICENSE`](./LICENSE) for full details.
