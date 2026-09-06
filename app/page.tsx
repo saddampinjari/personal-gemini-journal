@@ -826,7 +826,7 @@ export default function HomePage() {
                             piiEntities={inspectorData?.piiEntities || []}
                             piiCountScrubbed={inspectorData?.piiCountScrubbed || 0}
                             tokenMap={inspectorData?.tokenMap || {}}
-                            modelUsed={inspectorData?.modelUsed || 'gemini-2.5-flash'}
+                            modelUsed={inspectorData?.modelUsed || 'gemini-3.6-flash'}
                             fallbackTrail={inspectorData?.fallbackTrail || []}
                             latencyMs={inspectorData?.latencyMs || 0}
                             secretSource={inspectorData?.secretSource || 'Google Cloud Secret Manager'}

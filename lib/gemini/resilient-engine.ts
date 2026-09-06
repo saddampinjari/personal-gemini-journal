@@ -2,14 +2,14 @@ import { GoogleGenAI } from '@google/genai';
 
 /**
  * Resilient Gemini Model Fallback Ladder
- * Step 1: gemini-2.5-flash (Primary fast, high-quality multimodal reasoning)
- * Step 2: gemini-2.0-flash (Ultra-low latency, next-gen serving cluster)
- * Step 3: gemini-1.5-flash (Reliable long-context fallback)
+ * Step 1: gemini-3.6-flash (Primary fast, high-quality multimodal reasoning)
+ * Step 2: gemini-3.1-flash-lite (High-availability resilient serving tier)
+ * Step 3: gemini-2.5-flash (Reliable long-context fallback)
  */
 export const MODEL_FALLBACK_LADDER = [
+  'gemini-3.6-flash',
+  'gemini-3.1-flash-lite',
   'gemini-2.5-flash',
-  'gemini-2.0-flash',
-  'gemini-1.5-flash',
 ] as const;
 
 export interface FallbackAttempt {

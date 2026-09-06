@@ -485,7 +485,7 @@ export function JournalMapView({ items, onSelectItem }: JournalMapViewProps) {
                 {/* Open Button */}
                 <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                   <div className="text-[11px] text-slate-500">
-                    Model: <span className="font-mono text-blue-600 dark:text-blue-400">{selectedItem.modelUsed || 'gemini-2.5-flash'}</span>
+                    Model: <span className="font-mono text-blue-600 dark:text-blue-400">{selectedItem.modelUsed || 'gemini-3.6-flash'}</span>
                   </div>
                   <button
                     onClick={() => onSelectItem(selectedItem)}

@@ -5,7 +5,7 @@
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Cloud_Run-4285F4?style=flat&logo=googlecloud)](https://personal-gemini-journal-454901294317.us-central1.run.app/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)](https://nextjs.org/)
-[![Google Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-8E75FF?style=flat&logo=google)](https://ai.google.dev/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-3.6_Flash-8E75FF?style=flat&logo=google)](https://ai.google.dev/)
 [![Firebase](https://img.shields.io/badge/Firebase-Auth_%26_Firestore-FFCA28?style=flat&logo=firebase)](https://firebase.google.com/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
@@ -29,7 +29,7 @@ While conventional AI journaling tools transmit unencrypted personal thoughts di
 ### 2. Multi-Turn Gemini Reflections
 - **Empathetic Psychological Reframing**: Provides grounded cognitive clarity, emotional tone analysis, and mindful inquiries.
 - **Multi-Turn Conversational Memory**: Supports iterative dialogue allowing users to ask follow-up questions while maintaining thread context.
-- **Resilient Fallback Engine**: Implements an autonomous cascading ladder (`gemini-2.5-flash` &rarr; `gemini-2.0-flash` &rarr; `gemini-1.5-flash`) with local resilience against network spikes or rate limits.
+- **Resilient Fallback Engine**: Implements an autonomous cascading ladder (`gemini-3.6-flash` &rarr; `gemini-3.1-flash-lite` &rarr; `gemini-2.5-flash`) with local resilience against network spikes or rate limits.
 
 ### 3. Tenant-Isolated Firestore Storage
 - **Cryptographic User Sandboxing**: All user reflections, mood tags, and conversation threads are stored strictly at `/users/{userId}/interactions/{interactionId}`.
