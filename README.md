@@ -1,9 +1,24 @@
 # Personal Gemini Journal
 
 > **Enterprise Zero-Trust AI Journal & Reflection Space**  
-> Fortified by a server-side **Zero-Trust Privacy Gateway (DLP)**, runtime **Google Cloud Secret Manager** key injection with in-memory caching, multi-tier **Gemini Model Fallback Ladder**, and tenant-isolated **Cloud Firestore** native persistence.
+> Fortified by a server-side **Zero-Trust Privacy Gateway (Cloud DLP)**, runtime **Google Cloud Secret Manager** key injection with in-memory caching, multi-tier **Gemini Model Fallback Ladder**, and tenant-isolated **Cloud Firestore** native persistence. Deployed to **Google Cloud Run** with automated GitHub CI/CD.
+
+- 🌐 **Live Cloud Run Web App**: [https://personal-gemini-journal-454901294317.us-central1.run.app/](https://personal-gemini-journal-454901294317.us-central1.run.app/)
+- 💻 **GitHub Repository**: [https://github.com/saddampinjari/personal-gemini-journal](https://github.com/saddampinjari/personal-gemini-journal)
+- 🏷️ **Cloud Run Service Label**: `dev-tutorial=cloud-run-ai-challenge`
 
 ---
+
+## Brief Description (What We Built & Cloud Services Used)
+
+**Personal Gemini Journal** is an AI-powered mindfulness and reflection web application engineered with an enterprise **Zero-Trust** security architecture that guarantees absolute user data sovereignty.
+
+- **Firebase Authentication**: Provides secure, authenticated entry using Google Identity OAuth popups and Email/Password with verification links. No synthetic bypass accounts or mock users exist; unauthenticated access to reflections is strictly blocked (HTTP 401).
+- **Google Cloud Run**: Hosts the containerized Next.js 15 App Router frontend and backend APIs on a serverless, auto-scaling runtime with low latency, HTTPS termination, and automated CI/CD deployment via Cloud Build triggers from GitHub.
+- **Google Gemini API**: Delivers empathetic psychological framing, multi-turn reflective dialogue, and cognitive clarity using a resilient 3-tier model fallback ladder (`gemini-2.5-flash` → `gemini-2.0-flash` → `gemini-1.5-flash`).
+- **Cloud Firestore**: Persists reflections with zero cross-tenant data leakage strictly partitioned at `/users/{userId}/interactions/{interactionId}`. Enforced by granular Firestore Security Rules preventing any user from accessing another's journal.
+- **Google Cloud Secret Manager**: Safely resolves the runtime `GEMINI_API_KEY` directly from the Cloud Run container environment with in-memory caching. Zero API keys are hardcoded in git or exposed in client JavaScript bundles.
+- **Zero-Trust Privacy Gateway (DLP)**: Scrubs names, emails, locations, and phones into surrogate tokens (`[PERSON_1]`, `[LOCATION_1]`) *before* prompts reach Gemini, restoring the context for the user upon return.
 
 ## 1. Mandatory Agentic Threat Model: 5-Zone Security Matrix
 
@@ -145,6 +160,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // User root profile document
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) && isValidId(userId);
+    }
+
     match /users/{userId}/interactions/{interactionId} {
       allow get: if isOwner(userId) && isValidId(userId) && isValidId(interactionId);
       allow list: if isOwner(userId) && isValidId(userId);
@@ -171,11 +191,11 @@ service cloud.firestore {
 | Test Case | Interaction Steps | Expected Outcome |
 |-----------|-------------------|------------------|
 | **TC-1: Theme Toggle** | Click the theme icon (Sun/Moon) in the top header. | The application smoothly toggles between Google Material 3 Light Mode (clean tonal surfaces) and Dark Mode (deep slate surfaces) and persists preference in `localStorage`. |
-| **TC-2: Instant Demo Authentication** | Click "Test Demo Session" on the welcome screen. | Instantly authenticates as `Cloud Run Reviewer` with `demo-user-77` without blocking popups, displaying the active dashboard workspace. |
+| **TC-2: Authentic Firebase Authentication** | Click "Sign In with Google" or "Sign In" in the header. | Opens the authentic Firebase Google OAuth popup or Email/Password modal, safely authenticating and displaying the user's Google profile and avatar. |
 | **TC-3: Live PII De-identification Preview** | Type `"Had lunch in Seattle with Dr. Sarah Connor about our project at sarah@ai.com."` into the composer. | The live preview card displays `2` or `3` PII entities detected (`[LOCATION_1]`, `[PERSON_1]`, `[EMAIL_1]`) in real-time before submission. |
 | **TC-4: Zero-Trust Reflection Generation** | Select mood `"Grateful"` and click `"Generate Reflection"`. | The button enters an animated processing state. The empathetic reflection appears with key insights, and the Security Inspector HUD updates with exact telemetry. |
 | **TC-5: Security Inspector Verification** | Click on `"1. Redacted Context Sent to Gemini (DLP)"` in the Security Inspector. | The code viewer shows the exact surrogate string (`"Had lunch in [LOCATION_1] with [PERSON_1]..."`) proving no raw PII reached the AI model. |
-| **TC-6: Firestore Document Inspection** | Click on `"3. Stored Firestore Document"` tab and click `"Copy JSON"`. | Displays the exact structured document saved under `/users/demo-user-77/interactions/inter_*` with zero `undefined` values. |
+| **TC-6: Firestore Document Inspection** | Click on `"3. Stored Firestore Document"` tab and click `"Copy JSON"`. | Displays the exact structured document saved under `/users/{uid}/interactions/inter_*` with zero `undefined` values. |
 | **TC-7: Resilient Model Fallback HUD** | Click on `"4. Privacy & Resilience Telemetry HUD"`. | Displays the active model (`gemini-2.5-flash`), roundtrip latency in ms, PII entity count, and Secret Manager warm cache status. |
 | **TC-8: Journal History Search & Filtering** | Click `"Grateful"` mood filter chip or type `"Seattle"` in the search bar. | The history sidebar dynamically filters entries matching the query or mood. |
 | **TC-9: Location-Aware Privacy Journaling** | Click `"Add Location"` in the composer (e.g., select Seattle, WA) and submit. | The location is pinned to your journal entry. In the Security Inspector, verify that the location name was tokenized to `[LOCATION_1]` by the Zero-Trust Gateway before reaching Gemini. |
