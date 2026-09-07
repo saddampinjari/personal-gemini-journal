@@ -64,10 +64,12 @@ Thank you for delving deeper into this thought: "${summarySnippet}..."
 Continuing to unpack this experience allows subtle nuances to surface. When we observe thoughts in dialogue rather than keeping them isolated, we often find the initial reaction transforms into a clearer perspective.
 
 ### Guiding Reflections
+
 - **Nuance & Discovery**: Looking back at what you first felt versus what you're noticing now, where do you feel the tension softening?
 - **Self-Compassion**: Remember that progress in self-awareness isn't linear—honoring how you feel in this exact moment is enough.
 
 ### Next Prompt
+
 *If you were to speak to yourself right now with the same unconditional kindness you would offer a trusted friend, what would you say?*`;
   }
 
@@ -75,11 +77,13 @@ Continuing to unpack this experience allows subtle nuances to surface. When we o
 Thank you for articulating this moment. You noted: "${summarySnippet}..." Processing experiences through writing helps ground the nervous system and externalize what can otherwise feel internally congested. With a ${moodNormalized} mindset, giving voice to these tensions is the foundational step toward intentional clarity.
 
 ### Key Psychological Insights & Themes
+
 - **Cognitive Emotional Awareness**: Noticing and naming the underlying friction creates psychological distance from the immediate stressor.
 - **Agency and Boundaries**: Even when external timelines, people, or demands press inward, clarity comes from delineating what is within your locus of control versus what belongs to external circumstances.
 - **Resilience through Expression**: Documenting your honest thoughts directly supports emotional regulation and metacognitive growth.
 
 ### Mindful Inquiry & Prompts for Tomorrow
+
 1. If you could press pause on this specific situation for just 10 minutes, what would your body and mind ask for right now?
 2. Looking at what you wrote, which expectation belongs genuinely to your core values, and which might be borrowed from external pressure?
 3. What is one small, manageable boundary you can set tomorrow to protect your peace?`;

@@ -376,7 +376,7 @@ export default function HomePage() {
       // Graceful offline & client-side resilient fallback: preserve full zero-trust pipeline
       const dlp = deidentifyText(prompt);
       const moodLabel = mood || 'reflective';
-      const localReflection = `### Empathetic Summary\n\nThank you for articulating this moment. Navigating personal reflections with a ${moodLabel} mindset helps ground your thoughts and cultivate psychological clarity. Documenting experiences provides distance to examine what is within your locus of control.\n\n### Key Psychological Insights\n- **Cognitive Clarity**: Giving structured expression to your thoughts reduces emotional cognitive load.\n- **Locus of Control**: Focusing attention on immediate, actionable steps restores a sense of agency.\n\n### Mindful Inquiry\n1. What is one small, grounded action that would bring you calm today?\n2. What expectation can you release right now?`;
+      const localReflection = `### Empathetic Summary\n\nThank you for articulating this moment. Navigating personal reflections with a ${moodLabel} mindset helps ground your thoughts and cultivate psychological clarity. Documenting experiences provides distance to examine what is within your locus of control.\n\n### Key Psychological Insights\n\n- **Cognitive Clarity**: Giving structured expression to your thoughts reduces emotional cognitive load.\n- **Locus of Control**: Focusing attention on immediate, actionable steps restores a sense of agency.\n\n### Mindful Inquiry\n\n1. What is one small, grounded action that would bring you calm today?\n2. What expectation can you release right now?`;
       const detokenized = detokenizeText(localReflection, dlp.tokenMap);
 
       const nowIso = new Date().toISOString();

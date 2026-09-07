@@ -52,6 +52,194 @@ interface ReflectionViewerProps {
   onScrollToInspector?: () => void;
 }
 
+function renderInlineMarkdown(text: string): React.ReactNode {
+  const tokens: React.ReactNode[] = [];
+  const regex = /(\*\*.*?\*\*|\*[^*]+?\*)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      tokens.push(text.substring(lastIndex, match.index));
+    }
+    const token = match[0];
+    if (token.startsWith('**') && token.endsWith('**') && token.length >= 4) {
+      tokens.push(
+        <strong key={match.index} className="font-bold text-[#1C1B1F] dark:text-white">
+          {token.slice(2, -2)}
+        </strong>
+      );
+    } else if (token.startsWith('*') && token.endsWith('*') && token.length >= 2) {
+      tokens.push(
+        <em key={match.index} className="italic text-[#4B5563] dark:text-[#94A3B8]">
+          {token.slice(1, -1)}
+        </em>
+      );
+    }
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    tokens.push(text.substring(lastIndex));
+  }
+
+  return tokens.length > 0 ? tokens : text;
+}
+
+interface MarkdownBlock {
+  type: 'heading' | 'ul' | 'ol' | 'p';
+  level?: number;
+  text?: string;
+  items?: string[];
+}
+
+function parseMarkdownBlocks(rawText: string): MarkdownBlock[] {
+  const lines = rawText.split(/\r?\n/);
+  const blocks: MarkdownBlock[] = [];
+  let currentList: { type: 'ul' | 'ol'; items: string[] } | null = null;
+  let currentParagraph: string[] = [];
+
+  const flushParagraph = () => {
+    if (currentParagraph.length > 0) {
+      blocks.push({
+        type: 'p',
+        text: currentParagraph.join(' '),
+      });
+      currentParagraph = [];
+    }
+  };
+
+  const flushList = () => {
+    if (currentList) {
+      blocks.push({
+        type: currentList.type,
+        items: currentList.items,
+      });
+      currentList = null;
+    }
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      flushParagraph();
+      flushList();
+      continue;
+    }
+
+    // Heading check: #, ##, ###, ####
+    const headingMatch = trimmed.match(/^(#{1,4})\s+(.+)$/);
+    if (headingMatch) {
+      flushParagraph();
+      flushList();
+      blocks.push({
+        type: 'heading',
+        level: headingMatch[1].length,
+        text: headingMatch[2],
+      });
+      continue;
+    }
+
+    // Unordered bullet item: - ... or * ...
+    const ulMatch = trimmed.match(/^[-*]\s+(.+)$/);
+    if (ulMatch) {
+      flushParagraph();
+      if (!currentList || currentList.type !== 'ul') {
+        flushList();
+        currentList = { type: 'ul', items: [] };
+      }
+      currentList.items.push(ulMatch[1]);
+      continue;
+    }
+
+    // Ordered list item: 1. ...
+    const olMatch = trimmed.match(/^\d+\.\s+(.+)$/);
+    if (olMatch) {
+      flushParagraph();
+      if (!currentList || currentList.type !== 'ol') {
+        flushList();
+        currentList = { type: 'ol', items: [] };
+      }
+      currentList.items.push(olMatch[1]);
+      continue;
+    }
+
+    // Regular line in paragraph
+    flushList();
+    currentParagraph.push(trimmed);
+  }
+
+  flushParagraph();
+  flushList();
+
+  return blocks;
+}
+
+function FormattedMarkdown({ content }: { content: string }) {
+  const blocks = parseMarkdownBlocks(content);
+
+  return (
+    <div className="space-y-4 text-[#1C1B1F] dark:text-[#E6E1E5] text-sm sm:text-base leading-relaxed font-sans">
+      {blocks.map((block, idx) => {
+        if (block.type === 'heading') {
+          return (
+            <div
+              key={idx}
+              className={`pt-3 pb-1.5 border-b border-slate-200/80 dark:border-blue-900/40 ${
+                idx === 0 ? 'pt-0' : 'mt-6'
+              }`}
+            >
+              <h4 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+                <span className="w-1.5 h-4 rounded-full bg-blue-600 dark:bg-blue-400 inline-block shrink-0" />
+                <span>{renderInlineMarkdown(block.text || '')}</span>
+              </h4>
+            </div>
+          );
+        }
+
+        if (block.type === 'ul' && block.items) {
+          return (
+            <ul key={idx} className="space-y-2.5 pl-1 my-2">
+              {block.items.map((item, itemIdx) => (
+                <li key={itemIdx} className="flex items-start gap-2.5 text-sm sm:text-base leading-relaxed">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-blue-400 mt-2 shrink-0" />
+                  <span className="flex-1 text-[#334155] dark:text-[#CBD5E1]">
+                    {renderInlineMarkdown(item)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          );
+        }
+
+        if (block.type === 'ol' && block.items) {
+          return (
+            <ol key={idx} className="space-y-2.5 pl-1 my-2">
+              {block.items.map((item, itemIdx) => (
+                <li key={itemIdx} className="flex items-start gap-2.5 text-sm sm:text-base leading-relaxed">
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 text-xs font-bold shrink-0 mt-0.5">
+                    {itemIdx + 1}
+                  </span>
+                  <span className="flex-1 text-[#334155] dark:text-[#CBD5E1]">
+                    {renderInlineMarkdown(item)}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          );
+        }
+
+        return (
+          <p key={idx} className="leading-relaxed text-[#334155] dark:text-[#CBD5E1]">
+            {renderInlineMarkdown(block.text || '')}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
 export function ReflectionViewer({
   title,
   reflection,
@@ -216,42 +404,7 @@ export function ReflectionViewer({
 
       {/* Reflection Content */}
       <motion.div variants={itemVariants} className="p-6 sm:p-9 space-y-4">
-        <div className="prose prose-slate dark:prose-invert max-w-none text-[#1C1B1F] dark:text-[#E6E1E5] text-sm sm:text-base leading-relaxed space-y-3 font-sans">
-          {reflection.split('\n\n').map((paragraph, index) => {
-            // Check if bullet points
-            if (paragraph.startsWith('- ') || paragraph.startsWith('* ')) {
-              const items = paragraph.split('\n').map((item) => item.replace(/^[-*]\s+/, ''));
-              return (
-                <ul key={index} className="list-disc pl-5 space-y-1.5 text-sm">
-                  {items.map((it, i) => (
-                    <li key={i} className="leading-relaxed">
-                      {it}
-                    </li>
-                  ))}
-                </ul>
-              );
-            }
-
-            // Heading check
-            if (paragraph.startsWith('### ') || paragraph.startsWith('## ') || paragraph.startsWith('# ')) {
-              const headingText = paragraph.replace(/^#+\s+/, '');
-              return (
-                <h4
-                  key={index}
-                  className="font-semibold text-[#1C1B1F] dark:text-[#E6E1E5] text-base mt-4 mb-2 tracking-tight"
-                >
-                  {headingText}
-                </h4>
-              );
-            }
-
-            return (
-              <p key={index} className="leading-relaxed">
-                {paragraph}
-              </p>
-            );
-          })}
-        </div>
+        <FormattedMarkdown content={reflection} />
 
         {/* Multi-turn Conversational Dialogue Thread */}
         {conversation && conversation.length > 2 && (
@@ -291,7 +444,11 @@ export function ReflectionViewer({
                       </span>
                     )}
                   </div>
-                  <div className="whitespace-pre-wrap">{msg.content}</div>
+                  {msg.role === 'model' ? (
+                    <FormattedMarkdown content={msg.content} />
+                  ) : (
+                    <div className="whitespace-pre-wrap">{msg.content}</div>
+                  )}
                 </div>
               ))}
             </div>
