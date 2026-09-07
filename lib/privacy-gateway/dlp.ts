@@ -194,7 +194,9 @@ export function deidentifyText(text: string): DeidentificationResult {
   for (const [orig, surrogate] of sortedReplacements) {
     // Escape special regex characters in original string
     const escaped = orig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const replaceRegex = new RegExp(`\\b${escaped}\\b`, 'g');
+    const prefixBoundary = /^\w/.test(orig) ? '\\b' : '';
+    const suffixBoundary = /\w$/.test(orig) ? '\\b' : '';
+    const replaceRegex = new RegExp(`${prefixBoundary}${escaped}${suffixBoundary}`, 'g');
     sanitized = sanitized.replace(replaceRegex, surrogate);
   }
 

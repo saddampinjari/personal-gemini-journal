@@ -41,6 +41,9 @@ import {
   FileText,
   Lock,
   Sliders,
+  Monitor,
+  Laptop,
+  ChevronDown,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -58,6 +61,13 @@ const ICON_MAP: Record<string, LucideIcon> = {
   x: X,
   arrow_back: ChevronLeft,
   arrow_left: ChevronLeft,
+  expand_more: ChevronDown,
+  chevron_down: ChevronDown,
+  monitor: Monitor,
+  laptop: Laptop,
+  devices: Laptop,
+  device_default: Monitor,
+  brightness_auto: Monitor,
   arrow_forward: ArrowRight,
   arrow_right: ArrowRight,
   how_to_reg: UserCheck,

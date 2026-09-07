@@ -9,18 +9,23 @@ import { findLocationInText, getCoordinatesForLocation } from '@/lib/geo/coordin
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
 
+  // 1. Identity & Access Control: Verify Bearer token from headers
+  let user;
   try {
-    // 1. Identity & Access Control: Verify Bearer token from headers
     const authHeader = req.headers.get('Authorization');
-    const user = await verifyAuthToken(authHeader);
+    user = await verifyAuthToken(authHeader);
+  } catch {
+    user = null;
+  }
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized: Authentication required to create journal reflections' },
-        { status: 401 }
-      );
-    }
+  if (!user) {
+    return NextResponse.json(
+      { error: 'Unauthorized: Authentication required to create journal reflections' },
+      { status: 401 }
+    );
+  }
 
+  try {
     // 2. Parse & Validate Payload
     const body = await req.json().catch(() => ({}));
     const rawInput = body.prompt;
@@ -196,7 +201,7 @@ export async function POST(req: NextRequest) {
       secretSource: 'Autonomous Resilience Engine',
       secretCached: true,
       storedFirestoreDocument: {
-        userId: 'verified-user',
+        userId: user.uid,
         interactionId: fallbackId,
         title: 'Mindful Reflection',
         reflection: fallbackReflection,

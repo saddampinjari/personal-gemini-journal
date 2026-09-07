@@ -287,69 +287,67 @@ export function ReflectionViewer({
         variants={itemVariants}
         className="p-5 sm:p-7 border-b border-slate-200 dark:border-blue-900/40 bg-gradient-to-b from-blue-50/50 to-transparent dark:from-[#14204F]/40 dark:to-transparent backdrop-blur-md"
       >
-        {/* Row 1: Title, Meta, and Actions */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          <div className="flex items-start sm:items-center gap-3.5">
-            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-blue-200 dark:border-blue-700/60 shadow-xs shrink-0">
-              <MaterialIcon name="auto_awesome" size={24} className="text-[#2563EB] dark:text-blue-300" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-bold text-lg sm:text-xl text-[#1C1B1F] dark:text-[#E6E1E5] tracking-tight">
-                  {title || 'AI Journal Reflection'}
-                </h3>
-                <span className="capitalize px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 dark:bg-[#14204F]/80 text-[#14204F] dark:text-blue-200">
-                  {mood || 'Reflective'}
-                </span>
-                {location?.name && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-[#14204F]/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80">
-                    <MaterialIcon name="place" size={14} className="text-blue-600 dark:text-blue-400" />
-                    <span>{location.name}</span>
-                    <span className="text-[10px] text-blue-500 font-mono">(DLP Masked)</span>
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-[#79747E] dark:text-[#938F99] mt-1">
-                Recorded {new Date(createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-              </p>
-            </div>
+        {/* Title, Metadata, and Action Buttons Block */}
+        <div className="flex items-start gap-3.5">
+          <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-blue-200 dark:border-blue-700/60 shadow-xs shrink-0">
+            <MaterialIcon name="auto_awesome" size={24} className="text-[#2563EB] dark:text-blue-300" />
           </div>
-
-          {/* Action buttons - M3 Unified Buttons */}
-          <div className="flex items-center gap-2.5 flex-wrap self-start lg:self-center">
-            {onScrollToInspector && (
-              <button
-                onClick={onScrollToInspector}
-                className="m3-btn m3-btn-tonal text-xs h-9 px-4"
-              >
-                <MaterialIcon name="verified_user" size={16} className="text-emerald-600 dark:text-emerald-400" />
-                <span>Security HUD</span>
-              </button>
-            )}
-
-            <button
-              id="copy-reflection-btn"
-              onClick={handleCopy}
-              className="m3-btn m3-btn-outlined text-xs h-9 px-4"
-              title="Copy to clipboard"
-            >
-              {copied ? (
-                <MaterialIcon name="check" size={16} className="text-emerald-500" />
-              ) : (
-                <MaterialIcon name="content_copy" size={16} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-bold text-lg sm:text-xl text-[#1C1B1F] dark:text-[#E6E1E5] tracking-tight">
+                {title || 'AI Journal Reflection'}
+              </h3>
+              <span className="capitalize px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 dark:bg-[#14204F]/80 text-[#14204F] dark:text-blue-200 shrink-0">
+                {mood || 'Reflective'}
+              </span>
+              {location?.name && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-[#14204F]/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80 shrink-0">
+                  <MaterialIcon name="place" size={14} className="text-blue-600 dark:text-blue-400" />
+                  <span>{location.name}</span>
+                  <span className="text-[10px] text-blue-500 font-mono">(DLP Masked)</span>
+                </span>
               )}
-              <span>{copied ? 'Copied' : 'Copy'}</span>
-            </button>
+            </div>
+            <p className="text-xs text-[#79747E] dark:text-[#938F99] mt-1">
+              Recorded {new Date(createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+            </p>
 
-            <button
-              id="export-reflection-btn"
-              onClick={handleExport}
-              className="m3-btn m3-btn-filled text-xs h-9 px-4"
-              title="Export Markdown file"
-            >
-              <MaterialIcon name="file_download" size={16} />
-              <span>Export</span>
-            </button>
+            {/* Action buttons - Cleanly Inline Below Title */}
+            <div className="flex items-center gap-2.5 flex-wrap mt-3.5">
+              {onScrollToInspector && (
+                <button
+                  onClick={onScrollToInspector}
+                  className="m3-btn m3-btn-tonal text-xs h-9 px-4"
+                >
+                  <MaterialIcon name="verified_user" size={16} className="text-emerald-600 dark:text-emerald-400" />
+                  <span>Security HUD</span>
+                </button>
+              )}
+
+              <button
+                id="copy-reflection-btn"
+                onClick={handleCopy}
+                className="m3-btn m3-btn-outlined text-xs h-9 px-4"
+                title="Copy to clipboard"
+              >
+                {copied ? (
+                  <MaterialIcon name="check" size={16} className="text-emerald-500" />
+                ) : (
+                  <MaterialIcon name="content_copy" size={16} />
+                )}
+                <span>{copied ? 'Copied' : 'Copy'}</span>
+              </button>
+
+              <button
+                id="export-reflection-btn"
+                onClick={handleExport}
+                className="m3-btn m3-btn-filled text-xs h-9 px-4"
+                title="Export Markdown file"
+              >
+                <MaterialIcon name="file_download" size={16} />
+                <span>Export</span>
+              </button>
+            </div>
           </div>
         </div>
 

@@ -81,8 +81,8 @@ export async function verifyAuthToken(authHeader: string | null): Promise<Authen
     return null;
   }
 
-  // Handle resilient Google Identity token
-  if (token.startsWith('google-token-')) {
+  // Only permit simulated identity tokens in local non-production environments
+  if (process.env.NODE_ENV !== 'production' && token.startsWith('google-token-')) {
     const rawUid = token.replace('google-token-', '');
     const isSaddam = rawUid.includes('iamsaddamp');
     const isDev = rawUid.includes('developer');

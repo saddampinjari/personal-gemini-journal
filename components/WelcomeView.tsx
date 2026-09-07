@@ -89,7 +89,7 @@ export function WelcomeView({
       {/* Hero Eyebrow Pill */}
       <motion.div
         variants={heroItemVariants}
-        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-[#14204F]/80 text-[#14204F] dark:text-blue-200 border border-blue-200 dark:border-blue-700/60 mb-6 shadow-xs backdrop-blur-md"
+        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-white/90 dark:bg-[#14204F]/80 text-[#14204F] dark:text-blue-200 border border-blue-200/90 dark:border-blue-700/60 mb-6 shadow-xs backdrop-blur-md"
       >
         <MaterialIcon name="auto_awesome" size={16} className="text-[#2563EB] dark:text-blue-300" />
         <span>Zero-Trust AI Architecture &bull; Google Cloud Run</span>
@@ -98,20 +98,20 @@ export function WelcomeView({
       {/* Main Headline with Styled Italic Accent */}
       <motion.h1
         variants={heroItemVariants}
-        className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-center text-[#1C1B1F] dark:text-[#E6E1E5] tracking-tight max-w-4xl leading-[1.15]"
+        className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-center text-slate-900 dark:text-[#E6E1E5] tracking-tight max-w-4xl leading-[1.15]"
       >
         Reflect with Deep Insight. <br className="hidden sm:inline" />
-        <span className="font-serif italic font-normal text-[#2563EB] dark:text-blue-300">
+        <span className="font-serif italic font-normal bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent dark:from-blue-300 dark:to-indigo-300">
           Protected in Seconds.
         </span>
       </motion.h1>
 
       <motion.p
         variants={heroItemVariants}
-        className="mt-5 text-base sm:text-lg text-center text-[#49454F] dark:text-[#CAC4D0] max-w-2xl leading-relaxed"
+        className="mt-5 text-base sm:text-lg text-center text-slate-600 dark:text-[#CAC4D0] max-w-2xl leading-relaxed"
       >
         A private sanctuary for daily mindfulness and mental clarity, fortified by a server-side{' '}
-        <span className="font-semibold text-[#2563EB] dark:text-blue-300">Zero-Trust Privacy Gateway</span>,
+        <span className="font-semibold text-blue-600 dark:text-blue-300">Zero-Trust Privacy Gateway</span>,
         GCP Secret Manager key isolation, and tenant-isolated Cloud Firestore.
       </motion.p>
 
@@ -180,14 +180,14 @@ export function WelcomeView({
               <span className="w-2 h-2 rounded-full bg-[#FBBC05]" />
               <span className="w-2 h-2 rounded-full bg-[#34A853]" />
             </div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#49454F] dark:text-[#CAC4D0]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-[#CAC4D0]">
               Enterprise Security Pillars
             </span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#1C1B1F] dark:text-[#E6E1E5]">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-[#E6E1E5]">
             Why Zero-Trust Journaling Matters
           </h2>
-          <p className="text-xs sm:text-sm text-[#49454F] dark:text-[#CAC4D0] max-w-xl mx-auto mt-2">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-[#CAC4D0] max-w-xl mx-auto mt-2">
             Architected with Google Cloud enterprise-grade security primitives for absolute data sovereignty.
           </p>
         </motion.div>

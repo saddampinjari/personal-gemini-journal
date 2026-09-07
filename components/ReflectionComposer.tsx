@@ -109,43 +109,39 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
       initial="hidden"
       animate="visible"
       id="reflection-composer-card"
-      className="bg-white/95 dark:bg-[#0E1528]/85 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-blue-900/40 shadow-sm p-6 sm:p-9 transition-colors duration-200"
+      className="bg-white/95 dark:bg-[#0E1528]/85 backdrop-blur-xl rounded-3xl border border-slate-200 dark:border-blue-900/40 shadow-sm overflow-hidden transition-colors duration-200"
     >
       {/* Top Header Section: Clean, Spacious, Matching Security HUD */}
       <motion.div
         variants={itemVariants}
-        className="p-5 sm:p-7 border-b border-slate-200 dark:border-blue-900/40 bg-gradient-to-b from-blue-50/50 to-transparent dark:from-[#14204F]/40 dark:to-transparent -m-6 sm:-m-9 mb-6 sm:mb-8 backdrop-blur-md"
+        className="p-5 sm:p-7 border-b border-slate-200 dark:border-blue-900/40 bg-gradient-to-b from-blue-50/50 to-transparent dark:from-[#14204F]/40 dark:to-transparent backdrop-blur-md rounded-t-3xl"
       >
-        {/* Row 1: Icon, Title, and Privacy Status Badge */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center gap-3.5">
-            <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-blue-200 dark:border-blue-700/60 shadow-xs shrink-0">
-              <MaterialIcon name="edit_note" size={26} className="text-[#2563EB] dark:text-blue-300" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <h2 className="font-bold text-[#1C1B1F] dark:text-[#E6E1E5] text-lg sm:text-xl tracking-tight">
-                  New Journal Reflection
-                </h2>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  Zero-Trust DLP Active
-                </span>
-              </div>
-              <p className="text-xs sm:text-sm text-[#49454F] dark:text-[#CAC4D0] mt-1">
-                Reflect freely. Names, locations, and personal identifiers are scrubbed locally before AI processing.
-              </p>
-            </div>
+        {/* Row 1: Icon, Title, and Privacy Status Badges */}
+        <div className="flex items-start gap-3.5">
+          <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-100 dark:bg-[#14204F] text-[#14204F] dark:text-blue-200 border border-blue-200 dark:border-blue-700/60 shadow-xs shrink-0">
+            <MaterialIcon name="edit_note" size={26} className="text-[#2563EB] dark:text-blue-300" />
           </div>
-
-          {/* Right Status Badge */}
-          <div className="self-start sm:self-center flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/80 dark:bg-[#14204F]/60 backdrop-blur-md text-[#14204F] dark:text-blue-200 border border-slate-200 dark:border-blue-800/40 shadow-2xs shrink-0">
-            <MaterialIcon name="shield" size={16} className="text-[#2563EB] dark:text-blue-300" />
-            <span>
-              {livePreview.scrubCount > 0
-                ? `${livePreview.scrubCount} PII Entities Detected`
-                : 'Privacy Sanitizer Ready'}
-            </span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h2 className="font-bold text-[#1C1B1F] dark:text-[#E6E1E5] text-lg sm:text-xl tracking-tight">
+                New Journal Reflection
+              </h2>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Zero-Trust DLP Active
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-semibold bg-white/85 dark:bg-[#14204F]/70 backdrop-blur-md text-[#14204F] dark:text-blue-200 border border-slate-200 dark:border-blue-800/40 shadow-2xs shrink-0">
+                <MaterialIcon name="shield" size={14} className="text-[#2563EB] dark:text-blue-300" />
+                <span>
+                  {livePreview.scrubCount > 0
+                    ? `${livePreview.scrubCount} PII Entities Detected`
+                    : 'Privacy Sanitizer Ready'}
+                </span>
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-[#49454F] dark:text-[#CAC4D0] mt-1.5 leading-relaxed">
+              Reflect freely. Names, locations, and personal identifiers are scrubbed locally before AI processing.
+            </p>
           </div>
         </div>
 
@@ -198,7 +194,8 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
         </div>
       </motion.div>
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+      <div className="p-6 sm:p-9 pt-6 sm:pt-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
         {/* Mood Selector */}
         <motion.div variants={itemVariants}>
           <label className="block text-xs font-bold uppercase tracking-wider text-[#79747E] dark:text-[#938F99] mb-3">
@@ -358,6 +355,7 @@ export function ReflectionComposer({ onSubmit, isLoading }: ReflectionComposerPr
           </button>
         </motion.div>
       </form>
-    </motion.div>
-  );
+    </div>
+  </motion.div>
+);
 }

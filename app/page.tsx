@@ -281,8 +281,15 @@ export default function HomePage() {
       return;
     }
 
-    const effectiveUser = currentUser;
-    const effectiveToken = authToken;
+    let effectiveToken = authToken;
+    if (auth?.currentUser) {
+      try {
+        effectiveToken = await auth.currentUser.getIdToken();
+        setAuthToken(effectiveToken);
+      } catch {
+        // retain current token
+      }
+    }
 
     setIsSubmitting(true);
     setErrorMessage(null);
@@ -352,7 +359,10 @@ export default function HomePage() {
       });
       setActiveItem(newItem);
       if (currentUser?.uid) {
-        saveInteractionToFirestore(currentUser.uid, newItem.interactionId, newItem as unknown as Record<string, unknown>);
+        saveInteractionToFirestore(currentUser.uid, newItem.interactionId, {
+          ...newItem,
+          userId: currentUser.uid,
+        } as unknown as Record<string, unknown>);
       }
 
       // Update Live Security Inspector HUD
@@ -456,7 +466,16 @@ export default function HomePage() {
         { role: 'model', content: activeItem.reflection, createdAt: activeItem.createdAt },
       ];
 
-      const effectiveToken = authToken;
+      let effectiveToken = authToken;
+      if (auth?.currentUser) {
+        try {
+          effectiveToken = await auth.currentUser.getIdToken();
+          setAuthToken(effectiveToken);
+        } catch {
+          // retain current token
+        }
+      }
+
       if (!effectiveToken) {
         setErrorMessage('You must be signed in to submit follow-up questions.');
         setIsAuthModalOpen(true);
@@ -688,12 +707,12 @@ export default function HomePage() {
                                 <div className="flex items-center justify-between pb-1">
                                   <button
                                     onClick={() => handleNewReflection()}
-                                    className="m3-btn m3-btn-tonal text-xs h-9 px-4"
+                                    className="hidden lg:inline-flex m3-btn m3-btn-tonal text-xs h-9 px-4"
                                   >
                                     <MaterialIcon name="add" size={16} />
                                     <span>Create New Reflection</span>
                                   </button>
-                                  <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-blue-300/80 font-medium">
+                                  <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-blue-300/80 font-medium ml-auto lg:ml-0">
                                     <span className="w-2 h-2 rounded-full bg-[#2563EB] dark:bg-blue-400"></span>
                                     <span>Viewing Archival Record</span>
                                   </div>
